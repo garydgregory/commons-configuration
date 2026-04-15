@@ -39,6 +39,7 @@ import org.apache.commons.configuration2.sync.LockMode;
 import org.apache.commons.configuration2.sync.NoOpSynchronizer;
 import org.apache.commons.configuration2.sync.Synchronizer;
 import org.apache.commons.configuration2.sync.SynchronizerSupport;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.LogFactory;
 
 /**
@@ -174,7 +175,7 @@ public class FileHandler {
      */
     private static FileHandler checkSourceHandler(final FileHandler c) {
         if (c == null) {
-            throw new IllegalArgumentException("FileHandler to assign must not be null!");
+            throw new IllegalArgumentException("FileHandler to assign must not be null.");
         }
         return c;
     }
@@ -182,16 +183,10 @@ public class FileHandler {
     /**
      * A helper method for closing a stream. Occurring exceptions will be ignored.
      *
-     * @param cl the stream to be closed (may be <strong>null</strong>)
+     * @param closeable the stream to be closed, may be {@code null}.
      */
-    private static void closeSilent(final Closeable cl) {
-        try {
-            if (cl != null) {
-                cl.close();
-            }
-        } catch (final IOException e) {
-            LogFactory.getLog(FileHandler.class).warn("Exception when closing " + cl, e);
-        }
+    private static void closeSilent(final Closeable closeable) {
+        IOUtils.closeQuietly(closeable, e -> LogFactory.getLog(FileHandler.class).warn("Exception when closing " + closeable, e));
     }
 
     /**
@@ -304,7 +299,7 @@ public class FileHandler {
      */
     public void addFileHandlerListener(final FileHandlerListener l) {
         if (l == null) {
-            throw new IllegalArgumentException("Listener must not be null!");
+            throw new IllegalArgumentException("Listener must not be null.");
         }
         listeners.add(l);
     }
@@ -314,11 +309,13 @@ public class FileHandler {
      * content object is accessed.
      *
      * @throws ConfigurationException if not content object is defined
+     * @return {@code this} instance.
      */
-    private void checkContent() throws ConfigurationException {
+    FileHandler checkContent() throws ConfigurationException {
         if (getContent() == null) {
-            throw new ConfigurationException("No content available!");
+            throw new ConfigurationException("No content available.");
         }
+        return this;
     }
 
     /**
@@ -329,8 +326,7 @@ public class FileHandler {
      * @throws ConfigurationException if not content object is defined
      */
     private FileLocator checkContentAndGetLocator() throws ConfigurationException {
-        checkContent();
-        return getFileLocator();
+        return checkContent().getFileLocator();
     }
 
     /**
@@ -548,12 +544,15 @@ public class FileHandler {
      * the case, a {@code FileLocator} instance is injected which returns only <strong>null</strong> values. This method is called if
      * no file location is available (for example if data is to be loaded from a stream). The encoding of the injected locator is
      * derived from this object.
+     *
+     * @return {@code this} instance.
      */
-    private void injectNullFileLocator() {
+    private FileHandler injectNullFileLocator() {
         if (getContent() instanceof FileLocatorAware) {
             final FileLocator locator = prepareNullLocatorBuilder().create();
             ((FileLocatorAware) getContent()).initFileLocator(locator);
         }
+        return this;
     }
 
     /**
@@ -641,9 +640,7 @@ public class FileHandler {
      * @throws ConfigurationException if an error occurs during the load operation
      */
     public void load(final Reader in) throws ConfigurationException {
-        checkContent();
-        injectNullFileLocator();
-        loadFromReader(in);
+        checkContent().injectNullFileLocator().loadFromReader(in);
     }
 
     /**
@@ -731,8 +728,7 @@ public class FileHandler {
      * @throws ConfigurationException if an error occurs
      */
     private void loadFromStream(final InputStream in, final String encoding, final URL url) throws ConfigurationException {
-        checkContent();
-        final SynchronizerSupport syncSupport = fetchSynchronizerSupport();
+        final SynchronizerSupport syncSupport = checkContent().fetchSynchronizerSupport();
         syncSupport.lock(LockMode.WRITE);
         try {
             injectFileLocator(url);
@@ -891,7 +887,7 @@ public class FileHandler {
      */
     private void save(final FileLocator locator) throws ConfigurationException {
         if (!FileLocatorUtils.isLocationDefined(locator)) {
-            throw new ConfigurationException("No file location has been set!");
+            throw new ConfigurationException("No file location has been set.");
         }
 
         if (locator.getSourceURL() != null) {
@@ -1008,9 +1004,7 @@ public class FileHandler {
      * @throws ConfigurationException if an error occurs during the save operation
      */
     public void save(final Writer out) throws ConfigurationException {
-        checkContent();
-        injectNullFileLocator();
-        saveToWriter(out);
+        checkContent().injectNullFileLocator().saveToWriter(out);
     }
 
     /**
@@ -1022,8 +1016,7 @@ public class FileHandler {
      * @throws ConfigurationException if an error occurs
      */
     private void saveToStream(final OutputStream out, final String encoding, final URL url) throws ConfigurationException {
-        checkContent();
-        final SynchronizerSupport syncSupport = fetchSynchronizerSupport();
+        final SynchronizerSupport syncSupport = checkContent().fetchSynchronizerSupport();
         syncSupport.lock(LockMode.WRITE);
         try {
             injectFileLocator(url);
@@ -1124,7 +1117,7 @@ public class FileHandler {
      */
     public void setFileLocator(final FileLocator locator) {
         if (locator == null) {
-            throw new IllegalArgumentException("FileLocator must not be null!");
+            throw new IllegalArgumentException("FileLocator must not be null.");
         }
 
         fileLocator.set(locator);
