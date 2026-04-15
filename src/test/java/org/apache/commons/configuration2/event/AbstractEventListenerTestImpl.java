@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,6 +31,7 @@ import java.util.List;
  * @param <T> the type of events supported by this listener
  */
 public abstract class AbstractEventListenerTestImpl<T extends Event> implements EventListener<T> {
+
     /** The expected event source. */
     private final Object expectedSource;
 
@@ -40,7 +41,7 @@ public abstract class AbstractEventListenerTestImpl<T extends Event> implements 
     /**
      * Creates a new instance of {@code AbstractEventListenerTestImpl} and sets the expected event source.
      *
-     * @param source the event source (<b>null</b> if the source need not to be checked)
+     * @param source the event source (<strong>null</strong> if the source need not to be checked)
      */
     protected AbstractEventListenerTestImpl(final Object source) {
         expectedSource = source;

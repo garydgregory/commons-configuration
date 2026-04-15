@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -52,6 +52,7 @@ import org.junit.jupiter.api.io.TempDir;
 /**
  */
 public class TestPropertyListConfiguration {
+
     /**
      * Returns a list with the children of the given configuration's root note with the specified name.
      *
@@ -103,7 +104,7 @@ public class TestPropertyListConfiguration {
      * Ensure that addProperty doesn't alter an array of byte
      */
     @Test
-    public void testAddDataProperty() throws Exception {
+    void testAddDataProperty() throws Exception {
         final File saveFile = newFile(tempFolder);
         final byte[] expected = {1, 2, 3, 4};
         config = new PropertyListConfiguration();
@@ -120,19 +121,19 @@ public class TestPropertyListConfiguration {
     }
 
     @Test
-    public void testArray() {
+    void testArray() {
         final List<?> list = assertInstanceOf(List.class, config.getProperty("array"));
         assertEquals(Arrays.asList("value1", "value2", "value3"), list);
     }
 
     @Test
-    public void testData() {
-        byte[] bytes = assertInstanceOf(byte[].class, config.getProperty("data"));
+    void testData() {
+        final byte[] bytes = assertInstanceOf(byte[].class, config.getProperty("data"));
         assertArrayEquals("foo bar".getBytes(), bytes);
     }
 
     @Test
-    public void testDate() throws Exception {
+    void testDate() throws Exception {
         final Calendar cal = Calendar.getInstance();
         cal.clear();
         cal.set(2002, Calendar.MARCH, 22, 11, 30, 0);
@@ -143,13 +144,13 @@ public class TestPropertyListConfiguration {
     }
 
     @Test
-    public void testDictionary() {
+    void testDictionary() {
         assertEquals("bar1", config.getProperty("dictionary.foo1"));
         assertEquals("bar2", config.getProperty("dictionary.foo2"));
     }
 
     @Test
-    public void testDictionaryArray() {
+    void testDictionaryArray() {
         final String key = "dictionary-array";
 
         final Object array = config.getProperty(key);
@@ -173,7 +174,7 @@ public class TestPropertyListConfiguration {
     }
 
     @Test
-    public void testEmptyArray() {
+    void testEmptyArray() {
         final String key = "empty-array";
         assertNotNull(config.getProperty(key));
 
@@ -185,7 +186,7 @@ public class TestPropertyListConfiguration {
      * Tests formatting a date.
      */
     @Test
-    public void testFormatDate() {
+    void testFormatDate() {
         final Calendar cal = Calendar.getInstance();
         cal.clear();
         cal.set(2007, Calendar.OCTOBER, 29, 23, 4, 30);
@@ -198,18 +199,18 @@ public class TestPropertyListConfiguration {
     }
 
     @Test
-    public void testInitCopy() {
+    void testInitCopy() {
         final PropertyListConfiguration copy = new PropertyListConfiguration(config);
         assertFalse(copy.isEmpty());
     }
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         assertFalse(config.isEmpty());
     }
 
     @Test
-    public void testLoadWithError() {
+    void testLoadWithError() {
         config = new PropertyListConfiguration();
         final FileHandler fileHandler = new FileHandler(config);
         final StringReader reader = new StringReader("");
@@ -218,7 +219,7 @@ public class TestPropertyListConfiguration {
     }
 
     @Test
-    public void testNestedArrays() {
+    void testNestedArrays() {
         final String key = "nested-arrays";
 
         final Object array = config.getProperty(key);
@@ -240,7 +241,7 @@ public class TestPropertyListConfiguration {
     }
 
     @Test
-    public void testNestedDictionaries() {
+    void testNestedDictionaries() {
         assertEquals("value", config.getString("nested-dictionaries.foo.bar.key"));
     }
 
@@ -248,7 +249,7 @@ public class TestPropertyListConfiguration {
      * Tests parsing a date that contains an invalid separator character.
      */
     @Test
-    public void testParseDateInvalidChar() {
+    void testParseDateInvalidChar() {
         assertThrows(ParseException.class, () -> PropertyListConfiguration.parseDate("<*D2002+03-22 11:30:00 +0100>"));
     }
 
@@ -256,7 +257,7 @@ public class TestPropertyListConfiguration {
      * Tests parsing a date with an invalid numeric value.
      */
     @Test
-    public void testParseDateNoNumber() {
+    void testParseDateNoNumber() {
         assertThrows(ParseException.class, () -> PropertyListConfiguration.parseDate("<*D2002-03-22 1c:30:00 +0100>"));
     }
 
@@ -264,7 +265,7 @@ public class TestPropertyListConfiguration {
      * Tries parsing a null date. This should cause an exception.n
      */
     @Test
-    public void testParseDateNull() {
+    void testParseDateNull() {
         assertThrows(ParseException.class, () -> PropertyListConfiguration.parseDate(null));
     }
 
@@ -272,19 +273,19 @@ public class TestPropertyListConfiguration {
      * Tests parsing a date that is not long enough.
      */
     @Test
-    public void testParseDateTooShort() {
+    void testParseDateTooShort() {
         assertThrows(ParseException.class, () -> PropertyListConfiguration.parseDate("<*D2002-03-22 11:3>"));
     }
 
     @Test
-    public void testQuotedString() {
+    void testQuotedString() {
         assertEquals("string2", config.getProperty("quoted-string"));
         assertEquals("this is a string", config.getProperty("quoted-string2"));
         assertEquals("this is a \"complex\" string {(=,;)}", config.getProperty("complex-string"));
     }
 
     @Test
-    public void testQuoteString() {
+    void testQuoteString() {
         assertNull(config.quoteString(null));
         assertEquals("abcd", config.quoteString("abcd"));
         assertEquals("\"ab cd\"", config.quoteString("ab cd"));
@@ -293,7 +294,7 @@ public class TestPropertyListConfiguration {
     }
 
     @Test
-    public void testSave() throws Exception {
+    void testSave() throws Exception {
         final File savedFile = newFile("testsave.plist", tempFolder);
 
         // save the configuration
@@ -341,7 +342,7 @@ public class TestPropertyListConfiguration {
     }
 
     @Test
-    public void testSaveEmptyDictionary() throws Exception {
+    void testSaveEmptyDictionary() throws Exception {
         final File savedFile = newFile("testsave.plist", tempFolder);
 
         // save the configuration
@@ -360,7 +361,7 @@ public class TestPropertyListConfiguration {
      * Ensure that setProperty doesn't alter an array of byte since it's a first class type in plist file
      */
     @Test
-    public void testSetDataProperty() throws Exception {
+    void testSetDataProperty() throws Exception {
         final File saveFile = newFile(tempFolder);
         final byte[] expected = {1, 2, 3, 4};
         config = new PropertyListConfiguration();
@@ -377,7 +378,7 @@ public class TestPropertyListConfiguration {
     }
 
     @Test
-    public void testString() {
+    void testString() {
         assertEquals("string1", config.getProperty("simple-string"));
     }
 }

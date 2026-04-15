@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,9 +35,9 @@ import org.apache.commons.configuration2.ex.ConfigurationRuntimeException;
 
 /**
  * Assertions on configurations for the unit tests. This class also provides access to test files.
- *
  */
-public class ConfigurationAssert {
+public final class ConfigurationAssert {
+
     /** Constant for the name of the directory with the test files. */
     public static final String TEST_DIR_NAME = "target/test-classes";
 
@@ -131,6 +132,16 @@ public class ConfigurationAssert {
     }
 
     /**
+     * Returns a {@code File} object for the specified test file.
+     *
+     * @param name the name of the test file
+     * @return a {@code File} object pointing to that test file
+     */
+    public static Path getTestPath(final String name) {
+        return TEST_DIR.toPath().resolve(name);
+    }
+
+    /**
      * Returns a URL pointing to the specified test file. If the URL cannot be constructed, a runtime exception is thrown.
      *
      * @param name the name of the test file
@@ -177,5 +188,9 @@ public class ConfigurationAssert {
         } catch (final MalformedURLException mex) {
             throw new ConfigurationRuntimeException(mex);
         }
+    }
+
+    private ConfigurationAssert() {
+        // empty
     }
 }

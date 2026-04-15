@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,18 +16,17 @@
  */
 package org.apache.commons.configuration2.tree;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code DefaultExpressionEngineSymbols}.
- *
  */
 public class TestDefaultExpressionEngineSymbols {
+
     /**
      * Helper method for creating a builder object which is initialized with the default symbols.
      *
@@ -66,7 +65,7 @@ public class TestDefaultExpressionEngineSymbols {
      * Tests the instance with default symbols.
      */
     @Test
-    public void testDefaultSymbols() {
+    void testDefaultSymbols() {
         assertEquals(".", DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS.getPropertyDelimiter());
         assertEquals("..", DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS.getEscapedDelimiter());
         assertEquals("(", DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS.getIndexStart());
@@ -79,7 +78,7 @@ public class TestDefaultExpressionEngineSymbols {
      * Tests equals() if the expected result is false.
      */
     @Test
-    public void testEqualsFalse() {
+    void testEqualsFalse() {
         final DefaultExpressionEngineSymbols s1 = DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS;
         DefaultExpressionEngineSymbols s2 = builder().setPropertyDelimiter("/").create();
         expNE(s1, s2);
@@ -99,7 +98,7 @@ public class TestDefaultExpressionEngineSymbols {
      * Tests equals for null input.
      */
     @Test
-    public void testEqualsNull() {
+    void testEqualsNull() {
         expNE(builder().create(), null);
     }
 
@@ -107,7 +106,7 @@ public class TestDefaultExpressionEngineSymbols {
      * Tests equals with an object of another class.
      */
     @Test
-    public void testEqualsOtherClass() {
+    void testEqualsOtherClass() {
         expNE(builder().create(), this);
     }
 
@@ -115,7 +114,7 @@ public class TestDefaultExpressionEngineSymbols {
      * Tests equals() if the expected result is true.
      */
     @Test
-    public void testEqualsTrue() {
+    void testEqualsTrue() {
         expEqual(DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS, DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS);
         final DefaultExpressionEngineSymbols s2 = new DefaultExpressionEngineSymbols.Builder(DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS).create();
         expEqual(DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS, s2);
@@ -125,14 +124,14 @@ public class TestDefaultExpressionEngineSymbols {
      * Tests the string representation.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         final DefaultExpressionEngineSymbols symbols = builder().create();
         final String s = symbols.toString();
-        assertThat(s, containsString("propertyDelimiter=" + symbols.getPropertyDelimiter()));
-        assertThat(s, containsString("escapedDelimiter=" + symbols.getEscapedDelimiter()));
-        assertThat(s, containsString("indexStart=" + symbols.getIndexStart()));
-        assertThat(s, containsString("indexEnd=" + symbols.getIndexEnd()));
-        assertThat(s, containsString("attributeStart=" + symbols.getAttributeStart()));
-        assertThat(s, containsString("attributeEnd=" + symbols.getAttributeEnd()));
+        assertTrue(s.contains("propertyDelimiter=" + symbols.getPropertyDelimiter()));
+        assertTrue(s.contains("escapedDelimiter=" + symbols.getEscapedDelimiter()));
+        assertTrue(s.contains("indexStart=" + symbols.getIndexStart()));
+        assertTrue(s.contains("indexEnd=" + symbols.getIndexEnd()));
+        assertTrue(s.contains("attributeStart=" + symbols.getAttributeStart()));
+        assertTrue(s.contains("attributeEnd=" + symbols.getAttributeEnd()));
     }
 }

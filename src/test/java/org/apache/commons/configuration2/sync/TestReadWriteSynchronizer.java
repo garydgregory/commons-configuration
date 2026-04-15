@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,13 +30,14 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code ReadWriteSynchronizer}.
- *
  */
 public class TestReadWriteSynchronizer {
+
     /**
      * A class representing an account.
      */
-    private static class Account {
+    private static final class Account {
+
         /** The amount stored in this account. */
         private long amount;
 
@@ -63,7 +64,8 @@ public class TestReadWriteSynchronizer {
      * A thread which performs a number of read operations on the bank's accounts and checks whether the amount of money is
      * consistent.
      */
-    private static class ReaderThread extends Thread {
+    private static final class ReaderThread extends Thread {
+
         /** The acounts to monitor. */
         private final Account[] accounts;
 
@@ -119,7 +121,8 @@ public class TestReadWriteSynchronizer {
      * transaction determines the account containing more money. Then a random number of money is transferred from this
      * account to the other one.
      */
-    private static class UpdateThread extends Thread {
+    private static final class UpdateThread extends Thread {
+
         /** The synchronizer. */
         private final Synchronizer sync;
 
@@ -196,7 +199,7 @@ public class TestReadWriteSynchronizer {
      * Tests whether a lock passed to the constructor is used.
      */
     @Test
-    public void testInitLock() {
+    void testInitLock() {
         final ReadWriteLock lock = mock(ReadWriteLock.class);
         final Lock readLock = mock(Lock.class);
 
@@ -214,7 +217,7 @@ public class TestReadWriteSynchronizer {
      * Tests whether the synchronizer is reentrant. This is important for some combined operations on a configuration.
      */
     @Test
-    public void testReentrance() {
+    void testReentrance() {
         final Synchronizer sync = new ReadWriteSynchronizer();
         sync.beginWrite();
         sync.beginRead();
@@ -231,7 +234,7 @@ public class TestReadWriteSynchronizer {
      * accounts. If everything goes well, the total amount of money stays constant over time.
      */
     @Test
-    public void testSynchronizerInAction() throws InterruptedException {
+    void testSynchronizerInAction() throws InterruptedException {
         final int numberOfUpdates = 10000;
         final int numberOfReads = numberOfUpdates / 2;
         final int readThreadCount = 3;

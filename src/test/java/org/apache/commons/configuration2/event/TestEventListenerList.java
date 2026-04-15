@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,11 +35,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test class for {@code EventListenerList.}
- *
- * @since 2.0
+ * Test class for {@code EventListenerList}.
  */
 public class TestEventListenerList {
+
     /**
      * Test event class. For testing purposes, a small hierarchy of test event class is created. This way it can be checked
      * whether event types are correctly evaluated and take the event hierarchy into account.
@@ -63,7 +62,7 @@ public class TestEventListenerList {
     /**
      * A test event class derived from the base test event class.
      */
-    private static class EventSub1 extends EventBase {
+    private static final class EventSub1 extends EventBase {
         private static final long serialVersionUID = 1L;
 
         public EventSub1(final Object source, final EventType<? extends EventSub1> type, final String msg) {
@@ -74,7 +73,7 @@ public class TestEventListenerList {
     /**
      * Another test event class derived from the base class.
      */
-    private static class EventSub2 extends EventBase {
+    private static final class EventSub2 extends EventBase {
         private static final long serialVersionUID = 1L;
 
         public EventSub2(final Object source, final EventType<? extends EventSub2> type, final String msg) {
@@ -86,7 +85,8 @@ public class TestEventListenerList {
      * A test event listener implementation. This listener class expects that it receives at most a single event. This event
      * is stored for further evaluation.
      */
-    private static class ListenerTestImpl implements EventListener<EventBase> {
+    private static final class ListenerTestImpl implements EventListener<EventBase> {
+
         /** The event received by this object. */
         private EventBase receivedEvent;
 
@@ -174,7 +174,7 @@ public class TestEventListenerList {
      * Tests whether the content of another list can be added.
      */
     @Test
-    public void testAddAll() {
+    void testAddAll() {
         final EventListener<EventBase> l1 = new ListenerTestImpl();
         final EventListener<EventBase> l2 = new ListenerTestImpl();
         final EventListener<EventBase> l3 = new ListenerTestImpl();
@@ -200,7 +200,7 @@ public class TestEventListenerList {
      * Tries to add the content of a null list.
      */
     @Test
-    public void testAddAllNull() {
+    void testAddAllNull() {
         assertThrows(IllegalArgumentException.class, () -> list.addAll(null));
     }
 
@@ -208,7 +208,7 @@ public class TestEventListenerList {
      * Tests whether the list can be cleared.
      */
     @Test
-    public void testClear() {
+    void testClear() {
         list.addEventListener(typeSub1, new ListenerTestImpl());
         list.addEventListener(typeSub2, new ListenerTestImpl());
 
@@ -220,7 +220,7 @@ public class TestEventListenerList {
      * Tests that a null event is handled by the iterator.
      */
     @Test
-    public void testEventListenerIteratorNullEvent() {
+    void testEventListenerIteratorNullEvent() {
         list.addEventListener(typeBase, new ListenerTestImpl());
         final EventListenerList.EventListenerIterator<EventBase> iterator = list.getEventListenerIterator(typeBase);
         assertThrows(IllegalArgumentException.class, () -> iterator.invokeNext(null));
@@ -230,8 +230,8 @@ public class TestEventListenerList {
      * Tests whether the event listener iterator validates the passed in event object.
      */
     @Test
-    public void testEventListenerIteratorWrongEvent() {
-        final EventListener<EventSub2> listener = event -> {};
+    void testEventListenerIteratorWrongEvent() {
+        final EventListener<EventSub2> listener = event -> { };
         list.addEventListener(typeSub2, listener);
         final EventListenerList.EventListenerIterator<EventSub2> iterator = list.getEventListenerIterator(typeSub2);
         assertTrue(iterator.hasNext());
@@ -243,7 +243,7 @@ public class TestEventListenerList {
      * Tests that a null event is rejected by fire().
      */
     @Test
-    public void testFireNullEvent() {
+    void testFireNullEvent() {
         assertThrows(IllegalArgumentException.class, () -> list.fire(null));
     }
 
@@ -251,7 +251,7 @@ public class TestEventListenerList {
      * Tests whether event listener registrations derived from a super type can be queried.
      */
     @Test
-    public void testGetEventListenerRegistrationsForSuperType() {
+    void testGetEventListenerRegistrationsForSuperType() {
         final ListenerTestImpl l1 = new ListenerTestImpl();
         final ListenerTestImpl l2 = new ListenerTestImpl();
         @SuppressWarnings("unchecked")
@@ -271,7 +271,7 @@ public class TestEventListenerList {
      * Tests whether the base type is taken into account when querying for event listeners.
      */
     @Test
-    public void testGetEventListenersBaseType() {
+    void testGetEventListenersBaseType() {
         final ListenerTestImpl listener1 = new ListenerTestImpl();
         final ListenerTestImpl listener2 = new ListenerTestImpl();
         list.addEventListener(typeBase, listener1);
@@ -284,7 +284,7 @@ public class TestEventListenerList {
      * element.
      */
     @Test
-    public void testGetEventListenersIteratorNextNoElement() {
+    void testGetEventListenersIteratorNextNoElement() {
         final ListenerTestImpl listener1 = new ListenerTestImpl();
         final ListenerTestImpl listener2 = new ListenerTestImpl();
         list.addEventListener(typeBase, listener1);
@@ -300,7 +300,7 @@ public class TestEventListenerList {
      * Tests that the iterator returned by getEventListeners() does not support remove() operations.
      */
     @Test
-    public void testGetEventListenersIteratorRemove() {
+    void testGetEventListenersIteratorRemove() {
         list.addEventListener(typeBase, new ListenerTestImpl());
         final Iterator<EventListener<? super EventBase>> iterator = list.getEventListeners(typeBase).iterator();
         assertTrue(iterator.hasNext());
@@ -311,7 +311,7 @@ public class TestEventListenerList {
      * Tests whether only matching event listeners are returned by getEventListeners().
      */
     @Test
-    public void testGetEventListenersMatchingType() {
+    void testGetEventListenersMatchingType() {
         final ListenerTestImpl listener1 = new ListenerTestImpl();
         final ListenerTestImpl listener2 = new ListenerTestImpl();
         list.addEventListener(typeSub1, listener1);
@@ -323,7 +323,7 @@ public class TestEventListenerList {
      * Tests that an empty result is correctly handled by getEventListeners().
      */
     @Test
-    public void testGetEventListenersNoMatch() {
+    void testGetEventListenersNoMatch() {
         list.addEventListener(typeSub1, new ListenerTestImpl());
         checkEventListenersForType(typeSub2);
     }
@@ -332,7 +332,7 @@ public class TestEventListenerList {
      * Tests whether event listeners for a null type can be queried.
      */
     @Test
-    public void testGetEventListenersNull() {
+    void testGetEventListenersNull() {
         assertTrue(fetchElements(list.getEventListeners(null)).isEmpty());
     }
 
@@ -340,7 +340,7 @@ public class TestEventListenerList {
      * Tests whether all event listener registrations can be queried.
      */
     @Test
-    public void testGetRegistrations() {
+    void testGetRegistrations() {
         final EventListenerRegistrationData<EventSub1> reg1 = new EventListenerRegistrationData<>(typeSub1, new ListenerTestImpl());
         final EventListenerRegistrationData<EventSub2> reg2 = new EventListenerRegistrationData<>(typeSub2, new ListenerTestImpl());
         list.addEventListener(reg1);
@@ -354,9 +354,9 @@ public class TestEventListenerList {
      * Tests that the list with registration information cannot be modified.
      */
     @Test
-    public void testGetRegistrationsModify() {
+    void testGetRegistrationsModify() {
         final EventListenerRegistrationData<EventBase> registrationData = new EventListenerRegistrationData<>(typeBase, new ListenerTestImpl());
-        List<EventListenerRegistrationData<?>> registrations = list.getRegistrations();
+        final List<EventListenerRegistrationData<?>> registrations = list.getRegistrations();
         assertThrows(UnsupportedOperationException.class, () -> registrations.add(registrationData));
     }
 
@@ -364,7 +364,7 @@ public class TestEventListenerList {
      * Tests whether an event listener can be registered via a registration data object.
      */
     @Test
-    public void testListenerRegistrationWithListenerData() {
+    void testListenerRegistrationWithListenerData() {
         final ListenerTestImpl listener = new ListenerTestImpl();
         final EventListenerRegistrationData<EventSub1> regData = new EventListenerRegistrationData<>(typeSub1, listener);
         list.addEventListener(regData);
@@ -377,7 +377,7 @@ public class TestEventListenerList {
      * Tries to register a listener with a null registration data object.
      */
     @Test
-    public void testListenerRegistrationWithNullListenerData() {
+    void testListenerRegistrationWithNullListenerData() {
         assertThrows(IllegalArgumentException.class, () -> list.addEventListener(null));
     }
 
@@ -385,7 +385,7 @@ public class TestEventListenerList {
      * Tests that a listener can be registered multiple times for different event types.
      */
     @Test
-    public void testMultipleListenerRegistration() {
+    void testMultipleListenerRegistration() {
         final ListenerTestImpl listener = new ListenerTestImpl();
         list.addEventListener(typeSub1, listener);
         list.addEventListener(typeSub2, listener);
@@ -400,7 +400,7 @@ public class TestEventListenerList {
      * Tests whether the event type is taken into account when calling listeners.
      */
     @Test
-    public void testReceiveEventDifferentType() {
+    void testReceiveEventDifferentType() {
         final ListenerTestImpl listener1 = new ListenerTestImpl();
         final ListenerTestImpl listener2 = new ListenerTestImpl();
         list.addEventListener(typeSub1, listener1);
@@ -415,7 +415,7 @@ public class TestEventListenerList {
      * Tests whether multiple event listeners can be registered.
      */
     @Test
-    public void testReceiveEventMultipleListeners() {
+    void testReceiveEventMultipleListeners() {
         final ListenerTestImpl listener1 = new ListenerTestImpl();
         final ListenerTestImpl listener2 = new ListenerTestImpl();
         list.addEventListener(typeSub1, listener1);
@@ -430,7 +430,7 @@ public class TestEventListenerList {
      * Tests whether events matching the registration type are delivered.
      */
     @Test
-    public void testReceiveEventOfExactType() {
+    void testReceiveEventOfExactType() {
         final ListenerTestImpl listener = new ListenerTestImpl();
         list.addEventListener(typeSub1, listener);
 
@@ -442,7 +442,7 @@ public class TestEventListenerList {
      * Tests that events of a derived type are delivered to listeners registered for a base type.
      */
     @Test
-    public void testReceiveEventSubType() {
+    void testReceiveEventSubType() {
         final ListenerTestImpl listener = new ListenerTestImpl();
         list.addEventListener(typeBase, listener);
 
@@ -454,8 +454,8 @@ public class TestEventListenerList {
      * Tries to register a listener for a null event type.
      */
     @Test
-    public void testRegisterEventTypeNull() {
-        ListenerTestImpl listener = new ListenerTestImpl();
+    void testRegisterEventTypeNull() {
+        final ListenerTestImpl listener = new ListenerTestImpl();
         assertThrows(IllegalArgumentException.class, () -> list.addEventListener(null, listener));
     }
 
@@ -463,7 +463,7 @@ public class TestEventListenerList {
      * Tests that null event listeners cannot be registered.
      */
     @Test
-    public void testRegisterListenerNull() {
+    void testRegisterListenerNull() {
         assertThrows(IllegalArgumentException.class, () -> list.addEventListener(typeBase, null));
     }
 
@@ -471,7 +471,7 @@ public class TestEventListenerList {
      * Tests whether an event listener can be removed.
      */
     @Test
-    public void testRemoveEventListenerExisting() {
+    void testRemoveEventListenerExisting() {
         final ListenerTestImpl listener = new ListenerTestImpl();
         list.addEventListener(typeSub1, listener);
 
@@ -484,7 +484,7 @@ public class TestEventListenerList {
      * Tests removeEventListener() if another event type is specified for an existing listener.
      */
     @Test
-    public void testRemoveEventListenerNonExistingEventType() {
+    void testRemoveEventListenerNonExistingEventType() {
         final ListenerTestImpl listener = new ListenerTestImpl();
         list.addEventListener(typeSub1, listener);
 
@@ -495,7 +495,7 @@ public class TestEventListenerList {
      * Tests removeEventListener() for a non-existing event listener.
      */
     @Test
-    public void testRemoveEventListenerNonExistingListener() {
+    void testRemoveEventListenerNonExistingListener() {
         list.addEventListener(typeBase, new ListenerTestImpl());
         assertFalse(list.removeEventListener(typeBase, new ListenerTestImpl()));
     }
@@ -504,7 +504,7 @@ public class TestEventListenerList {
      * Tests that removeEventListener() can handle a null listener.
      */
     @Test
-    public void testRemoveEventListenerNullListener() {
+    void testRemoveEventListenerNullListener() {
         assertFalse(list.removeEventListener(typeBase, null));
     }
 
@@ -512,7 +512,7 @@ public class TestEventListenerList {
      * Tests that removeEventListener() can handle a null registration object.
      */
     @Test
-    public void testRemoveEventListenerNullRegistration() {
+    void testRemoveEventListenerNullRegistration() {
         assertFalse(list.removeEventListener(null));
     }
 
@@ -520,7 +520,7 @@ public class TestEventListenerList {
      * Tests that removeEventListener() can handle a null event type.
      */
     @Test
-    public void testRemoveEventListenerNullType() {
+    void testRemoveEventListenerNullType() {
         assertFalse(list.removeEventListener(null, new ListenerTestImpl()));
     }
 
@@ -528,7 +528,7 @@ public class TestEventListenerList {
      * Tests that events of a base type do not cause a listener to be invoked.
      */
     @Test
-    public void testSuppressEventOfSuperType() {
+    void testSuppressEventOfSuperType() {
         final ListenerTestImpl listener = new ListenerTestImpl();
         list.addEventListener(typeSub1, listener);
 

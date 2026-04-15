@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,3 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.commons.configuration2;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
+
+/**
+ */
+public class TestPatternSubtreeConfigurationWrapper {
+
+    /**
+     * Tests a read operation if the wrapped configuration does not implement FileBased.
+     */
+    @Test
+    void testReadNotFileBased() {
+        assertThrows(NullPointerException.class, () -> new PatternSubtreeConfigurationWrapper(null, ""));
+    }
+}

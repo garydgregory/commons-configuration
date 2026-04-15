@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,6 +37,7 @@ import org.apache.commons.configuration2.builder.BuilderParameters;
  * @since 2.0
  */
 public class CombinedConfigurationBuilderProvider extends BaseConfigurationBuilderProvider {
+
     /** Constant for the name of the supported builder class. */
     private static final String BUILDER_CLASS = "org.apache.commons.configuration2.builder.combined.CombinedConfigurationBuilder";
 
@@ -51,6 +52,18 @@ public class CombinedConfigurationBuilderProvider extends BaseConfigurationBuild
 
     /** Constant for the name of the file-based builder parameters class. */
     private static final String FILE_PARAMS = "org.apache.commons.configuration2.builder.FileBasedBuilderParametersImpl";
+
+    /**
+     * Populates the specified parameters object with properties from the given configuration. This method is used to set
+     * default values for basic properties based on the result configuration of the parent builder.
+     *
+     * @param config the configuration whose properties are to be copied
+     * @param params the target parameters object
+     */
+    private static void setUpBasicParameters(final CombinedConfiguration config, final BasicBuilderParameters params) {
+        params.setListDelimiterHandler(config.getListDelimiterHandler()).setLogger(config.getLogger())
+            .setThrowExceptionOnMissing(config.isThrowExceptionOnMissing()).setConfigurationDecoder(config.getConfigurationDecoder());
+    }
 
     /**
      * Creates a new instance of {@code CombinedConfigurationBuilderProvider}.
@@ -89,17 +102,5 @@ public class CombinedConfigurationBuilderProvider extends BaseConfigurationBuild
         setUpBasicParameters(decl.getConfigurationBuilder().getConfigurationUnderConstruction(), basicParams);
         // now properties set explicitly can be overridden
         super.initializeParameterObjects(decl, params);
-    }
-
-    /**
-     * Populates the specified parameters object with properties from the given configuration. This method is used to set
-     * default values for basic properties based on the result configuration of the parent builder.
-     *
-     * @param config the configuration whose properties are to be copied
-     * @param params the target parameters object
-     */
-    private static void setUpBasicParameters(final CombinedConfiguration config, final BasicBuilderParameters params) {
-        params.setListDelimiterHandler(config.getListDelimiterHandler()).setLogger(config.getLogger())
-            .setThrowExceptionOnMissing(config.isThrowExceptionOnMissing()).setConfigurationDecoder(config.getConfigurationDecoder());
     }
 }

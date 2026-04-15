@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,9 +28,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code TrackedNodeHandler}.
- *
  */
 public class TestTrackedNodeHandler {
+
     /** A test root node. */
     private static ImmutableNode root;
 
@@ -56,7 +56,7 @@ public class TestTrackedNodeHandler {
      * Tests whether a parent node can be queried.
      */
     @Test
-    public void testGetParent() {
+    void testGetParent() {
         final ImmutableNode node = new ImmutableNode.Builder().name("node").create();
         final ImmutableNode parent = new ImmutableNode.Builder().name("parent").create();
 
@@ -72,7 +72,7 @@ public class TestTrackedNodeHandler {
      * Tests whether the correct root node is returned.
      */
     @Test
-    public void testGetRootNode() {
+    void testGetRootNode() {
         assertSame(root, handler.getRootNode());
     }
 }

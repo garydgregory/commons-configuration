@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,9 +44,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code BaseConfigurationBuilderProvider}.
- *
  */
 public class TestBaseConfigurationBuilderProvider {
+
     /**
      * Helper method for testing whether the builder's allowFailOnInit flag is set correctly.
      *
@@ -141,14 +141,14 @@ public class TestBaseConfigurationBuilderProvider {
      * Tests whether the allowFailOnInit flag can be enabled on the builder.
      */
     @Test
-    public void testGetBuilderAllowFailOnInit() throws ConfigurationException {
+    void testGetBuilderAllowFailOnInit() throws ConfigurationException {
         checkAllowFailOnInit(true, CombinedConfigurationBuilder.ATTR_OPTIONAL_RES, CombinedConfigurationBuilder.ATTR_FORCECREATE);
     }
 
     /**
      * Tests that the allowFailOnInit flag is not set for builders which are not optional.
      */
-    public void testGetBuilderAllowFailOnInitNotOptional() throws ConfigurationException {
+    void testGetBuilderAllowFailOnInitNotOptional() throws ConfigurationException {
         checkAllowFailOnInit(false, CombinedConfigurationBuilder.ATTR_FORCECREATE);
     }
 
@@ -156,7 +156,7 @@ public class TestBaseConfigurationBuilderProvider {
      * Tests that the allowFailOnInit flag is not set per default on the builder.
      */
     @Test
-    public void testGetBuilderNoFailOnInit() throws ConfigurationException {
+    void testGetBuilderNoFailOnInit() throws ConfigurationException {
         checkAllowFailOnInit(false);
     }
 
@@ -164,7 +164,7 @@ public class TestBaseConfigurationBuilderProvider {
      * Tests whether a builder without reloading support can be created.
      */
     @Test
-    public void testGetBuilderNotReloading() throws ConfigurationException {
+    void testGetBuilderNotReloading() throws ConfigurationException {
         final ConfigurationBuilder<? extends Configuration> builder = checkBuilder(false);
         assertEquals(FileBasedConfigurationBuilder.class, builder.getClass());
     }
@@ -173,7 +173,7 @@ public class TestBaseConfigurationBuilderProvider {
      * Tests whether a builder with reloading support can be created.
      */
     @Test
-    public void testGetBuilderReloading() throws ConfigurationException {
+    void testGetBuilderReloading() throws ConfigurationException {
         final ConfigurationBuilder<? extends Configuration> builder = checkBuilder(true);
         assertEquals(ReloadingFileBasedConfigurationBuilder.class, builder.getClass());
     }
@@ -182,7 +182,7 @@ public class TestBaseConfigurationBuilderProvider {
      * Tests that the collection with parameter classes cannot be modified.
      */
     @Test
-    public void testGetParameterClassesModify() {
+    void testGetParameterClassesModify() {
         final BaseConfigurationBuilderProvider provider = new BaseConfigurationBuilderProvider(BasicConfigurationBuilder.class.getName(), null,
             PropertiesConfiguration.class.getName(), Arrays.asList(BasicBuilderParameters.class.getName()));
         final Collection<String> parameterClasses = provider.getParameterClasses();
@@ -193,7 +193,7 @@ public class TestBaseConfigurationBuilderProvider {
      * Tries to create a reloading builder if this is not supported by the provider.
      */
     @Test
-    public void testGetReloadingBuilderNotSupported() {
+    void testGetReloadingBuilderNotSupported() {
         final BaseConfigurationBuilderProvider provider = new BaseConfigurationBuilderProvider(FileBasedConfigurationBuilder.class.getName(), null,
             PropertiesConfiguration.class.getName(), Arrays.asList(FileBasedBuilderParametersImpl.class.getName()));
         final HierarchicalConfiguration<?> declConfig = setUpConfig(true);
@@ -205,7 +205,7 @@ public class TestBaseConfigurationBuilderProvider {
      * Tries to create an instance without a builder class.
      */
     @Test
-    public void testInitNoBuilderClass() {
+    void testInitNoBuilderClass() {
         final String configClass = PropertiesConfiguration.class.getName();
         assertThrows(IllegalArgumentException.class, () -> new BaseConfigurationBuilderProvider(null, null, configClass, null));
     }
@@ -214,7 +214,7 @@ public class TestBaseConfigurationBuilderProvider {
      * Tries to create an instance without a configuration class.
      */
     @Test
-    public void testInitNoConfigurationClass() {
+    void testInitNoConfigurationClass() {
         final String builderClass = BasicConfigurationBuilder.class.getName();
         assertThrows(IllegalArgumentException.class, () -> new BaseConfigurationBuilderProvider(builderClass, null, null, null));
     }
@@ -223,7 +223,7 @@ public class TestBaseConfigurationBuilderProvider {
      * Tests whether a null collection of parameter classes is handled correctly.
      */
     @Test
-    public void testInitNoParameterClasses() {
+    void testInitNoParameterClasses() {
         final BaseConfigurationBuilderProvider provider = new BaseConfigurationBuilderProvider(BasicConfigurationBuilder.class.getName(), null,
             PropertiesConfiguration.class.getName(), null);
         assertEquals(Collections.emptyList(), new ArrayList<>(provider.getParameterClasses()));

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -92,13 +92,14 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code CombinedConfigurationBuilder}.
- *
  */
 public class TestCombinedConfigurationBuilder {
+
     /**
      * A test builder provider implementation for testing whether providers can be defined in the definition file.
      */
     public static class BuilderProviderTestImpl implements ConfigurationBuilderProvider {
+
         /** The test property key of the configuration to be created. */
         private String propertyKey;
 
@@ -128,7 +129,7 @@ public class TestCombinedConfigurationBuilder {
     /**
      * A test builder class which always returns the same configuration.
      */
-    private static class ConstantConfigurationBuilder extends BasicConfigurationBuilder<BaseHierarchicalConfiguration> {
+    private static final class ConstantConfigurationBuilder extends BasicConfigurationBuilder<BaseHierarchicalConfiguration> {
         private final BaseHierarchicalConfiguration configuration;
 
         public ConstantConfigurationBuilder(final BaseHierarchicalConfiguration conf) {
@@ -146,6 +147,7 @@ public class TestCombinedConfigurationBuilder {
      * A specialized entity resolver implementation for testing whether properties of a catalog resolver are correctly set.
      */
     public static class EntityResolverWithPropertiesTestImpl extends CatalogResolver {
+
         /** The base directory. */
         private String baseDirectory;
 
@@ -196,7 +198,8 @@ public class TestCombinedConfigurationBuilder {
     /**
      * A thread class for testing concurrent read access to a newly created configuration.
      */
-    private static class ReadThread extends Thread {
+    private static final class ReadThread extends Thread {
+
         /** The configuration to access. */
         private final CombinedConfiguration config;
 
@@ -452,7 +455,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests if the base path is correctly evaluated.
      */
     @Test
-    public void testBasePathForChildConfigurations() throws ConfigurationException {
+    void testBasePathForChildConfigurations() throws ConfigurationException {
         final BaseHierarchicalConfiguration defConfig = new BaseHierarchicalConfiguration();
         defConfig.addProperty("properties[@fileName]", "test.properties");
         final File deepDir = new File(ConfigurationAssert.TEST_DIR, "config/deep");
@@ -466,7 +469,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether the names of sub builders can be queried.
      */
     @Test
-    public void testBuilderNames() throws ConfigurationException {
+    void testBuilderNames() throws ConfigurationException {
         builder.configure(createParameters().setFile(TEST_FILE));
         builder.getConfiguration();
         final Set<String> names = builder.builderNames();
@@ -477,7 +480,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests the behavior of builderNames() before the result configuration has been created.
      */
     @Test
-    public void testBuilderNamesBeforeConfigurationAccess() {
+    void testBuilderNamesBeforeConfigurationAccess() {
         assertEquals(Collections.emptySet(), builder.builderNames());
         builder.configure(createParameters().setFile(TEST_FILE));
         assertEquals(Collections.emptySet(), builder.builderNames());
@@ -487,7 +490,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests that the collection with builder names cannot be manipulated.
      */
     @Test
-    public void testBuilderNamesManipulate() throws ConfigurationException {
+    void testBuilderNamesManipulate() throws ConfigurationException {
         builder.configure(createParameters().setFile(TEST_FILE));
         builder.getConfiguration();
         final Set<String> names = builder.builderNames();
@@ -499,7 +502,7 @@ public class TestCombinedConfigurationBuilder {
      * CONFIGURATION-687.
      */
     @Test
-    public void testChildBuildersAreInitializedOnlyOnce() throws ConfigurationException {
+    void testChildBuildersAreInitializedOnlyOnce() throws ConfigurationException {
         builder.configure(createParameters().setFile(TEST_FILE));
         builder.getConfiguration();
         builder.resetResult();
@@ -512,7 +515,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether attributes are correctly set on the combined configurations for the override and additional sections.
      */
     @Test
-    public void testCombinedConfigurationAttributes() throws ConfigurationException {
+    void testCombinedConfigurationAttributes() throws ConfigurationException {
         final File initFile = ConfigurationAssert.getTestFile("testCCResultInitialization.xml");
         builder.configure(createParameters().setFile(initFile));
         final CombinedConfiguration cc = builder.getConfiguration();
@@ -525,7 +528,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether the list node definition was correctly processed.
      */
     @Test
-    public void testCombinedConfigurationListNodes() throws ConfigurationException {
+    void testCombinedConfigurationListNodes() throws ConfigurationException {
         final File initFile = ConfigurationAssert.getTestFile("testCCResultInitialization.xml");
         builder.configure(createParameters().setFile(initFile));
         final CombinedConfiguration cc = builder.getConfiguration();
@@ -541,7 +544,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests the structure of the returned combined configuration if there is no additional section.
      */
     @Test
-    public void testCombinedConfigurationNoAdditional() throws ConfigurationException {
+    void testCombinedConfigurationNoAdditional() throws ConfigurationException {
         builder.configure(createParameters().setFile(TEST_FILE));
         final CombinedConfiguration cc = builder.getConfiguration();
         assertNull(cc.getConfiguration(CombinedConfigurationBuilder.ADDITIONAL_NAME));
@@ -551,7 +554,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a newly created instance can be read concurrently without a special synchronizer.
      */
     @Test
-    public void testConcurrentReadAccessWithoutSynchronizer() throws ConfigurationException {
+    void testConcurrentReadAccessWithoutSynchronizer() throws ConfigurationException {
         builder.configure(createParameters().setFile(TEST_FILE));
         final CombinedConfiguration config = builder.getConfiguration();
         final int threadCount = 32;
@@ -572,7 +575,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a configuration builder can itself be declared in a configuration definition file.
      */
     @Test
-    public void testConfigurationBuilderProvider() throws ConfigurationException {
+    void testConfigurationBuilderProvider() throws ConfigurationException {
         final BaseHierarchicalConfiguration defConfig = new BaseHierarchicalConfiguration();
         defConfig.addProperty("override.configuration[@fileName]", TEST_FILE.getAbsolutePath());
         builder.configure(new CombinedBuilderParametersImpl().setDefinitionBuilder(new ConstantConfigurationBuilder(defConfig)));
@@ -585,7 +588,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether the base path can be inherited to child combined configuration builders.
      */
     @Test
-    public void testConfigurationBuilderProviderInheritBasePath() throws ConfigurationException {
+    void testConfigurationBuilderProviderInheritBasePath() throws ConfigurationException {
         final File envFile = ConfigurationAssert.getTestFile("testCCEnvProperties.xml");
         final String basePath = ConfigurationAssert.OUT_DIR.getAbsolutePath();
         builder.configure(new CombinedBuilderParametersImpl().setBasePath(basePath).setDefinitionBuilderParameters(createParameters().setFile(envFile)));
@@ -600,7 +603,7 @@ public class TestCombinedConfigurationBuilder {
      * builder.
      */
     @Test
-    public void testConfigurationBuilderProviderInheritBasicProperties() throws ConfigurationException {
+    void testConfigurationBuilderProviderInheritBasicProperties() throws ConfigurationException {
         final File testFile = ConfigurationAssert.getTestFile("testCCCombinedChildBuilder.xml");
         final ListDelimiterHandler listHandler = new DefaultListDelimiterHandler('*');
         final ConfigurationDecoder decoder = mock(ConfigurationDecoder.class);
@@ -617,7 +620,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether custom builder providers are inherited to child combined configuration builder providers.
      */
     @Test
-    public void testConfigurationBuilderProviderInheritCustomProviders() throws ConfigurationException {
+    void testConfigurationBuilderProviderInheritCustomProviders() throws ConfigurationException {
         builder.configure(createParameters().setFile(ConfigurationAssert.getTestFile("testCCCustomProvider.xml")));
         builder.getConfiguration();
         final CombinedBuilderParametersImpl ccparams = new CombinedBuilderParametersImpl();
@@ -629,7 +632,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a child configuration builder inherits the event listeners from its parent.
      */
     @Test
-    public void testConfigurationBuilderProviderInheritEventListeners() throws ConfigurationException {
+    void testConfigurationBuilderProviderInheritEventListeners() throws ConfigurationException {
         @SuppressWarnings("unchecked")
         final EventListener<Event> l1 = mock(EventListener.class);
         @SuppressWarnings("unchecked")
@@ -653,7 +656,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether the entity resolver is initialized with other XML-related properties.
      */
     @Test
-    public void testConfigureEntityResolverWithProperties() throws ConfigurationException {
+    void testConfigureEntityResolverWithProperties() throws ConfigurationException {
         final HierarchicalConfiguration<ImmutableNode> config = new BaseHierarchicalConfiguration();
         config.addProperty("header.entity-resolver[@config-class]", EntityResolverWithPropertiesTestImpl.class.getName());
         final XMLBuilderParametersImpl xmlParams = new XMLBuilderParametersImpl();
@@ -671,7 +674,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests that the return value of configure() is overloaded.
      */
     @Test
-    public void testConfigureResult() {
+    void testConfigureResult() {
         final CombinedConfigurationBuilder configuredBuilder = builder.configure(createParameters().setFile(TEST_FILE));
         assertSame(builder, configuredBuilder);
     }
@@ -680,7 +683,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a custom provider can be registered.
      */
     @Test
-    public void testCustomBuilderProvider() throws ConfigurationException {
+    void testCustomBuilderProvider() throws ConfigurationException {
         final String tagName = "myTestTag";
         final BaseHierarchicalConfiguration dataConf = new BaseHierarchicalConfiguration();
         dataConf.addProperty(tagName, Boolean.TRUE);
@@ -698,7 +701,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether an entity resolver can be defined in the definition file.
      */
     @Test
-    public void testCustomEntityResolver() throws ConfigurationException {
+    void testCustomEntityResolver() throws ConfigurationException {
         final File resolverFile = ConfigurationAssert.getTestFile("testCCEntityResolver.xml");
         builder.configure(createParameters().setFile(resolverFile));
         final CombinedConfiguration cc = builder.getConfiguration();
@@ -711,7 +714,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a default file system can be configured in the definition file.
      */
     @Test
-    public void testCustomFileSystem() throws ConfigurationException {
+    void testCustomFileSystem() throws ConfigurationException {
         checkFileSystem(ConfigurationAssert.getTestFile("testCCFileSystem.xml"));
     }
 
@@ -719,7 +722,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a specific file system can be applied to a sub configuration.
      */
     @Test
-    public void testCustomFileSystemForSubConfig() throws ConfigurationException {
+    void testCustomFileSystemForSubConfig() throws ConfigurationException {
         checkFileSystem(ConfigurationAssert.getTestFile("testCCFileSystemSubConfig.xml"));
     }
 
@@ -727,7 +730,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a Lookup object can be declared in the definition configuration.
      */
     @Test
-    public void testCustomLookup() throws ConfigurationException {
+    void testCustomLookup() throws ConfigurationException {
         final File testFile = ConfigurationAssert.getTestFile("testCCLookup.xml");
         builder.configure(createParameters().setFile(testFile));
         final CombinedConfiguration cc = builder.getConfiguration();
@@ -740,7 +743,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether the resulting combined configuration can be customized.
      */
     @Test
-    public void testCustomResultConfiguration() throws ConfigurationException {
+    void testCustomResultConfiguration() throws ConfigurationException {
         final File testFile = ConfigurationAssert.getTestFile("testCCResultClass.xml");
         final ListDelimiterHandler listHandler = new DefaultListDelimiterHandler('.');
         builder.configure(new CombinedBuilderParametersImpl().setDefinitionBuilderParameters(new XMLBuilderParametersImpl().setFile(testFile))
@@ -756,7 +759,7 @@ public class TestCombinedConfigurationBuilder {
      * builder.
      */
     @Test
-    public void testDefaultBasePathFromDefinitionBuilder() throws ConfigurationException, IOException {
+    void testDefaultBasePathFromDefinitionBuilder() throws ConfigurationException, IOException {
         final String testFile = "testCCSystemProperties.xml";
         builder.configure(new CombinedBuilderParametersImpl()
             .setDefinitionBuilderParameters(createParameters().setBasePath(ConfigurationAssert.TEST_DIR.getAbsolutePath()).setFileName(testFile)));
@@ -771,7 +774,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a default base path for all file-based child configurations can be set in the builder parameters.
      */
     @Test
-    public void testDefaultBasePathInParameters() throws ConfigurationException {
+    void testDefaultBasePathInParameters() throws ConfigurationException {
         final File testFile = ConfigurationAssert.getTestFile("testCCSystemProperties.xml");
         final String basePath = ConfigurationAssert.OUT_DIR.getAbsolutePath();
         builder.configure(new CombinedBuilderParametersImpl().setBasePath(basePath).setDefinitionBuilderParameters(createParameters().setFile(testFile)));
@@ -785,7 +788,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether environment properties can be added as a configuration source.
      */
     @Test
-    public void testEnvironmentProperties() throws ConfigurationException {
+    void testEnvironmentProperties() throws ConfigurationException {
         final File envFile = ConfigurationAssert.getTestFile("testCCEnvProperties.xml");
         builder.configure(createParameters().setFile(envFile));
         final CombinedConfiguration cc = builder.getConfiguration();
@@ -806,7 +809,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether all child builders can be obtained.
      */
     @Test
-    public void testGetChildBuilders() throws ConfigurationException {
+    void testGetChildBuilders() throws ConfigurationException {
         builder.configure(createParameters().setFile(TEST_FILE));
         builder.getConfiguration();
         final Collection<ConfigurationBuilder<? extends Configuration>> childBuilders = builder.getChildBuilders();
@@ -817,7 +820,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether named builders can be accessed.
      */
     @Test
-    public void testGetNamedBuilder() throws ConfigurationException {
+    void testGetNamedBuilder() throws ConfigurationException {
         builder.configure(createParameters().setFile(TEST_FILE));
         builder.getConfiguration();
         final ConfigurationBuilder<? extends Configuration> propBuilder = builder.getNamedBuilder("props");
@@ -829,7 +832,7 @@ public class TestCombinedConfigurationBuilder {
      * Tries to query a named builder before the result configuration has been created.
      */
     @Test
-    public void testGetNamedBuilderBeforeConfigurationAccess() {
+    void testGetNamedBuilderBeforeConfigurationAccess() {
         builder.configure(createParameters().setFile(TEST_FILE));
         assertThrows(ConfigurationException.class, () -> builder.getNamedBuilder("nonExistingBuilder"));
     }
@@ -838,7 +841,7 @@ public class TestCombinedConfigurationBuilder {
      * Tries to query a non-existing builder by name.
      */
     @Test
-    public void testGetNamedBuilderUnknown() throws ConfigurationException {
+    void testGetNamedBuilderUnknown() throws ConfigurationException {
         builder.configure(createParameters().setFile(TEST_FILE));
         builder.getConfiguration();
         assertThrows(ConfigurationException.class, () -> builder.getNamedBuilder("nonExistingBuilder"));
@@ -848,7 +851,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether builder properties can be inherited by child builders.
      */
     @Test
-    public void testInheritProperties() throws ConfigurationException {
+    void testInheritProperties() throws ConfigurationException {
         final Parameters params = new Parameters();
         final XMLBuilderParameters xmlParams = prepareParamsForInheritanceTest(params);
         builder.configure(xmlParams);
@@ -867,7 +870,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether an INI configuration source can be added to the combined configuration.
      */
     @Test
-    public void testINIConfiguration() throws ConfigurationException {
+    void testINIConfiguration() throws ConfigurationException {
         final File multiFile = ConfigurationAssert.getTestFile("testDigesterConfiguration3.xml");
         builder.configure(new CombinedBuilderParametersImpl().setDefinitionBuilderParameters(createParameters().setFile(multiFile)));
         final CombinedConfiguration cc = builder.getConfiguration();
@@ -879,7 +882,7 @@ public class TestCombinedConfigurationBuilder {
      * objects.
      */
     @Test
-    public void testInitChildBuilderParametersDefaultChildProperties() throws ConfigurationException {
+    void testInitChildBuilderParametersDefaultChildProperties() throws ConfigurationException {
         final Long defRefresh = 60000L;
         final Long xmlRefresh = 30000L;
         builder.configure(parameters.combined().setDefinitionBuilderParameters(parameters.fileBased().setFile(TEST_FILE))
@@ -905,7 +908,7 @@ public class TestCombinedConfigurationBuilder {
      * configuration.
      */
     @Test
-    public void testInterpolationOverMultipleSources() throws ConfigurationException {
+    void testInterpolationOverMultipleSources() throws ConfigurationException {
         final File testFile = ConfigurationAssert.getTestFile("testInterpolationBuilder.xml");
         builder.configure(createParameters().setFile(testFile));
         final CombinedConfiguration combConfig = builder.getConfiguration();
@@ -920,7 +923,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a JNDI configuration can be integrated into the combined configuration.
      */
     @Test
-    public void testJndiConfiguration() throws ConfigurationException {
+    void testJndiConfiguration() throws ConfigurationException {
         final File multiFile = ConfigurationAssert.getTestFile("testDigesterConfiguration3.xml");
         builder.configure(new CombinedBuilderParametersImpl().setDefinitionBuilderParameters(createParameters().setFile(multiFile)));
         final CombinedConfiguration cc = builder.getConfiguration();
@@ -931,7 +934,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests loading a configuration definition file with an additional section.
      */
     @Test
-    public void testLoadAdditional() throws ConfigurationException {
+    void testLoadAdditional() throws ConfigurationException {
         final File additonalFile = ConfigurationAssert.getTestFile("testDigesterConfiguration2.xml");
         builder.configure(createParameters().setFile(additonalFile));
         final CombinedConfiguration compositeConfiguration = builder.getConfiguration();
@@ -964,7 +967,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests loading a simple configuration definition file.
      */
     @Test
-    public void testLoadConfiguration() throws ConfigurationException {
+    void testLoadConfiguration() throws ConfigurationException {
         builder.configure(createParameters().setFile(TEST_FILE));
         checkConfiguration();
     }
@@ -973,7 +976,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests loading a definition file that contains optional configurations.
      */
     @Test
-    public void testLoadOptional() throws Exception {
+    void testLoadOptional() throws Exception {
         final File optionalFile = ConfigurationAssert.getTestFile("testDigesterOptionalConfiguration.xml");
         builder.configure(createParameters().setFile(optionalFile));
         final Configuration config = builder.getConfiguration();
@@ -985,7 +988,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether the force-create attribute is taken into account.
      */
     @Test
-    public void testLoadOptionalForceCreate() throws ConfigurationException {
+    void testLoadOptionalForceCreate() throws ConfigurationException {
         final String name = "optionalConfig";
         final Map<String, Object> attrs = new HashMap<>();
         attrs.put("fileName", "nonExisting.xml");
@@ -1005,7 +1008,7 @@ public class TestCombinedConfigurationBuilder {
      * exist, so this should cause an exception.
      */
     @Test
-    public void testLoadOptionalWithException() {
+    void testLoadOptionalWithException() {
         final File optionalExFile = ConfigurationAssert.getTestFile("testDigesterOptionalConfigurationEx.xml");
         builder.configure(createParameters().setFile(optionalExFile));
         assertThrows(ConfigurationException.class, builder::getConfiguration);
@@ -1015,7 +1018,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a MultiFileConfigurationBuilder can be integrated into a combined configuration definition.
      */
     @Test
-    public void testMultiTenentConfiguration() throws ConfigurationException {
+    void testMultiTenentConfiguration() throws ConfigurationException {
         final CombinedConfiguration config = createMultiFileConfig("testCCMultiTenent.xml");
         checkMultiFile("1001", config, 15);
         checkMultiFile("1002", config, 25);
@@ -1027,7 +1030,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a configuration created by a MultiFileConfigurationBuilder has been initialized correctly.
      */
     @Test
-    public void testMultiTenentConfigurationProperties() throws ConfigurationException {
+    void testMultiTenentConfigurationProperties() throws ConfigurationException {
         final CombinedConfiguration config = createMultiFileConfig("testCCMultiTenent.xml");
         switchToMultiFile("1001");
         final HierarchicalConfiguration<?> multiConf = (HierarchicalConfiguration<?>) config.getConfiguration("clientConfig");
@@ -1040,7 +1043,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether reloading support works for MultiFileConfigurationBuilder.
      */
     @Test
-    public void testMultiTenentConfigurationReloading() throws ConfigurationException, InterruptedException {
+    void testMultiTenentConfigurationReloading() throws ConfigurationException, InterruptedException {
         final CombinedConfiguration config = createMultiFileConfig("testCCMultiTenentReloading.xml");
         final File outFile = ConfigurationAssert.getOutFile("MultiFileReloadingTest.xml");
         switchToMultiFile(outFile.getAbsolutePath());
@@ -1087,7 +1090,7 @@ public class TestCombinedConfigurationBuilder {
      * Tries to build a configuration if no definition builder is provided.
      */
     @Test
-    public void testNoDefinitionBuilder() {
+    void testNoDefinitionBuilder() {
         assertThrows(ConfigurationException.class, builder::getConfiguration);
     }
 
@@ -1095,7 +1098,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a custom provider can be defined in the definition file.
      */
     @Test
-    public void testProviderInDefinitionConfig() throws ConfigurationException {
+    void testProviderInDefinitionConfig() throws ConfigurationException {
         builder.configure(createParameters().setFile(ConfigurationAssert.getTestFile("testCCCustomProvider.xml")));
         final CombinedConfiguration cc = builder.getConfiguration();
         assertTrue(cc.getBoolean("testKey"));
@@ -1105,7 +1108,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a reset of one of the sub builders causes the combined configuration to be re-created.
      */
     @Test
-    public void testReactOnSubBuilderChange() throws ConfigurationException {
+    void testReactOnSubBuilderChange() throws ConfigurationException {
         final Map<String, Object> attrs = new HashMap<>();
         prepareSubBuilderTest(attrs);
         final CombinedConfiguration cc = builder.getConfiguration();
@@ -1118,7 +1121,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether a reloading sub builder can be created.
      */
     @Test
-    public void testReloadingBuilder() throws ConfigurationException {
+    void testReloadingBuilder() throws ConfigurationException {
         final Map<String, Object> attrs = new HashMap<>();
         attrs.put("config-reload", Boolean.TRUE);
         prepareSubBuilderTest(attrs);
@@ -1130,7 +1133,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests that change listeners registered at sub builders are removed on a reset.
      */
     @Test
-    public void testRemoveSubBuilderListener() throws ConfigurationException {
+    void testRemoveSubBuilderListener() throws ConfigurationException {
         final Map<String, Object> attrs = new HashMap<>();
         prepareSubBuilderTest(attrs);
         builder.getConfiguration();
@@ -1148,7 +1151,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests a reset of the builder. The configuration instance should be created anew.
      */
     @Test
-    public void testResetBuilder() throws ConfigurationException {
+    void testResetBuilder() throws ConfigurationException {
         final Map<String, Object> attrs = new HashMap<>();
         final BasicConfigurationBuilder<? extends HierarchicalConfiguration<ImmutableNode>> defBuilder = prepareSubBuilderTest(attrs);
         final CombinedConfiguration cc = builder.getConfiguration();
@@ -1165,7 +1168,7 @@ public class TestCombinedConfigurationBuilder {
      * the builder.
      */
     @Test
-    public void testRootNodeInitializedAfterCreation() throws ConfigurationException {
+    void testRootNodeInitializedAfterCreation() throws ConfigurationException {
         builder.configure(createParameters().setFile(TEST_FILE));
         final CombinedConfiguration cc = builder.getConfiguration();
         assertNotNull(cc.getNodeModel().getNodeHandler().getRootNode());
@@ -1175,7 +1178,7 @@ public class TestCombinedConfigurationBuilder {
      * Tests whether the inheritance of builder properties can be disabled.
      */
     @Test
-    public void testSuppressChildBuilderPropertyInheritance() throws ConfigurationException {
+    void testSuppressChildBuilderPropertyInheritance() throws ConfigurationException {
         final Parameters params = new Parameters();
         final CombinedBuilderParameters combinedParams = params.combined().setInheritSettings(false);
         builder.configure(combinedParams, prepareParamsForInheritanceTest(params));
@@ -1191,7 +1194,7 @@ public class TestCombinedConfigurationBuilder {
      * properties can be added to the resulting configuration.
      */
     @Test
-    public void testSystemProperties() throws ConfigurationException {
+    void testSystemProperties() throws ConfigurationException {
         final File systemFile = ConfigurationAssert.getTestFile("testCCSystemProperties.xml");
         builder.configure(createParameters().setFile(systemFile));
         final CombinedConfiguration cc = builder.getConfiguration();

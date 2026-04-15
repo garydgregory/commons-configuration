@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -53,6 +53,7 @@ import org.apache.commons.configuration2.event.EventType;
  * @since 2.0
  */
 public class EventListenerParameters implements BuilderParameters, EventListenerProvider {
+
     /** Stores the event listener registrations added to this object. */
     private final EventListenerList eventListeners;
 
@@ -61,19 +62,6 @@ public class EventListenerParameters implements BuilderParameters, EventListener
      */
     public EventListenerParameters() {
         eventListeners = new EventListenerList();
-    }
-
-    /**
-     * Adds an event listener of the specified event type to this object.
-     *
-     * @param eventType the event type object
-     * @param listener the event listener
-     * @param <T> the event type
-     * @return a reference to this object for method chaining
-     */
-    public <T extends Event> EventListenerParameters addEventListener(final EventType<T> eventType, final EventListener<? super T> listener) {
-        eventListeners.addEventListener(eventType, listener);
-        return this;
     }
 
     /**
@@ -89,15 +77,28 @@ public class EventListenerParameters implements BuilderParameters, EventListener
     }
 
     /**
-     * {@inheritDoc} This implementation returns an empty map.
+     * Adds an event listener of the specified event type to this object.
+     *
+     * @param eventType the event type object
+     * @param listener the event listener
+     * @param <T> the event type
+     * @return a reference to this object for method chaining
      */
-    @Override
-    public Map<String, Object> getParameters() {
-        return Collections.emptyMap();
+    public <T extends Event> EventListenerParameters addEventListener(final EventType<T> eventType, final EventListener<? super T> listener) {
+        eventListeners.addEventListener(eventType, listener);
+        return this;
     }
 
     @Override
     public EventListenerList getListeners() {
         return eventListeners;
+    }
+
+    /**
+     * {@inheritDoc} This implementation returns an empty map.
+     */
+    @Override
+    public Map<String, Object> getParameters() {
+        return Collections.emptyMap();
     }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,7 +54,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 public class TestDynamicCombinedConfiguration {
-    private class ReaderThread extends Thread {
+    private final class ReaderThread extends Thread {
         private volatile boolean running = true;
         private volatile boolean failed;
         private final CombinedConfigurationBuilder builder;
@@ -99,7 +99,7 @@ public class TestDynamicCombinedConfiguration {
         }
 
     }
-    private static class ReloadThread extends Thread {
+    private static final class ReloadThread extends Thread {
         private final CombinedConfigurationBuilder builder;
         private final int[] failures;
         private final int index;
@@ -145,11 +145,13 @@ public class TestDynamicCombinedConfiguration {
             }
         }
     }
+
     public static class ThreadLookup implements Lookup {
-        private static final ThreadLocal<String> id = new ThreadLocal<>();
+
+        private static final ThreadLocal<String> ID = new ThreadLocal<>();
 
         public static void setId(final String value) {
-            id.set(value);
+            ID.set(value);
         }
 
         public ThreadLookup() {
@@ -164,7 +166,7 @@ public class TestDynamicCombinedConfiguration {
             if (value != null) {
                 return value;
             }
-            return id.get();
+            return ID.get();
 
         }
     }
@@ -222,7 +224,7 @@ public class TestDynamicCombinedConfiguration {
      * Tests whether adding a configuration is synchronized.
      */
     @Test
-    public void testAddConfigurationSynchronized() {
+    void testAddConfigurationSynchronized() {
         final DynamicCombinedConfiguration config = new DynamicCombinedConfiguration();
         final SynchronizerTestImpl sync = prepareSynchronizerTest(config);
         config.addConfiguration(new PropertiesConfiguration());
@@ -230,15 +232,15 @@ public class TestDynamicCombinedConfiguration {
     }
 
     @Test
-    public void testConcurrentGetAndReload() throws Exception {
+    void testConcurrentGetAndReload() throws Exception {
         System.getProperties().remove("Id");
         final CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder();
         builder.configure(parameters.fileBased().setFile(MULTI_TENENT_FILE).setSynchronizer(new ReadWriteSynchronizer()));
         final CombinedConfiguration config = builder.getConfiguration();
 
         assertEquals("50", config.getString("rowsPerPage"));
-        final Thread testThreads[] = new Thread[THREAD_COUNT];
-        final int failures[] = new int[THREAD_COUNT];
+        final Thread[] testThreads = new Thread[THREAD_COUNT];
+        final int[] failures = new int[THREAD_COUNT];
 
         for (int i = 0; i < testThreads.length; ++i) {
             testThreads[i] = new ReloadThread(builder, failures, i, LOOP_COUNT, false, null, "50");
@@ -254,7 +256,7 @@ public class TestDynamicCombinedConfiguration {
     }
 
     @Test
-    public void testConcurrentGetAndReload2() throws Exception {
+    void testConcurrentGetAndReload2() throws Exception {
         System.getProperties().remove("Id");
         final CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder();
         builder.configure(parameters.fileBased().setFile(MULTI_TENENT_FILE).setSynchronizer(new ReadWriteSynchronizer()));
@@ -262,8 +264,8 @@ public class TestDynamicCombinedConfiguration {
 
         assertEquals("50", config.getString("rowsPerPage"));
 
-        final Thread testThreads[] = new Thread[THREAD_COUNT];
-        final int failures[] = new int[THREAD_COUNT];
+        final Thread[] testThreads = new Thread[THREAD_COUNT];
+        final int[] failures = new int[THREAD_COUNT];
         System.setProperty("Id", "2002");
         assertEquals("25", config.getString("rowsPerPage"));
         for (int i = 0; i < testThreads.length; ++i) {
@@ -281,7 +283,7 @@ public class TestDynamicCombinedConfiguration {
     }
 
     @Test
-    public void testConcurrentGetAndReloadFile() throws Exception {
+    void testConcurrentGetAndReloadFile() throws Exception {
         final int threadCount = 25;
         System.getProperties().remove("Id");
         System.setProperty("TemporaryFolder", tempFolder.getAbsolutePath());
@@ -299,7 +301,7 @@ public class TestDynamicCombinedConfiguration {
         CombinedConfiguration config = builder.getConfiguration();
         assertEquals("ID0001", config.getString("Product/FIIndex/FI[@id='123456781']"));
 
-        final ReaderThread testThreads[] = new ReaderThread[threadCount];
+        final ReaderThread[] testThreads = new ReaderThread[threadCount];
         for (int i = 0; i < testThreads.length; ++i) {
             testThreads[i] = new ReaderThread(builder);
             testThreads[i].start();
@@ -331,7 +333,7 @@ public class TestDynamicCombinedConfiguration {
     }
 
     @Test
-    public void testConcurrentGetAndReloadMultipleClients() throws Exception {
+    void testConcurrentGetAndReloadMultipleClients() throws Exception {
         System.getProperties().remove("Id");
         final CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder();
         builder.configure(parameters.fileBased().setFile(MULTI_TENENT_FILE).setSynchronizer(new ReadWriteSynchronizer()));
@@ -339,8 +341,8 @@ public class TestDynamicCombinedConfiguration {
 
         assertEquals("50", config.getString("rowsPerPage"));
 
-        final Thread testThreads[] = new Thread[THREAD_COUNT];
-        final int failures[] = new int[THREAD_COUNT];
+        final Thread[] testThreads = new Thread[THREAD_COUNT];
+        final int[] failures = new int[THREAD_COUNT];
         final String[] ids = {null, "2002", "3001", "3002", "3003"};
         final String[] expected = {"50", "25", "15", "25", "50"};
         for (int i = 0; i < testThreads.length; ++i) {
@@ -364,7 +366,7 @@ public class TestDynamicCombinedConfiguration {
     }
 
     @Test
-    public void testConfiguration() throws Exception {
+    void testConfiguration() throws Exception {
         final DynamicCombinedConfiguration config = new DynamicCombinedConfiguration();
         final DefaultListDelimiterHandler listHandler = new DefaultListDelimiterHandler(',');
         config.setListDelimiterHandler(listHandler);
@@ -402,7 +404,7 @@ public class TestDynamicCombinedConfiguration {
      * Tests whether querying a configuration by index is synchronized.
      */
     @Test
-    public void testGetConfigurationByIdxSynchronized() {
+    void testGetConfigurationByIdxSynchronized() {
         final DynamicCombinedConfiguration config = new DynamicCombinedConfiguration();
         final Configuration child = new PropertiesConfiguration();
         config.addConfiguration(child);
@@ -415,7 +417,7 @@ public class TestDynamicCombinedConfiguration {
      * Tests whether querying a configuration by name is synchronized.
      */
     @Test
-    public void testGetConfigurationByNameSynchronized() {
+    void testGetConfigurationByNameSynchronized() {
         final DynamicCombinedConfiguration config = new DynamicCombinedConfiguration();
         final SynchronizerTestImpl sync = prepareSynchronizerTest(config);
         assertNull(config.getConfiguration("unknown config"));
@@ -426,7 +428,7 @@ public class TestDynamicCombinedConfiguration {
      * Tests whether querying the set of configuration names is synchronized.
      */
     @Test
-    public void testGetConfigurationNamesSynchronized() {
+    void testGetConfigurationNamesSynchronized() {
         final DynamicCombinedConfiguration config = new DynamicCombinedConfiguration();
         final SynchronizerTestImpl sync = prepareSynchronizerTest(config);
         config.getConfigurationNames();
@@ -437,7 +439,7 @@ public class TestDynamicCombinedConfiguration {
      * Tests whether querying the number of configurations is synchronized.
      */
     @Test
-    public void testGetNumberOfConfigurationsSynchronized() {
+    void testGetNumberOfConfigurationsSynchronized() {
         final DynamicCombinedConfiguration config = new DynamicCombinedConfiguration();
         final SynchronizerTestImpl sync = prepareSynchronizerTest(config);
         config.getNumberOfConfigurations();
@@ -448,7 +450,7 @@ public class TestDynamicCombinedConfiguration {
      * Tests whether removing a child configuration is synchronized.
      */
     @Test
-    public void testRemoveConfigurationSynchronized() {
+    void testRemoveConfigurationSynchronized() {
         final DynamicCombinedConfiguration config = new DynamicCombinedConfiguration();
         final String configName = "testConfig";
         config.addConfiguration(new PropertiesConfiguration(), configName);
@@ -461,7 +463,7 @@ public class TestDynamicCombinedConfiguration {
      * Tests whether a configuration can be updated.
      */
     @Test
-    public void testUpdateConfiguration() throws ConfigurationException {
+    void testUpdateConfiguration() throws ConfigurationException {
         System.getProperties().remove("Id");
         final CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder();
         builder.configure(parameters.fileBased().setFile(MULTI_TENENT_FILE).setSynchronizer(new ReadWriteSynchronizer()));

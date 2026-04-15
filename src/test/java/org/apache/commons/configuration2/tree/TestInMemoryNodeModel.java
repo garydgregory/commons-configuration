@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,9 +51,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code InMemoryNodeModel}.
- *
  */
 public class TestInMemoryNodeModel {
+
     /** Constant for a test key. */
     private static final String KEY = "aTestKey";
 
@@ -118,7 +118,7 @@ public class TestInMemoryNodeModel {
      * Tests an add nodes operation if an empty collection is passed in.
      */
     @Test
-    public void testAddNodesEmptyCollection() {
+    void testAddNodesEmptyCollection() {
         checkAddNodesNoNodes(Collections.<ImmutableNode>emptySet());
     }
 
@@ -126,7 +126,7 @@ public class TestInMemoryNodeModel {
      * Tests an add nodes operation if a null collection is passed in.
      */
     @Test
-    public void testAddNodesNullCollection() {
+    void testAddNodesNullCollection() {
         checkAddNodesNoNodes(null);
     }
 
@@ -134,7 +134,7 @@ public class TestInMemoryNodeModel {
      * Tries to add new nodes if the key references an attribute.
      */
     @Test
-    public void testAddNodesToAttribute() {
+    void testAddNodesToAttribute() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_AUTHORS_TREE);
         when(resolver.resolveKey(NodeStructureHelper.ROOT_AUTHORS_TREE, KEY, model.getNodeHandler()))
@@ -149,7 +149,7 @@ public class TestInMemoryNodeModel {
      * Tests whether new nodes can be added to an existing node in the model.
      */
     @Test
-    public void testAddNodesToExistingNode() {
+    void testAddNodesToExistingNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_AUTHORS_TREE);
         final String key = NodeStructureHelper.author(0);
@@ -169,7 +169,7 @@ public class TestInMemoryNodeModel {
      * Tries to add new nodes to an non-existing key pointing to an attribute.
      */
     @Test
-    public void testAddNodesToNewAttributeKey() {
+    void testAddNodesToNewAttributeKey() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_AUTHORS_TREE);
         when(resolver.resolveKey(NodeStructureHelper.ROOT_AUTHORS_TREE, KEY, model.getNodeHandler()))
@@ -186,7 +186,7 @@ public class TestInMemoryNodeModel {
      * Tests whether nodes can be added to a node which has to be created.
      */
     @Test
-    public void testAddNodesToNewNode() {
+    void testAddNodesToNewNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_AUTHORS_TREE);
         final String newAuthor = "Goethe";
@@ -206,7 +206,7 @@ public class TestInMemoryNodeModel {
      * Tests whether an attribute property can be added if there are no path nodes.
      */
     @Test
-    public void testAddPropertyAttributeNoPathNodes() {
+    void testAddPropertyAttributeNoPathNodes() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final NodeAddData<ImmutableNode> addData = new NodeAddData<>(nodeForKey(ROOT_AUTHORS_TREE, "Shakespeare/The Tempest"), "year", true, null);
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_AUTHORS_TREE);
@@ -222,7 +222,7 @@ public class TestInMemoryNodeModel {
      * Tests whether an attribute can be added if there are some path nodes.
      */
     @Test
-    public void testAddPropertyAttributeWithPathNodes() {
+    void testAddPropertyAttributeWithPathNodes() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final NodeAddData<ImmutableNode> addData = new NodeAddData<>(nodeForKey(ROOT_AUTHORS_TREE, "Homer/Ilias"), "number", true,
             Arrays.asList("scenes", "scene"));
@@ -239,7 +239,7 @@ public class TestInMemoryNodeModel {
      * Tests the special case that an attribute is added with a single path node.
      */
     @Test
-    public void testAddPropertyAttributeWithSinglePathNode() {
+    void testAddPropertyAttributeWithSinglePathNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final NodeAddData<ImmutableNode> addData = new NodeAddData<>(nodeForKey(ROOT_AUTHORS_TREE, NodeStructureHelper.author(0)), "year", true,
             Arrays.asList("dateOfBirth"));
@@ -257,7 +257,7 @@ public class TestInMemoryNodeModel {
      * Tests whether a property can be added if there are no intermediate path nodes.
      */
     @Test
-    public void testAddPropertyNoPathNodes() {
+    void testAddPropertyNoPathNodes() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final NodeAddData<ImmutableNode> addData = new NodeAddData<>(nodeForKey(ROOT_AUTHORS_TREE, "Homer"), "work", false, null);
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_AUTHORS_TREE);
@@ -274,7 +274,7 @@ public class TestInMemoryNodeModel {
      * Tests an addProperty() operation if no values are provided.
      */
     @Test
-    public void testAddPropertyNoValues() {
+    void testAddPropertyNoValues() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_AUTHORS_TREE);
 
@@ -286,7 +286,7 @@ public class TestInMemoryNodeModel {
      * Tests whether the parent node references are updated when nodes are added.
      */
     @Test
-    public void testAddPropertyUpdateParentReferences() {
+    void testAddPropertyUpdateParentReferences() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final NodeAddData<ImmutableNode> addData = new NodeAddData<>(nodeForKey(ROOT_AUTHORS_TREE, "Homer/Ilias"), "location", false,
             Collections.singleton("locations"));
@@ -306,7 +306,7 @@ public class TestInMemoryNodeModel {
      * Tests whether a property can be added to the node model if there are some additional path nodes to be created.
      */
     @Test
-    public void testAddPropertyWithPathNodes() {
+    void testAddPropertyWithPathNodes() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final NodeAddData<ImmutableNode> addData = new NodeAddData<>(nodeForKey(ROOT_AUTHORS_TREE, "Homer/Ilias"), "location", false,
             Collections.singleton("locations"));
@@ -334,7 +334,7 @@ public class TestInMemoryNodeModel {
      * Tests whether the whole node structure can be cleared.
      */
     @Test
-    public void testClear() {
+    void testClear() {
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_AUTHORS_TREE);
         model.clear(createResolver());
         assertFalse(model.getNodeHandler().isDefined(model.getRootNode()));
@@ -345,7 +345,7 @@ public class TestInMemoryNodeModel {
      * Tests whether a property value stored as an attribute can be cleared.
      */
     @Test
-    public void testClearPropertyAttribute() {
+    void testClearPropertyAttribute() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_PERSONAE_TREE);
         final String nodeKey = "Prospero/The Tempest/" + NodeStructureHelper.ELEM_ORG_VALUE;
@@ -362,7 +362,7 @@ public class TestInMemoryNodeModel {
      * Tests whether a property value can be cleared on a node.
      */
     @Test
-    public void testClearPropertyNode() {
+    void testClearPropertyNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_PERSONAE_TREE);
         final String nodeKey = "Ariel/The Tempest/" + NodeStructureHelper.ELEM_ORG_VALUE;
@@ -378,7 +378,7 @@ public class TestInMemoryNodeModel {
      * Tests clearProperty() for a non existing property.
      */
     @Test
-    public void testClearPropertyNonExisting() {
+    void testClearPropertyNonExisting() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_PERSONAE_TREE);
 
@@ -394,7 +394,7 @@ public class TestInMemoryNodeModel {
      * Tests whether attributes can be cleared with clearTree().
      */
     @Test
-    public void testClearTreeAttribute() {
+    void testClearTreeAttribute() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_PERSONAE_TREE);
         final String nodeName = "Puck";
@@ -413,7 +413,7 @@ public class TestInMemoryNodeModel {
      * Tests whether the children of removed nodes are also removed from the parent mapping.
      */
     @Test
-    public void testClearTreeChildrenRemovedFromParentMapping() {
+    void testClearTreeChildrenRemovedFromParentMapping() {
         final String path = "Homer/Ilias";
         checkClearTreeUpdatedParentMapping(path, nodeForKey(ROOT_AUTHORS_TREE, path + "/Achilles"));
     }
@@ -422,7 +422,7 @@ public class TestInMemoryNodeModel {
      * Tests whether a removed node can no longer be passed to getParent().
      */
     @Test
-    public void testClearTreeNodeRemovedFromParentMapping() {
+    void testClearTreeNodeRemovedFromParentMapping() {
         final String path = "Homer/Ilias/Achilles";
         checkClearTreeUpdatedParentMapping(path, nodeForKey(ROOT_AUTHORS_TREE, path));
     }
@@ -431,7 +431,7 @@ public class TestInMemoryNodeModel {
      * Tests whether a clearTree() operation can be performed if only nodes are involved.
      */
     @Test
-    public void testClearTreeNodes() {
+    void testClearTreeNodes() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_AUTHORS_TREE);
         final QueryResult<ImmutableNode> result = QueryResult.createNodeResult(nodeForKey(model, "Homer/Ilias/Achilles"));
@@ -453,7 +453,7 @@ public class TestInMemoryNodeModel {
      * children from a node. The node becomes undefined and should be removed.
      */
     @Test
-    public void testClearTreeNodesAndAttributes() {
+    void testClearTreeNodesAndAttributes() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_PERSONAE_TREE);
         final String nodeName = "Puck";
@@ -472,7 +472,7 @@ public class TestInMemoryNodeModel {
      * Tests clearTree() if the passed in key does not exist.
      */
     @Test
-    public void testClearTreeNonExistingKey() {
+    void testClearTreeNonExistingKey() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_PERSONAE_TREE);
 
@@ -488,7 +488,7 @@ public class TestInMemoryNodeModel {
      * Tests whether undefined nodes are removed from the hierarchy when clearing properties.
      */
     @Test
-    public void testClearTreeRemoveUndefinedNodes() {
+    void testClearTreeRemoveUndefinedNodes() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_AUTHORS_TREE);
         final ImmutableNode node = nodeForKey(model, "Homer/Ilias");
@@ -510,7 +510,7 @@ public class TestInMemoryNodeModel {
      * Tests a clearTree() operation which should yield an empty tree structure.
      */
     @Test
-    public void testClearTreeResultIsEmpty() {
+    void testClearTreeResultIsEmpty() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final ImmutableNode child = new ImmutableNode.Builder().name("child").value("test").create();
         final ImmutableNode root = new ImmutableNode.Builder(1).addChild(child).create();
@@ -526,7 +526,7 @@ public class TestInMemoryNodeModel {
      * Tests whether clearTree() handles the root node in a special way.
      */
     @Test
-    public void testClearTreeRootNode() {
+    void testClearTreeRootNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_AUTHORS_TREE);
         final List<QueryResult<ImmutableNode>> results = new ArrayList<>(2);
@@ -543,7 +543,7 @@ public class TestInMemoryNodeModel {
      * Tests whether references to parent nodes are updated correctly when clearing properties.
      */
     @Test
-    public void testClearTreeUpdateParentReferences() {
+    void testClearTreeUpdateParentReferences() {
         final String[] path = {"Homer", "Ilias"};
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_AUTHORS_TREE);
@@ -559,7 +559,7 @@ public class TestInMemoryNodeModel {
      * Tests whether the replacement mapping is automatically compacted if it gets too large.
      */
     @Test
-    public void testCompactReplacementMapping() {
+    void testCompactReplacementMapping() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_AUTHORS_TREE);
         final int numberOfOperations = 200;
@@ -588,7 +588,7 @@ public class TestInMemoryNodeModel {
      * Then it is checked whether all authors have been added correctly.
      */
     @Test
-    public void testConcurrentUpdate() throws InterruptedException {
+    void testConcurrentUpdate() throws InterruptedException {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_AUTHORS_TREE);
 
@@ -635,7 +635,7 @@ public class TestInMemoryNodeModel {
      * Tests whether the model's data can be represented as immutable node objects (which is trivial in this case).
      */
     @Test
-    public void testGetInMemoryRepresentation() {
+    void testGetInMemoryRepresentation() {
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_AUTHORS_TREE);
         assertSame(NodeStructureHelper.ROOT_AUTHORS_TREE, model.getInMemoryRepresentation());
     }
@@ -644,7 +644,7 @@ public class TestInMemoryNodeModel {
      * Tests whether the correct node handler is returned.
      */
     @Test
-    public void testGetNodeHandler() {
+    void testGetNodeHandler() {
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_PERSONAE_TREE);
         assertSame(model.getTreeData(), model.getNodeHandler());
     }
@@ -653,7 +653,7 @@ public class TestInMemoryNodeModel {
      * Tests whether the correct root node is returned if a tree was passed at construction time.
      */
     @Test
-    public void testGetRootNodeFromConstructor() {
+    void testGetRootNodeFromConstructor() {
         final InMemoryNodeModel model = new InMemoryNodeModel(ROOT_AUTHORS_TREE);
         assertSame(ROOT_AUTHORS_TREE, model.getRootNode());
     }
@@ -662,7 +662,7 @@ public class TestInMemoryNodeModel {
      * Tests whether an undefined default root node is created if none is specified.
      */
     @Test
-    public void testInitDefaultRoot() {
+    void testInitDefaultRoot() {
         final InMemoryNodeModel model = new InMemoryNodeModel();
         final ImmutableNode root = model.getRootNode();
         assertNull(root.getNodeName());
@@ -675,7 +675,7 @@ public class TestInMemoryNodeModel {
      * Tests whether setProperty() can handle changes in node values.
      */
     @Test
-    public void testSetPropertyChangedValues() {
+    void testSetPropertyChangedValues() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_PERSONAE_TREE);
         final String nodeKey = "Ariel/The Tempest/" + NodeStructureHelper.ELEM_ORG_VALUE;
@@ -698,7 +698,7 @@ public class TestInMemoryNodeModel {
      * Tests whether setProperty() can handle nodes to be cleared.
      */
     @Test
-    public void testSetPropertyClearValues() {
+    void testSetPropertyClearValues() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_PERSONAE_TREE);
         final String nodeKey = "Ariel/The Tempest/" + NodeStructureHelper.ELEM_ORG_VALUE;
@@ -716,7 +716,7 @@ public class TestInMemoryNodeModel {
      * Tests whether setProperty() can handle newly added values.
      */
     @Test
-    public void testSetPropertyNewValues() {
+    void testSetPropertyNewValues() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final NodeAddData<ImmutableNode> addData = new NodeAddData<>(nodeForKey(ROOT_AUTHORS_TREE, "Homer"), "work", false, null);
         final NodeUpdateData<ImmutableNode> updateData = new NodeUpdateData<>(null, Collections.<Object>singleton("Odyssee"), null, KEY);
@@ -735,7 +735,7 @@ public class TestInMemoryNodeModel {
      * Tests a set property operation which is a no-op.
      */
     @Test
-    public void testSetPropertyNoChanges() {
+    void testSetPropertyNoChanges() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_PERSONAE_TREE);
 
@@ -750,7 +750,7 @@ public class TestInMemoryNodeModel {
      * Tests whether a new root node can be set.
      */
     @Test
-    public void testSetRoot() {
+    void testSetRoot() {
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_PERSONAE_TREE);
         model.setRootNode(NodeStructureHelper.ROOT_AUTHORS_TREE);
         assertSame(NodeStructureHelper.ROOT_AUTHORS_TREE, model.getRootNode());
@@ -762,7 +762,7 @@ public class TestInMemoryNodeModel {
      * Tests whether the root node can be set to null.
      */
     @Test
-    public void testSetRootNull() {
+    void testSetRootNull() {
         final InMemoryNodeModel model = new InMemoryNodeModel(NodeStructureHelper.ROOT_PERSONAE_TREE);
         model.setRootNode(null);
         final ImmutableNode rootNode = model.getRootNode();

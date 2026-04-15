@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,22 +35,22 @@ public final class URLConnectionOptions {
     public static final URLConnectionOptions DEFAULT = new URLConnectionOptions();
 
     /**
-     * TODO
+     * Tells if user interaction, sicj as displaying an authentication dialog, is allowed.
      */
     private boolean allowUserInteraction;
 
     /**
-     * TODO
+     * The connect timeout in milliseconds.
      */
     private int connectTimeoutMillis;
 
     /**
-     * TODO
+     * The read timeout in milliseconds.
      */
     private int readTimeoutMillis;
 
     /**
-     * TODO
+     * Tells if the connection should use caches.
      */
     private boolean useCaches = true;
 
@@ -127,7 +127,7 @@ public final class URLConnectionOptions {
     }
 
     /**
-     * Whether to cache.
+     * Gets whether to cache.
      *
      * @return Whether to cache.
      */

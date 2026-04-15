@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,12 +34,13 @@ package org.apache.commons.configuration2;
  * @since 2.0
  */
 public interface ConfigurationDecoder {
+
     /**
      * Decodes the specified string. This method is called with a string in encoded form read from a configuration file. An
      * implementation has to be perform an appropriate decoding and return the result. This result is passed to the calling
      * application; so it should be in a readable form.
      *
-     * @param s the string to be decoded (not <b>null</b>)
+     * @param s the string to be decoded (not <strong>null</strong>)
      * @return the decoded string
      */
     String decode(String s);

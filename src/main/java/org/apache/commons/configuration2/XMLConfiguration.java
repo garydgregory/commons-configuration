@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +17,6 @@
 
 package org.apache.commons.configuration2;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -39,6 +30,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.configuration2.convert.ListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -78,11 +79,11 @@ import org.xml.sax.helpers.DefaultHandler;
  * <p>
  * Like other file based configuration classes this class maintains the name and path to the loaded configuration file.
  * These properties can be altered using several setter methods, but they are not modified by {@code save()} and
- * {@code load()} methods. If XML documents contain relative paths to other documents (e.g. to a DTD), these references
+ * {@code load()} methods. If XML documents contain relative paths to other documents (for example to a DTD), these references
  * are resolved based on the path set for this configuration.
  * </p>
  * <p>
- * By inheriting from {@link AbstractConfiguration} this class provides some extended functionality, e.g. interpolation
+ * By inheriting from {@link AbstractConfiguration} this class provides some extended functionality, for example interpolation
  * of property values. Like in {@link PropertiesConfiguration} property values can contain delimiter characters (the
  * comma ',' per default) and are then split into multiple values. This works for XML attributes and text content of
  * elements as well. The delimiter can be escaped by a backslash. As an example consider the following XML fragment:
@@ -102,7 +103,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * escaped, so that no splitting is performed.
  * </p>
  * <p>
- * The configuration API allows setting multiple values for a single attribute, e.g. something like the following is
+ * The configuration API allows setting multiple values for a single attribute, for example something like the following is
  * legal (assuming that the default expression engine is used):
  * </p>
  *
@@ -135,7 +136,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * <p>
  * Per default the spaces in the {@code indent} element will be trimmed resulting in an empty element. To tell
  * {@code XMLConfiguration} that spaces are relevant the {@code xml:space} attribute can be used, which is defined in
- * the <a href="http://www.w3.org/TR/REC-xml/#sec-white-space">XML specification</a>. This will look as follows:
+ * the <a href="https://www.w3.org/TR/REC-xml/#sec-white-space">XML specification</a>. This will look as follows:
  * </p>
  *
  * <pre>
@@ -168,6 +169,238 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 1.0
  */
 public class XMLConfiguration extends BaseHierarchicalConfiguration implements FileBasedConfiguration, FileLocatorAware, InputStreamSupport {
+
+    /**
+     * A concrete {@code BuilderVisitor} that constructs XML documents.
+     */
+    static class XMLBuilderVisitor extends BuilderVisitor {
+
+        /**
+         * Removes all attributes of the given element.
+         *
+         * @param elem the element.
+         */
+        private static void clearAttributes(final Element elem) {
+            final NamedNodeMap attributes = elem.getAttributes();
+            for (int i = 0; i < attributes.getLength(); i++) {
+                elem.removeAttribute(attributes.item(i).getNodeName());
+            }
+        }
+
+        /**
+         * Returns the only text node of an element for update. This method is called when the element's text changes. Then all
+         * text nodes except for the first are removed. A reference to the first is returned or <strong>null</strong> if there is no text
+         * node at all.
+         *
+         * @param elem the element.
+         * @return the first and only text node.
+         */
+        private static Text findTextNodeForUpdate(final Element elem) {
+            Text result = null;
+            // Find all Text nodes
+            final NodeList children = elem.getChildNodes();
+            final Collection<Node> textNodes = new ArrayList<>();
+            for (int i = 0; i < children.getLength(); i++) {
+                final Node nd = children.item(i);
+                if (nd instanceof Text) {
+                    if (result == null) {
+                        result = (Text) nd;
+                    } else {
+                        textNodes.add(nd);
+                    }
+                }
+            }
+
+            // We don't want CDATAs
+            if (result instanceof CDATASection) {
+                textNodes.add(result);
+                result = null;
+            }
+
+            // Remove all but the first Text node
+            textNodes.forEach(elem::removeChild);
+            return result;
+        }
+
+        /**
+         * Helper method for updating the values of all attributes of the specified node.
+         *
+         * @param node the affected node.
+         * @param elem the element that is associated with this node.
+         */
+        private static void updateAttributes(final ImmutableNode node, final Element elem) {
+            if (node != null && elem != null) {
+                clearAttributes(elem);
+                node.getAttributes().forEach((k, v) -> {
+                    if (v != null) {
+                        elem.setAttribute(k, v.toString());
+                    }
+                });
+            }
+        }
+
+        /** Stores the document to be constructed. */
+        private final Document document;
+
+        /** The element mapping. */
+        private final Map<Node, Node> elementMapping;
+
+        /** A mapping for the references for new nodes. */
+        private final Map<ImmutableNode, Element> newElements;
+
+        /** Stores the list delimiter handler . */
+        private final ListDelimiterHandler listDelimiterHandler;
+
+        /**
+         * Creates a new instance of {@code XMLBuilderVisitor}.
+         *
+         * @param docHelper the document helper
+         * @param handler the delimiter handler for properties with multiple values
+         */
+        public XMLBuilderVisitor(final XMLDocumentHelper docHelper, final ListDelimiterHandler handler) {
+            document = docHelper.getDocument();
+            elementMapping = docHelper.getElementMapping();
+            listDelimiterHandler = handler;
+            newElements = new HashMap<>();
+        }
+
+        /**
+         * Helper method for accessing the element of the specified node.
+         *
+         * @param node the node.
+         * @param refHandler the {@code ReferenceNodeHandler}.
+         * @return the element of this node.
+         */
+        private Element getElement(final ImmutableNode node, final ReferenceNodeHandler refHandler) {
+            final Element elementNew = newElements.get(node);
+            if (elementNew != null) {
+                return elementNew;
+            }
+
+            // special treatment for root node of the hierarchy
+            final Object reference = refHandler.getReference(node);
+            final Node element;
+            if (reference instanceof XMLDocumentHelper) {
+                element = ((XMLDocumentHelper) reference).getDocument().getDocumentElement();
+            } else if (reference instanceof XMLListReference) {
+                element = ((XMLListReference) reference).getElement();
+            } else {
+                element = (Node) reference;
+            }
+            return element != null ? (Element) elementMapping.get(element) : document.getDocumentElement();
+        }
+
+        /**
+         * Updates the current XML document regarding removed nodes. The elements associated with removed nodes are removed from
+         * the document.
+         *
+         * @param refHandler the {@code ReferenceNodeHandler}.
+         */
+        public void handleRemovedNodes(final ReferenceNodeHandler refHandler) {
+            refHandler.removedReferences().stream().filter(Node.class::isInstance).forEach(ref -> removeReference(elementMapping.get(ref)));
+        }
+
+        /**
+         * {@inheritDoc} This implementation ensures that the correct XML element is created and inserted between the given
+         * siblings.
+         */
+        @Override
+        protected void insert(final ImmutableNode newNode, final ImmutableNode parent, final ImmutableNode sibling1, final ImmutableNode sibling2,
+            final ReferenceNodeHandler refHandler) {
+            if (XMLListReference.isListNode(newNode, refHandler)) {
+                return;
+            }
+
+            final Element elem = document.createElement(newNode.getNodeName());
+            newElements.put(newNode, elem);
+            updateAttributes(newNode, elem);
+            if (newNode.getValue() != null) {
+                final String txt = String.valueOf(listDelimiterHandler.escape(newNode.getValue(), ListDelimiterHandler.NOOP_TRANSFORMER));
+                elem.appendChild(document.createTextNode(txt));
+            }
+            if (sibling2 == null) {
+                getElement(parent, refHandler).appendChild(elem);
+            } else if (sibling1 != null) {
+                getElement(parent, refHandler).insertBefore(elem, getElement(sibling1, refHandler).getNextSibling());
+            } else {
+                getElement(parent, refHandler).insertBefore(elem, getElement(parent, refHandler).getFirstChild());
+            }
+        }
+
+        /**
+         * Processes the specified document, updates element values, and adds new nodes to the hierarchy.
+         *
+         * @param refHandler the {@code ReferenceNodeHandler}.
+         */
+        public void processDocument(final ReferenceNodeHandler refHandler) {
+            updateAttributes(refHandler.getRootNode(), document.getDocumentElement());
+            NodeTreeWalker.INSTANCE.walkDFS(refHandler.getRootNode(), this, refHandler);
+        }
+
+        /**
+         * Updates the associated XML elements when a node is removed.
+         *
+         * @param element the element to be removed.
+         */
+        private void removeReference(final Node element) {
+            final Node parentElem = element.getParentNode();
+            if (parentElem != null) {
+                parentElem.removeChild(element);
+            }
+        }
+
+        /**
+         * {@inheritDoc} This implementation determines the XML element associated with the given node. Then this element's
+         * value and attributes are set accordingly.
+         */
+        @Override
+        protected void update(final ImmutableNode node, final Object reference, final ReferenceNodeHandler refHandler) {
+            if (XMLListReference.isListNode(node, refHandler)) {
+                if (XMLListReference.isFirstListItem(node, refHandler)) {
+                    final String value = XMLListReference.listValue(node, refHandler, listDelimiterHandler);
+                    updateElement(node, refHandler, value);
+                }
+            } else {
+                final Object value = listDelimiterHandler.escape(refHandler.getValue(node), ListDelimiterHandler.NOOP_TRANSFORMER);
+                updateElement(node, refHandler, value);
+            }
+        }
+
+        /**
+         * Updates the node's value if it represents an element node.
+         *
+         * @param element the element.
+         * @param value the new value.
+         */
+        private void updateElement(final Element element, final Object value) {
+            Text txtNode = findTextNodeForUpdate(element);
+            if (value == null) {
+                // remove text
+                if (txtNode != null) {
+                    element.removeChild(txtNode);
+                }
+            } else {
+                final String newValue = String.valueOf(value);
+                if (txtNode == null) {
+                    txtNode = document.createTextNode(newValue);
+                    if (element.getFirstChild() != null) {
+                        element.insertBefore(txtNode, element.getFirstChild());
+                    } else {
+                        element.appendChild(txtNode);
+                    }
+                } else {
+                    txtNode.setNodeValue(newValue);
+                }
+            }
+        }
+
+        private void updateElement(final ImmutableNode node, final ReferenceNodeHandler refHandler, final Object value) {
+            final Element element = getElement(node, refHandler);
+            updateElement(element, value);
+            updateAttributes(node, element);
+        }
+    }
+
     /** Constant for the default indent size. */
     static final int DEFAULT_INDENT_SIZE = 2;
 
@@ -192,6 +425,88 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
     /** Schema Language for the parser */
     private static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
+    /**
+     * Determines the number of child elements of this given node with the specified node name.
+     *
+     * @param parent the parent node.
+     * @param name the name in question.
+     * @return the number of child elements with this name.
+     */
+    private static int countChildElements(final Node parent, final String name) {
+        final NodeList childNodes = parent.getChildNodes();
+        int count = 0;
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            final Node item = childNodes.item(i);
+            if (item instanceof Element && name.equals(((Element) item).getTagName())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Determines the value of a configuration node. This method mainly checks whether the text value is to be trimmed or
+     * not. This is normally defined by the trim flag. However, if the node has children and its content is only whitespace,
+     * then it makes no sense to store any value; this would only scramble layout when the configuration is saved again.
+     *
+     * @param content the text content of this node.
+     * @param hasChildren a flag whether the node has children.
+     * @param trimFlag the trim flag.
+     * @return the value to be stored for this node.
+     */
+    private static String determineValue(final String content, final boolean hasChildren, final boolean trimFlag) {
+        final boolean shouldTrim = trimFlag || StringUtils.isBlank(content) && hasChildren;
+        return shouldTrim ? content.trim() : content;
+    }
+
+    /**
+     * Checks whether an element defines a complete list. If this is the case, extended list handling can be applied.
+     *
+     * @param element the element to be checked.
+     * @return a flag whether this is the only element defining the list.
+     */
+    private static boolean isSingleElementList(final Element element) {
+        final Node parentNode = element.getParentNode();
+        return countChildElements(parentNode, element.getTagName()) == 1;
+    }
+
+    /**
+     * Helper method for initializing the attributes of a configuration node from the given XML element.
+     *
+     * @param element the current XML element
+     * @return a map with all attribute values extracted for the current node
+     */
+    private static Map<String, String> processAttributes(final Node element) {
+        final NamedNodeMap attributes = element.getAttributes();
+        final Map<String, String> attrmap = new HashMap<>();
+        for (int i = 0; i < attributes.getLength(); ++i) {
+            final Node w3cNode = attributes.item(i);
+            if (w3cNode instanceof Attr) {
+                final Attr attr = (Attr) w3cNode;
+                attrmap.put(attr.getName(), attr.getValue());
+            }
+        }
+        return attrmap;
+    }
+
+    /**
+     * Checks whether the content of the current XML element should be trimmed. This method checks whether a
+     * {@code xml:space} attribute is present and evaluates its value. See
+     * <a href="https://www.w3.org/TR/REC-xml/#sec-white-space"> http://www.w3.org/TR/REC-xml/#sec-white-space</a> for more
+     * details.
+     *
+     * @param element the current XML element
+     * @param currentTrim the current trim flag
+     * @return a flag whether the content of this element should be trimmed
+     */
+    private static boolean shouldTrim(final Element element, final boolean currentTrim) {
+        final Attr attr = element.getAttributeNode(ATTR_SPACE);
+        if (attr == null) {
+            return currentTrim;
+        }
+        return !VALUE_PRESERVE.equals(attr.getValue());
+    }
+
     /** Stores the name of the root element. */
     private String rootElementName;
 
@@ -207,10 +522,10 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
     /** Stores a flag whether DTD or Schema validation should be performed. */
     private boolean validating;
 
-    /** Stores a flag whether DTD or Schema validation is used */
+    /** Stores a flag whether DTD or Schema validation is used. */
     private boolean schemaValidation;
 
-    /** The EntityResolver to use */
+    /** The EntityResolver to use. */
     private EntityResolver entityResolver = new DefaultEntityResolver();
 
     /** The current file locator. */
@@ -228,7 +543,7 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
      * object. Note that only the data of the passed in configuration will be copied. If, for instance, the other
      * configuration is a {@code XMLConfiguration}, too, things like comments or processing instructions will be lost.
      *
-     * @param c the configuration to copy
+     * @param c the configuration to copy.
      * @since 1.4
      */
     public XMLConfiguration(final HierarchicalConfiguration<ImmutableNode> c) {
@@ -238,259 +553,16 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
     }
 
     /**
-     * Returns the name of the root element. If this configuration was loaded from a XML document, the name of this
-     * document's root element is returned. Otherwise it is possible to set a name for the root element that will be used
-     * when this configuration is stored.
-     *
-     * @return the name of the root element
-     */
-    @Override
-    protected String getRootElementNameInternal() {
-        final Document doc = getDocument();
-        if (doc == null) {
-            return rootElementName == null ? DEFAULT_ROOT_NAME : rootElementName;
-        }
-        return doc.getDocumentElement().getNodeName();
-    }
-
-    /**
-     * Sets the name of the root element. This name is used when this configuration object is stored in an XML file. Note
-     * that setting the name of the root element works only if this configuration has been newly created. If the
-     * configuration was loaded from an XML file, the name cannot be changed and an {@code UnsupportedOperationException}
-     * exception is thrown. Whether this configuration has been loaded from an XML document or not can be found out using
-     * the {@code getDocument()} method.
-     *
-     * @param name the name of the root element
-     */
-    public void setRootElementName(final String name) {
-        beginRead(true);
-        try {
-            if (getDocument() != null) {
-                throw new UnsupportedOperationException("The name of the root element " + "cannot be changed when loaded from an XML document!");
-            }
-            rootElementName = name;
-        } finally {
-            endRead();
-        }
-    }
-
-    /**
-     * Returns the {@code DocumentBuilder} object that is used for loading documents. If no specific builder has been set,
-     * this method returns <b>null</b>.
-     *
-     * @return the {@code DocumentBuilder} for loading new documents
-     * @since 1.2
-     */
-    public DocumentBuilder getDocumentBuilder() {
-        return documentBuilder;
-    }
-
-    /**
-     * Sets the {@code DocumentBuilder} object to be used for loading documents. This method makes it possible to specify
-     * the exact document builder. So an application can create a builder, configure it for its special needs, and then pass
-     * it to this method.
-     *
-     * @param documentBuilder the document builder to be used; if undefined, a default builder will be used
-     * @since 1.2
-     */
-    public void setDocumentBuilder(final DocumentBuilder documentBuilder) {
-        this.documentBuilder = documentBuilder;
-    }
-
-    /**
-     * Returns the public ID of the DOCTYPE declaration from the loaded XML document. This is <b>null</b> if no document has
-     * been loaded yet or if the document does not contain a DOCTYPE declaration with a public ID.
-     *
-     * @return the public ID
-     * @since 1.3
-     */
-    public String getPublicID() {
-        beginRead(false);
-        try {
-            return publicID;
-        } finally {
-            endRead();
-        }
-    }
-
-    /**
-     * Sets the public ID of the DOCTYPE declaration. When this configuration is saved, a DOCTYPE declaration will be
-     * constructed that contains this public ID.
-     *
-     * @param publicID the public ID
-     * @since 1.3
-     */
-    public void setPublicID(final String publicID) {
-        beginWrite(false);
-        try {
-            this.publicID = publicID;
-        } finally {
-            endWrite();
-        }
-    }
-
-    /**
-     * Returns the system ID of the DOCTYPE declaration from the loaded XML document. This is <b>null</b> if no document has
-     * been loaded yet or if the document does not contain a DOCTYPE declaration with a system ID.
-     *
-     * @return the system ID
-     * @since 1.3
-     */
-    public String getSystemID() {
-        beginRead(false);
-        try {
-            return systemID;
-        } finally {
-            endRead();
-        }
-    }
-
-    /**
-     * Sets the system ID of the DOCTYPE declaration. When this configuration is saved, a DOCTYPE declaration will be
-     * constructed that contains this system ID.
-     *
-     * @param systemID the system ID
-     * @since 1.3
-     */
-    public void setSystemID(final String systemID) {
-        beginWrite(false);
-        try {
-            this.systemID = systemID;
-        } finally {
-            endWrite();
-        }
-    }
-
-    /**
-     * Returns the value of the validating flag.
-     *
-     * @return the validating flag
-     * @since 1.2
-     */
-    public boolean isValidating() {
-        return validating;
-    }
-
-    /**
-     * Sets the value of the validating flag. This flag determines whether DTD/Schema validation should be performed when
-     * loading XML documents. This flag is evaluated only if no custom {@code DocumentBuilder} was set.
-     *
-     * @param validating the validating flag
-     * @since 1.2
-     */
-    public void setValidating(final boolean validating) {
-        if (!schemaValidation) {
-            this.validating = validating;
-        }
-    }
-
-    /**
-     * Returns the value of the schemaValidation flag.
-     *
-     * @return the schemaValidation flag
-     * @since 1.7
-     */
-    public boolean isSchemaValidation() {
-        return schemaValidation;
-    }
-
-    /**
-     * Sets the value of the schemaValidation flag. This flag determines whether DTD or Schema validation should be used.
-     * This flag is evaluated only if no custom {@code DocumentBuilder} was set. If set to true the XML document must
-     * contain a schemaLocation definition that provides resolvable hints to the required schemas.
-     *
-     * @param schemaValidation the validating flag
-     * @since 1.7
-     */
-    public void setSchemaValidation(final boolean schemaValidation) {
-        this.schemaValidation = schemaValidation;
-        if (schemaValidation) {
-            this.validating = true;
-        }
-    }
-
-    /**
-     * Sets a new EntityResolver. Setting this will cause RegisterEntityId to have no effect.
-     *
-     * @param resolver The EntityResolver to use.
-     * @since 1.7
-     */
-    public void setEntityResolver(final EntityResolver resolver) {
-        this.entityResolver = resolver;
-    }
-
-    /**
-     * Returns the EntityResolver.
-     *
-     * @return The EntityResolver.
-     * @since 1.7
-     */
-    public EntityResolver getEntityResolver() {
-        return this.entityResolver;
-    }
-
-    /**
-     * Returns the XML document this configuration was loaded from. The return value is <b>null</b> if this configuration
-     * was not loaded from a XML document.
-     *
-     * @return the XML document this configuration was loaded from
-     */
-    public Document getDocument() {
-        final XMLDocumentHelper docHelper = getDocumentHelper();
-        return docHelper != null ? docHelper.getDocument() : null;
-    }
-
-    /**
-     * Returns the helper object for managing the underlying document.
-     *
-     * @return the {@code XMLDocumentHelper}
-     */
-    private XMLDocumentHelper getDocumentHelper() {
-        final ReferenceNodeHandler handler = getReferenceHandler();
-        return (XMLDocumentHelper) handler.getReference(handler.getRootNode());
-    }
-
-    /**
-     * Returns the extended node handler with support for references.
-     *
-     * @return the {@code ReferenceNodeHandler}
-     */
-    private ReferenceNodeHandler getReferenceHandler() {
-        return getSubConfigurationParentModel().getReferenceNodeHandler();
-    }
-
-    /**
-     * Initializes this configuration from an XML document.
-     *
-     * @param docHelper the helper object with the document to be parsed
-     * @param elemRefs a flag whether references to the XML elements should be set
-     */
-    private void initProperties(final XMLDocumentHelper docHelper, final boolean elemRefs) {
-        final Document document = docHelper.getDocument();
-        setPublicID(docHelper.getSourcePublicID());
-        setSystemID(docHelper.getSourceSystemID());
-
-        final ImmutableNode.Builder rootBuilder = new ImmutableNode.Builder();
-        final MutableObject<String> rootValue = new MutableObject<>();
-        final Map<ImmutableNode, Object> elemRefMap = elemRefs ? new HashMap<>() : null;
-        final Map<String, String> attributes = constructHierarchy(rootBuilder, rootValue, document.getDocumentElement(), elemRefMap, true, 0);
-        attributes.remove(ATTR_SPACE_INTERNAL);
-        final ImmutableNode top = rootBuilder.value(rootValue.getValue()).addAttributes(attributes).create();
-        getSubConfigurationParentModel().mergeRoot(top, document.getDocumentElement().getTagName(), elemRefMap, elemRefs ? docHelper : null, this);
-    }
-
-    /**
      * Helper method for building the internal storage hierarchy. The XML elements are transformed into node objects.
      *
-     * @param node a builder for the current node
-     * @param refValue stores the text value of the element
-     * @param element the current XML element
-     * @param elemRefs a map for assigning references objects to nodes; can be <b>null</b>, then reference objects are
-     *        irrelevant
-     * @param trim a flag whether the text content of elements should be trimmed; this controls the whitespace handling
-     * @param level the current level in the hierarchy
-     * @return a map with all attribute values extracted for the current node; this map also contains the value of the trim
-     *         flag for this node under the key {@value #ATTR_SPACE}
+     * @param node     a builder for the current node.
+     * @param refValue stores the text value of the element.
+     * @param element  the current XML element.
+     * @param elemRefs a map for assigning references objects to nodes; can be <strong>null</strong>, then reference objects are irrelevant.
+     * @param trim     a flag whether the text content of elements should be trimmed; this controls the whitespace handling.
+     * @param level    the current level in the hierarchy.
+     * @return a map with all attribute values extracted for the current node; this map also contains the value of the trim flag for this node under the key
+     *         {@value #ATTR_SPACE}.
      */
     private Map<String, String> constructHierarchy(final ImmutableNode.Builder node, final MutableObject<String> refValue, final Element element,
         final Map<ImmutableNode, Object> elemRefs, final boolean trim, final int level) {
@@ -511,7 +583,7 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
                 final Map<String, String> attrmap = constructHierarchy(childNode, refChildValue, child, elemRefs, trimFlag, level + 1);
                 final boolean childTrim = Boolean.parseBoolean(attrmap.remove(ATTR_SPACE_INTERNAL));
                 childNode.addAttributes(attrmap);
-                final ImmutableNode newChild = createChildNodeWithValue(node, childNode, child, refChildValue.getValue(), childTrim, attrmap, elemRefs);
+                final ImmutableNode newChild = createChildNodeWithValue(node, childNode, child, refChildValue.get(), childTrim, attrmap, elemRefs);
                 if (elemRefs != null && !elemRefs.containsKey(newChild)) {
                     elemRefs.put(newChild, child);
                 }
@@ -534,55 +606,17 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
     }
 
     /**
-     * Determines the value of a configuration node. This method mainly checks whether the text value is to be trimmed or
-     * not. This is normally defined by the trim flag. However, if the node has children and its content is only whitespace,
-     * then it makes no sense to store any value; this would only scramble layout when the configuration is saved again.
+     * Creates a new child node, assigns its value, and adds it to its parent. This method also deals with elements whose value is a list. In this case multiple
+     * child elements must be added. The return value is the first child node which was added.
      *
-     * @param content the text content of this node
-     * @param hasChildren a flag whether the node has children
-     * @param trimFlag the trim flag
-     * @return the value to be stored for this node
-     */
-    private static String determineValue(final String content, final boolean hasChildren, final boolean trimFlag) {
-        final boolean shouldTrim = trimFlag || StringUtils.isBlank(content) && hasChildren;
-        return shouldTrim ? content.trim() : content;
-    }
-
-    /**
-     * Helper method for initializing the attributes of a configuration node from the given XML element.
-     *
-     * @param element the current XML element
-     * @return a map with all attribute values extracted for the current node
-     */
-    private static Map<String, String> processAttributes(final Element element) {
-        final NamedNodeMap attributes = element.getAttributes();
-        final Map<String, String> attrmap = new HashMap<>();
-
-        for (int i = 0; i < attributes.getLength(); ++i) {
-            final Node w3cNode = attributes.item(i);
-            if (w3cNode instanceof Attr) {
-                final Attr attr = (Attr) w3cNode;
-                attrmap.put(attr.getName(), attr.getValue());
-            }
-        }
-
-        return attrmap;
-    }
-
-    /**
-     * Creates a new child node, assigns its value, and adds it to its parent. This method also deals with elements whose
-     * value is a list. In this case multiple child elements must be added. The return value is the first child node which
-     * was added.
-     *
-     * @param parent the builder for the parent element
-     * @param child the builder for the child element
-     * @param elem the associated XML element
-     * @param value the value of the child element
-     * @param trim flag whether texts of elements should be trimmed
-     * @param attrmap a map with the attributes of the current node
-     * @param elemRefs a map for assigning references objects to nodes; can be <b>null</b>, then reference objects are
-     *        irrelevant
-     * @return the first child node added to the parent
+     * @param parent   the builder for the parent element.
+     * @param child    the builder for the child element.
+     * @param elem     the associated XML element.
+     * @param value    the value of the child element.
+     * @param trim     flag whether texts of elements should be trimmed.
+     * @param attrmap  a map with the attributes of the current node.
+     * @param elemRefs a map for assigning references objects to nodes; can be <strong>null</strong>, then reference objects are irrelevant.
+     * @return the first child node added to the parent.
      */
     private ImmutableNode createChildNodeWithValue(final ImmutableNode.Builder parent, final ImmutableNode.Builder child, final Element elem,
         final String value, final boolean trim, final Map<String, String> attrmap, final Map<ImmutableNode, Object> elemRefs) {
@@ -628,52 +662,21 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
     }
 
     /**
-     * Checks whether an element defines a complete list. If this is the case, extended list handling can be applied.
+     * Creates a DOM document from the internal tree of configuration nodes.
      *
-     * @param element the element to be checked
-     * @return a flag whether this is the only element defining the list
+     * @return the new document.
+     * @throws ConfigurationException if an error occurs.
      */
-    private static boolean isSingleElementList(final Element element) {
-        final Node parentNode = element.getParentNode();
-        return countChildElements(parentNode, element.getTagName()) == 1;
-    }
+    private Document createDocument() throws ConfigurationException {
+        final ReferenceNodeHandler handler = getReferenceHandler();
+        final XMLDocumentHelper docHelper = (XMLDocumentHelper) handler.getReference(handler.getRootNode());
+        final XMLDocumentHelper newHelper = docHelper == null ? XMLDocumentHelper.forNewDocument(getRootElementName()) : docHelper.createCopy();
 
-    /**
-     * Determines the number of child elements of this given node with the specified node name.
-     *
-     * @param parent the parent node
-     * @param name the name in question
-     * @return the number of child elements with this name
-     */
-    private static int countChildElements(final Node parent, final String name) {
-        final NodeList childNodes = parent.getChildNodes();
-        int count = 0;
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            final Node item = childNodes.item(i);
-            if (item instanceof Element && name.equals(((Element) item).getTagName())) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    /**
-     * Checks whether the content of the current XML element should be trimmed. This method checks whether a
-     * {@code xml:space} attribute is present and evaluates its value. See
-     * <a href="http://www.w3.org/TR/REC-xml/#sec-white-space"> http://www.w3.org/TR/REC-xml/#sec-white-space</a> for more
-     * details.
-     *
-     * @param element the current XML element
-     * @param currentTrim the current trim flag
-     * @return a flag whether the content of this element should be trimmed
-     */
-    private static boolean shouldTrim(final Element element, final boolean currentTrim) {
-        final Attr attr = element.getAttributeNode(ATTR_SPACE);
-
-        if (attr == null) {
-            return currentTrim;
-        }
-        return !VALUE_PRESERVE.equals(attr.getValue());
+        final XMLBuilderVisitor builder = new XMLBuilderVisitor(newHelper, getListDelimiterHandler());
+        builder.handleRemovedNodes(handler);
+        builder.processDocument(handler);
+        initRootElementText(newHelper.getDocument(), getModel().getNodeHandler().getRootNode().getValue());
+        return newHelper.getDocument();
     }
 
     /**
@@ -682,8 +685,8 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
      * Depending on the value of the validating flag this builder will be a validating or a non validating
      * {@code DocumentBuilder}.
      *
-     * @return the {@code DocumentBuilder} for loading configuration files
-     * @throws ParserConfigurationException if an error occurs
+     * @return the {@code DocumentBuilder} for loading configuration files.
+     * @throws ParserConfigurationException if an error occurs.
      * @since 1.2
      */
     protected DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
@@ -719,8 +722,8 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
      * default settings like indentation mode and the DOCTYPE. Derived classes may overload this method if they have
      * specific needs.
      *
-     * @return the transformer to use for a save operation
-     * @throws ConfigurationException if an error occurs
+     * @return the transformer to use for a save operation.
+     * @throws ConfigurationException if an error occurs.
      * @since 1.3
      */
     protected Transformer createTransformer() throws ConfigurationException {
@@ -742,28 +745,129 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
     }
 
     /**
-     * Creates a DOM document from the internal tree of configuration nodes.
+     * Gets the XML document this configuration was loaded from. The return value is <strong>null</strong> if this configuration
+     * was not loaded from a XML document.
      *
-     * @return the new document
-     * @throws ConfigurationException if an error occurs
+     * @return the XML document this configuration was loaded from.
      */
-    private Document createDocument() throws ConfigurationException {
-        final ReferenceNodeHandler handler = getReferenceHandler();
-        final XMLDocumentHelper docHelper = (XMLDocumentHelper) handler.getReference(handler.getRootNode());
-        final XMLDocumentHelper newHelper = docHelper == null ? XMLDocumentHelper.forNewDocument(getRootElementName()) : docHelper.createCopy();
+    public Document getDocument() {
+        final XMLDocumentHelper docHelper = getDocumentHelper();
+        return docHelper != null ? docHelper.getDocument() : null;
+    }
 
-        final XMLBuilderVisitor builder = new XMLBuilderVisitor(newHelper, getListDelimiterHandler());
-        builder.handleRemovedNodes(handler);
-        builder.processDocument(handler);
-        initRootElementText(newHelper.getDocument(), getModel().getNodeHandler().getRootNode().getValue());
-        return newHelper.getDocument();
+    /**
+     * Gets the {@code DocumentBuilder} object that is used for loading documents. If no specific builder has been set,
+     * this method returns <strong>null</strong>.
+     *
+     * @return the {@code DocumentBuilder} for loading new documents.
+     * @since 1.2
+     */
+    public DocumentBuilder getDocumentBuilder() {
+        return documentBuilder;
+    }
+
+    /**
+     * Gets the helper object for managing the underlying document.
+     *
+     * @return the {@code XMLDocumentHelper}.
+     */
+    private XMLDocumentHelper getDocumentHelper() {
+        final ReferenceNodeHandler handler = getReferenceHandler();
+        return (XMLDocumentHelper) handler.getReference(handler.getRootNode());
+    }
+
+    /**
+     * Gets the EntityResolver.
+     *
+     * @return The EntityResolver.
+     * @since 1.7
+     */
+    public EntityResolver getEntityResolver() {
+        return this.entityResolver;
+    }
+
+    /**
+     * Gets the public ID of the DOCTYPE declaration from the loaded XML document. This is <strong>null</strong> if no document has
+     * been loaded yet or if the document does not contain a DOCTYPE declaration with a public ID.
+     *
+     * @return the public ID.
+     * @since 1.3
+     */
+    public String getPublicID() {
+        return syncReadValue(publicID, false);
+    }
+
+    /**
+     * Gets the extended node handler with support for references.
+     *
+     * @return the {@code ReferenceNodeHandler}.
+     */
+    private ReferenceNodeHandler getReferenceHandler() {
+        return getSubConfigurationParentModel().getReferenceNodeHandler();
+    }
+
+    /**
+     * Gets the name of the root element. If this configuration was loaded from a XML document, the name of this
+     * document's root element is returned. Otherwise it is possible to set a name for the root element that will be used
+     * when this configuration is stored.
+     *
+     * @return the name of the root element.
+     */
+    @Override
+    protected String getRootElementNameInternal() {
+        final Document doc = getDocument();
+        if (doc == null) {
+            return rootElementName == null ? DEFAULT_ROOT_NAME : rootElementName;
+        }
+        return doc.getDocumentElement().getNodeName();
+    }
+
+    /**
+     * Gets the system ID of the DOCTYPE declaration from the loaded XML document. This is <strong>null</strong> if no document has
+     * been loaded yet or if the document does not contain a DOCTYPE declaration with a system ID.
+     *
+     * @return the system ID.
+     * @since 1.3
+     */
+    public String getSystemID() {
+        return syncReadValue(systemID, false);
+    }
+
+    /**
+     * {@inheritDoc} Stores the passed in locator for the upcoming IO operation.
+     */
+    @Override
+    public void initFileLocator(final FileLocator loc) {
+        locator = loc;
+    }
+
+    /**
+     * Initializes this configuration from an XML document.
+     *
+     * @param docHelper the helper object with the document to be parsed.
+     * @param elemRefs a flag whether references to the XML elements should be set.
+     */
+    private void initProperties(final XMLDocumentHelper docHelper, final boolean elemRefs) {
+        setPublicID(docHelper.getSourcePublicID());
+        setSystemID(docHelper.getSourceSystemID());
+        initProperties(docHelper, elemRefs, docHelper.getDocument().getDocumentElement());
+    }
+
+    private void initProperties(final XMLDocumentHelper docHelper, final boolean elemRefs, final Element element) {
+        final ImmutableNode.Builder rootBuilder = new ImmutableNode.Builder();
+        final MutableObject<String> rootValue = new MutableObject<>();
+        final Map<ImmutableNode, Object> elemRefMap = elemRefs ? new HashMap<>() : null;
+        final Map<String, String> attributes = constructHierarchy(rootBuilder, rootValue, element, elemRefMap, true, 0);
+        attributes.remove(ATTR_SPACE_INTERNAL);
+        final ImmutableNode top = rootBuilder.value(rootValue.get()).addAttributes(attributes).create();
+        getSubConfigurationParentModel().mergeRoot(top, element.getTagName(), elemRefMap, elemRefs ? docHelper : null, this);
     }
 
     /**
      * Sets the text of the root element of a newly created XML Document.
      *
-     * @param doc the document
-     * @param value the new text to be set
+     * @param doc the document.
+     * @param value the new text to be set.
      */
     private void initRootElementText(final Document doc, final Object value) {
         final Element elem = doc.getDocumentElement();
@@ -784,50 +888,35 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
     }
 
     /**
-     * {@inheritDoc} Stores the passed in locator for the upcoming IO operation.
+     * Returns the value of the schemaValidation flag.
+     *
+     * @return the schemaValidation flag.
+     * @since 1.7
      */
-    @Override
-    public void initFileLocator(final FileLocator loc) {
-        locator = loc;
+    public boolean isSchemaValidation() {
+        return schemaValidation;
     }
 
     /**
-     * Loads the configuration from the given reader. Note that the {@code clear()} method is not called, so the properties
-     * contained in the loaded file will be added to the current set of properties.
+     * Returns the value of the validating flag.
      *
-     * @param in the reader
-     * @throws ConfigurationException if an error occurs
-     * @throws IOException if an IO error occurs
+     * @return the validating flag.
+     * @since 1.2
      */
-    @Override
-    public void read(final Reader in) throws ConfigurationException, IOException {
-        load(new InputSource(in));
-    }
-
-    /**
-     * Loads the configuration from the given input stream. This is analogous to {@link #read(Reader)}, but data is read
-     * from a stream. Note that this method will be called most time when reading an XML configuration source. By reading
-     * XML documents directly from an input stream, the file's encoding can be correctly dealt with.
-     *
-     * @param in the input stream
-     * @throws ConfigurationException if an error occurs
-     * @throws IOException if an IO error occurs
-     */
-    @Override
-    public void read(final InputStream in) throws ConfigurationException, IOException {
-        load(new InputSource(in));
+    public boolean isValidating() {
+        return validating;
     }
 
     /**
      * Loads a configuration file from the specified input source.
      *
-     * @param source the input source
-     * @throws ConfigurationException if an error occurs
+     * @param source the input source.
+     * @throws ConfigurationException if an error occurs.
      */
     private void load(final InputSource source) throws ConfigurationException {
         if (locator == null) {
             throw new ConfigurationException(
-                "Load operation not properly " + "initialized! Do not call read(InputStream) directly," + " but use a FileHandler to load a configuration.");
+                "Load operation not properly initialized! Do not call read(InputStream) directly, but use a FileHandler to load a configuration.");
         }
 
         try {
@@ -841,19 +930,178 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
             final Document oldDocument = getDocument();
             initProperties(XMLDocumentHelper.forSourceDocument(newDocument), oldDocument == null);
         } catch (final SAXParseException spe) {
-            throw new ConfigurationException("Error parsing " + source.getSystemId(), spe);
+            throw new ConfigurationException(spe, "Error parsing system ID %s", source.getSystemId());
         } catch (final Exception e) {
-            this.getLogger().debug("Unable to load the configuration: " + e);
+            getLogger().debug("Unable to load the configuration: " + e);
             throw new ConfigurationException("Unable to load the configuration", e);
         }
     }
 
     /**
+     * Loads the configuration from the given XML DOM Element.
+     * <p>
+     * This method can be used to initialize the configuration from an XML element in a document that has already been parsed. This is especially useful if the
+     * configuration is only a part of a larger XML document.
+     * </p>
+     *
+     * @param element the input element.
+     * @throws ConfigurationException if an error occurs.
+     * @since 2.14.0
+     */
+    public void read(final Element element) throws ConfigurationException {
+        try {
+            initProperties(getDocumentHelper(), getDocument() == null, element);
+        } catch (final Exception e) {
+            getLogger().debug("Unable to load the configuration: " + e);
+            throw new ConfigurationException(e, "Unable to load the configuration %s", element);
+        }
+    }
+
+    /**
+     * Loads the configuration from the given input stream. This is analogous to {@link #read(Reader)}, but data is read
+     * from a stream. Note that this method will be called most time when reading an XML configuration source. By reading
+     * XML documents directly from an input stream, the file's encoding can be correctly dealt with.
+     *
+     * @param in the input stream.
+     * @throws ConfigurationException if an error occurs.
+     * @throws IOException if an IO error occurs.
+     */
+    @Override
+    public void read(final InputStream in) throws ConfigurationException, IOException {
+        load(new InputSource(in));
+    }
+
+    /**
+     * Loads the configuration from the given reader. Note that the {@code clear()} method is not called, so the properties
+     * contained in the loaded file will be added to the current set of properties.
+     *
+     * @param in the reader.
+     * @throws ConfigurationException if an error occurs.
+     * @throws IOException if an IO error occurs.
+     */
+    @Override
+    public void read(final Reader in) throws ConfigurationException, IOException {
+        load(new InputSource(in));
+    }
+
+    /**
+     * Sets the {@code DocumentBuilder} object to be used for loading documents. This method makes it possible to specify
+     * the exact document builder. So an application can create a builder, configure it for its special needs, and then pass
+     * it to this method.
+     *
+     * @param documentBuilder the document builder to be used; if undefined, a default builder will be used.
+     * @since 1.2
+     */
+    public void setDocumentBuilder(final DocumentBuilder documentBuilder) {
+        this.documentBuilder = documentBuilder;
+    }
+
+    /**
+     * Sets a new EntityResolver. Setting this will cause RegisterEntityId to have no effect.
+     *
+     * @param resolver The EntityResolver to use.
+     * @since 1.7
+     */
+    public void setEntityResolver(final EntityResolver resolver) {
+        this.entityResolver = resolver;
+    }
+
+    /**
+     * Sets the public ID of the DOCTYPE declaration. When this configuration is saved, a DOCTYPE declaration will be
+     * constructed that contains this public ID.
+     *
+     * @param publicID the public ID.
+     * @since 1.3
+     */
+    public void setPublicID(final String publicID) {
+        syncWrite(() -> this.publicID = publicID, false);
+    }
+
+    /**
+     * Sets the name of the root element. This name is used when this configuration object is stored in an XML file. Note
+     * that setting the name of the root element works only if this configuration has been newly created. If the
+     * configuration was loaded from an XML file, the name cannot be changed and an {@code UnsupportedOperationException}
+     * exception is thrown. Whether this configuration has been loaded from an XML document or not can be found out using
+     * the {@code getDocument()} method.
+     *
+     * @param name the name of the root element.
+     */
+    public void setRootElementName(final String name) {
+        beginRead(true);
+        try {
+            if (getDocument() != null) {
+                throw new UnsupportedOperationException("The name of the root element cannot be changed when loaded from an XML document!");
+            }
+            rootElementName = name;
+        } finally {
+            endRead();
+        }
+    }
+
+    /**
+     * Sets the value of the schemaValidation flag. This flag determines whether DTD or Schema validation should be used.
+     * This flag is evaluated only if no custom {@code DocumentBuilder} was set. If set to true the XML document must
+     * contain a schemaLocation definition that provides resolvable hints to the required schemas.
+     *
+     * @param schemaValidation the validating flag.
+     * @since 1.7
+     */
+    public void setSchemaValidation(final boolean schemaValidation) {
+        this.schemaValidation = schemaValidation;
+        if (schemaValidation) {
+            this.validating = true;
+        }
+    }
+
+    /**
+     * Sets the system ID of the DOCTYPE declaration. When this configuration is saved, a DOCTYPE declaration will be
+     * constructed that contains this system ID.
+     *
+     * @param systemID the system ID.
+     * @since 1.3
+     */
+    public void setSystemID(final String systemID) {
+        syncWrite(() -> this.systemID = systemID, false);
+    }
+
+    /**
+     * Sets the value of the validating flag. This flag determines whether DTD/Schema validation should be performed when
+     * loading XML documents. This flag is evaluated only if no custom {@code DocumentBuilder} was set.
+     *
+     * @param validating the validating flag.
+     * @since 1.2
+     */
+    public void setValidating(final boolean validating) {
+        if (!schemaValidation) {
+            this.validating = validating;
+        }
+    }
+
+    /**
+     * Validate the document against the Schema.
+     *
+     * @throws ConfigurationException if the validation fails.
+     */
+    public void validate() throws ConfigurationException {
+        syncWrite(() -> {
+            try {
+                final StringWriter writer = new StringWriter();
+                final Result result = new StreamResult(writer);
+                XMLDocumentHelper.transform(createTransformer(), new DOMSource(createDocument()), result);
+                final Reader reader = new StringReader(writer.getBuffer().toString());
+                createDocumentBuilder().parse(new InputSource(reader));
+            } catch (final SAXException | IOException | ParserConfigurationException pce) {
+                throw new ConfigurationException("Validation failed", pce);
+            }
+        }, false);
+    }
+
+    /**
      * Saves the configuration to the specified writer.
      *
-     * @param writer the writer used to save the configuration
-     * @throws ConfigurationException if an error occurs
-     * @throws IOException if an IO error occurs
+     * @param writer the writer used to save the configuration.
+     * @throws ConfigurationException if an error occurs.
+     * @throws IOException if an IO error occurs.
      */
     @Override
     public void write(final Writer writer) throws ConfigurationException, IOException {
@@ -872,258 +1120,5 @@ public class XMLConfiguration extends BaseHierarchicalConfiguration implements F
         final Source source = new DOMSource(createDocument());
         final Result result = new StreamResult(writer);
         XMLDocumentHelper.transform(transformer, source, result);
-    }
-
-    /**
-     * Validate the document against the Schema.
-     *
-     * @throws ConfigurationException if the validation fails.
-     */
-    public void validate() throws ConfigurationException {
-        beginWrite(false);
-        try {
-            final Transformer transformer = createTransformer();
-            final Source source = new DOMSource(createDocument());
-            final StringWriter writer = new StringWriter();
-            final Result result = new StreamResult(writer);
-            XMLDocumentHelper.transform(transformer, source, result);
-            final Reader reader = new StringReader(writer.getBuffer().toString());
-            final DocumentBuilder builder = createDocumentBuilder();
-            builder.parse(new InputSource(reader));
-        } catch (final SAXException | IOException | ParserConfigurationException pce) {
-            throw new ConfigurationException("Validation failed", pce);
-        } finally {
-            endWrite();
-        }
-    }
-
-    /**
-     * A concrete {@code BuilderVisitor} that can construct XML documents.
-     */
-    static class XMLBuilderVisitor extends BuilderVisitor {
-        /** Stores the document to be constructed. */
-        private final Document document;
-
-        /** The element mapping. */
-        private final Map<Node, Node> elementMapping;
-
-        /** A mapping for the references for new nodes. */
-        private final Map<ImmutableNode, Element> newElements;
-
-        /** Stores the list delimiter handler . */
-        private final ListDelimiterHandler listDelimiterHandler;
-
-        /**
-         * Creates a new instance of {@code XMLBuilderVisitor}.
-         *
-         * @param docHelper the document helper
-         * @param handler the delimiter handler for properties with multiple values
-         */
-        public XMLBuilderVisitor(final XMLDocumentHelper docHelper, final ListDelimiterHandler handler) {
-            document = docHelper.getDocument();
-            elementMapping = docHelper.getElementMapping();
-            listDelimiterHandler = handler;
-            newElements = new HashMap<>();
-        }
-
-        /**
-         * Processes the specified document, updates element values, and adds new nodes to the hierarchy.
-         *
-         * @param refHandler the {@code ReferenceNodeHandler}
-         */
-        public void processDocument(final ReferenceNodeHandler refHandler) {
-            updateAttributes(refHandler.getRootNode(), document.getDocumentElement());
-            NodeTreeWalker.INSTANCE.walkDFS(refHandler.getRootNode(), this, refHandler);
-        }
-
-        /**
-         * Updates the current XML document regarding removed nodes. The elements associated with removed nodes are removed from
-         * the document.
-         *
-         * @param refHandler the {@code ReferenceNodeHandler}
-         */
-        public void handleRemovedNodes(final ReferenceNodeHandler refHandler) {
-            refHandler.removedReferences().stream().filter(Node.class::isInstance).forEach(ref -> removeReference(elementMapping.get(ref)));
-        }
-
-        /**
-         * {@inheritDoc} This implementation ensures that the correct XML element is created and inserted between the given
-         * siblings.
-         */
-        @Override
-        protected void insert(final ImmutableNode newNode, final ImmutableNode parent, final ImmutableNode sibling1, final ImmutableNode sibling2,
-            final ReferenceNodeHandler refHandler) {
-            if (XMLListReference.isListNode(newNode, refHandler)) {
-                return;
-            }
-
-            final Element elem = document.createElement(newNode.getNodeName());
-            newElements.put(newNode, elem);
-            updateAttributes(newNode, elem);
-            if (newNode.getValue() != null) {
-                final String txt = String.valueOf(listDelimiterHandler.escape(newNode.getValue(), ListDelimiterHandler.NOOP_TRANSFORMER));
-                elem.appendChild(document.createTextNode(txt));
-            }
-            if (sibling2 == null) {
-                getElement(parent, refHandler).appendChild(elem);
-            } else if (sibling1 != null) {
-                getElement(parent, refHandler).insertBefore(elem, getElement(sibling1, refHandler).getNextSibling());
-            } else {
-                getElement(parent, refHandler).insertBefore(elem, getElement(parent, refHandler).getFirstChild());
-            }
-        }
-
-        /**
-         * {@inheritDoc} This implementation determines the XML element associated with the given node. Then this element's
-         * value and attributes are set accordingly.
-         */
-        @Override
-        protected void update(final ImmutableNode node, final Object reference, final ReferenceNodeHandler refHandler) {
-            if (XMLListReference.isListNode(node, refHandler)) {
-                if (XMLListReference.isFirstListItem(node, refHandler)) {
-                    final String value = XMLListReference.listValue(node, refHandler, listDelimiterHandler);
-                    updateElement(node, refHandler, value);
-                }
-            } else {
-                final Object value = listDelimiterHandler.escape(refHandler.getValue(node), ListDelimiterHandler.NOOP_TRANSFORMER);
-                updateElement(node, refHandler, value);
-            }
-        }
-
-        private void updateElement(final ImmutableNode node, final ReferenceNodeHandler refHandler, final Object value) {
-            final Element element = getElement(node, refHandler);
-            updateElement(element, value);
-            updateAttributes(node, element);
-        }
-
-        /**
-         * Updates the node's value if it represents an element node.
-         *
-         * @param element the element
-         * @param value the new value
-         */
-        private void updateElement(final Element element, final Object value) {
-            Text txtNode = findTextNodeForUpdate(element);
-            if (value == null) {
-                // remove text
-                if (txtNode != null) {
-                    element.removeChild(txtNode);
-                }
-            } else {
-                final String newValue = String.valueOf(value);
-                if (txtNode == null) {
-                    txtNode = document.createTextNode(newValue);
-                    if (element.getFirstChild() != null) {
-                        element.insertBefore(txtNode, element.getFirstChild());
-                    } else {
-                        element.appendChild(txtNode);
-                    }
-                } else {
-                    txtNode.setNodeValue(newValue);
-                }
-            }
-        }
-
-        /**
-         * Updates the associated XML elements when a node is removed.
-         *
-         * @param element the element to be removed
-         */
-        private void removeReference(final Node element) {
-            final Node parentElem = element.getParentNode();
-            if (parentElem != null) {
-                parentElem.removeChild(element);
-            }
-        }
-
-        /**
-         * Helper method for accessing the element of the specified node.
-         *
-         * @param node the node
-         * @param refHandler the {@code ReferenceNodeHandler}
-         * @return the element of this node
-         */
-        private Element getElement(final ImmutableNode node, final ReferenceNodeHandler refHandler) {
-            final Element elementNew = newElements.get(node);
-            if (elementNew != null) {
-                return elementNew;
-            }
-
-            // special treatment for root node of the hierarchy
-            final Object reference = refHandler.getReference(node);
-            final Node element;
-            if (reference instanceof XMLDocumentHelper) {
-                element = ((XMLDocumentHelper) reference).getDocument().getDocumentElement();
-            } else if (reference instanceof XMLListReference) {
-                element = ((XMLListReference) reference).getElement();
-            } else {
-                element = (Node) reference;
-            }
-            return element != null ? (Element) elementMapping.get(element) : document.getDocumentElement();
-        }
-
-        /**
-         * Helper method for updating the values of all attributes of the specified node.
-         *
-         * @param node the affected node
-         * @param elem the element that is associated with this node
-         */
-        private static void updateAttributes(final ImmutableNode node, final Element elem) {
-            if (node != null && elem != null) {
-                clearAttributes(elem);
-                node.getAttributes().forEach((k, v) -> {
-                    if (v != null) {
-                        elem.setAttribute(k, v.toString());
-                    }
-                });
-            }
-        }
-
-        /**
-         * Removes all attributes of the given element.
-         *
-         * @param elem the element
-         */
-        private static void clearAttributes(final Element elem) {
-            final NamedNodeMap attributes = elem.getAttributes();
-            for (int i = 0; i < attributes.getLength(); i++) {
-                elem.removeAttribute(attributes.item(i).getNodeName());
-            }
-        }
-
-        /**
-         * Returns the only text node of an element for update. This method is called when the element's text changes. Then all
-         * text nodes except for the first are removed. A reference to the first is returned or <b>null</b> if there is no text
-         * node at all.
-         *
-         * @param elem the element
-         * @return the first and only text node
-         */
-        private static Text findTextNodeForUpdate(final Element elem) {
-            Text result = null;
-            // Find all Text nodes
-            final NodeList children = elem.getChildNodes();
-            final Collection<Node> textNodes = new ArrayList<>();
-            for (int i = 0; i < children.getLength(); i++) {
-                final Node nd = children.item(i);
-                if (nd instanceof Text) {
-                    if (result == null) {
-                        result = (Text) nd;
-                    } else {
-                        textNodes.add(nd);
-                    }
-                }
-            }
-
-            // We don't want CDATAs
-            if (result instanceof CDATASection) {
-                textNodes.add(result);
-                result = null;
-            }
-
-            // Remove all but the first Text node
-            textNodes.forEach(elem::removeChild);
-            return result;
-        }
     }
 }

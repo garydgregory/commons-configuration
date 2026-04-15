@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +18,8 @@
 package org.apache.commons.configuration2;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -32,6 +32,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 
@@ -40,6 +41,7 @@ import com.fasterxml.jackson.databind.type.MapType;
  * {@link JSONConfiguration} itself
  */
 public class TestJSONConfiguration {
+
     /** The files that we test with. */
     private final String testJson = ConfigurationAssert.getTestFile("test.json").getAbsolutePath();
 
@@ -52,7 +54,7 @@ public class TestJSONConfiguration {
     }
 
     @Test
-    public void testCopyConstructor() {
+    void testCopyConstructor() {
         final BaseHierarchicalConfiguration c = new BaseHierarchicalConfiguration();
         c.addProperty("foo", "bar");
 
@@ -63,53 +65,53 @@ public class TestJSONConfiguration {
     /**
      * Tests CONFIGURATION-793.
      */
-    public void testGetList_nested_with_list() {
+    void testGetListNestedWithList() {
         assertEquals(Arrays.asList("col1", "col2"), jsonConfiguration.getList(String.class, "key4.key5"));
     }
 
     @Test
-    public void testGetProperty_dictionary() {
+    void testGetPropertyDictionary() {
         assertEquals("Martin D'vloper", jsonConfiguration.getProperty("martin.name"));
         assertEquals("Developer", jsonConfiguration.getProperty("martin.job"));
         assertEquals("Elite", jsonConfiguration.getProperty("martin.skill"));
     }
 
     @Test
-    public void testGetProperty_dictionaryInList() {
+    void testGetPropertyDictionaryInList() {
         assertEquals("UK", jsonConfiguration.getString("capitals(1).country"));
         assertEquals("Washington", jsonConfiguration.getString("capitals(0).capital"));
     }
 
     @Test
-    public void testGetProperty_integer() {
+    void testGetPropertyInteger() {
         final Object property = jsonConfiguration.getProperty("int1");
         assertInstanceOf(Integer.class, property);
         assertEquals(37, property);
     }
 
     @Test
-    public void testGetProperty_nested() {
+    void testGetPropertyNested() {
         assertEquals("value23", jsonConfiguration.getProperty("key2.key3"));
     }
 
     @Test
-    public void testGetProperty_nested_with_list() {
+    void testGetPropertyNestedWithList() {
         assertEquals(Arrays.asList("col1", "col2"), jsonConfiguration.getProperty("key4.key5"));
     }
 
     @Test
-    public void testGetProperty_simple() {
+    void testGetPropertySimple() {
         assertEquals("value1", jsonConfiguration.getProperty("key1"));
     }
 
     @Test
-    public void testGetProperty_subset() {
+    void testGetPropertySubset() {
         final Configuration subset = jsonConfiguration.subset("key4");
         assertEquals(Arrays.asList("col1", "col2"), subset.getProperty("key5"));
     }
 
     @Test
-    public void testGetProperty_very_nested_properties() {
+    void testGetPropertyVeryNestedProperties() {
         final Object property = jsonConfiguration.getProperty("very.nested.properties");
         assertEquals(Arrays.asList("nested1", "nested2", "nested3"), property);
     }
@@ -119,7 +121,7 @@ public class TestJSONConfiguration {
      */
     @Disabled
     @Test
-    public void testListOfObjects() {
+    void testListOfObjects() {
         final Configuration subset = jsonConfiguration.subset("capitals");
         assertNotNull(subset);
         assertEquals(2, subset.size());
@@ -135,7 +137,7 @@ public class TestJSONConfiguration {
     }
 
     @Test
-    public void testSave() throws IOException, ConfigurationException {
+    void testSave() throws IOException, ConfigurationException {
         // save the Configuration as a String...
         final StringWriter sw = new StringWriter();
         jsonConfiguration.write(sw);
@@ -148,7 +150,7 @@ public class TestJSONConfiguration {
         assertEquals(7, parsed.entrySet().size());
         assertEquals("value1", parsed.get("key1"));
 
-        final Map<?, ?> key2 = (Map<? , ?>) parsed.get("key2");
+        final Map<?, ?> key2 = (Map<?, ?>) parsed.get("key2");
         assertEquals("value23", key2.get("key3"));
 
         final List<?> key5 = (List<?>) ((Map<?, ?>) parsed.get("key4")).get("key5");

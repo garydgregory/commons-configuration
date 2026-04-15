@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,14 +32,14 @@ import org.junit.jupiter.api.Test;
 
 /**
  * A test class for {@code BasicConfigurationBuilder} with tests related to events fired by the builder.
- *
  */
 public class TestBasicConfigurationBuilderEvents {
+
     /**
      * Tests whether the base type for builder events is correctly configured.
      */
     @Test
-    public void testBuilderEventType() {
+    void testBuilderEventType() {
         final EventType<ConfigurationBuilderEvent> builderEventType = ConfigurationBuilderEvent.ANY;
         assertEquals(Event.ANY, builderEventType.getSuperType());
     }
@@ -48,7 +48,7 @@ public class TestBasicConfigurationBuilderEvents {
      * Tests whether builder reset events are correctly distributed.
      */
     @Test
-    public void testBuilderResetEvent() {
+    void testBuilderResetEvent() {
         final BuilderEventListenerImpl listener = new BuilderEventListenerImpl();
         final BasicConfigurationBuilder<PropertiesConfiguration> builder = new BasicConfigurationBuilder<>(PropertiesConfiguration.class);
         builder.addEventListener(ConfigurationBuilderEvent.RESET, listener);
@@ -66,7 +66,7 @@ public class TestBasicConfigurationBuilderEvents {
      * Tests whether the reset builder event type is correctly configured.
      */
     @Test
-    public void testBuilderResetEventType() {
+    void testBuilderResetEventType() {
         final EventType<ConfigurationBuilderEvent> builderResetType = ConfigurationBuilderEvent.RESET;
         assertEquals(ConfigurationBuilderEvent.ANY, builderResetType.getSuperType());
     }
@@ -75,7 +75,7 @@ public class TestBasicConfigurationBuilderEvents {
      * Tests whether a configuration request event is generated.
      */
     @Test
-    public void testConfigurationRequestEvent() throws ConfigurationException {
+    void testConfigurationRequestEvent() throws ConfigurationException {
         final BasicConfigurationBuilder<PropertiesConfiguration> builder = new BasicConfigurationBuilder<>(PropertiesConfiguration.class);
         builder.getConfiguration();
         final BuilderEventListenerImpl listener = new BuilderEventListenerImpl();
@@ -91,7 +91,7 @@ public class TestBasicConfigurationBuilderEvents {
      * Tests whether the configuration request event type is correctly configured.
      */
     @Test
-    public void testConfigurationRequestEventType() {
+    void testConfigurationRequestEventType() {
         final EventType<ConfigurationBuilderEvent> eventType = ConfigurationBuilderEvent.CONFIGURATION_REQUEST;
         assertEquals(ConfigurationBuilderEvent.ANY, eventType.getSuperType());
     }
@@ -100,7 +100,7 @@ public class TestBasicConfigurationBuilderEvents {
      * Tests whether an event listener can be removed again.
      */
     @Test
-    public void testRemoveEventListener() {
+    void testRemoveEventListener() {
         final BuilderEventListenerImpl listener = new BuilderEventListenerImpl();
         final BasicConfigurationBuilder<PropertiesConfiguration> builder = new BasicConfigurationBuilder<>(PropertiesConfiguration.class);
         builder.addEventListener(ConfigurationBuilderEvent.RESET, listener);
@@ -116,7 +116,7 @@ public class TestBasicConfigurationBuilderEvents {
      * Tests removeEventListener() for a non-existing listener.
      */
     @Test
-    public void testRemoveEventListenerNotExisting() {
+    void testRemoveEventListenerNotExisting() {
         final BasicConfigurationBuilder<PropertiesConfiguration> builder = new BasicConfigurationBuilder<>(PropertiesConfiguration.class);
         final BuilderEventListenerImpl listener = new BuilderEventListenerImpl();
         builder.addEventListener(ConfigurationBuilderEvent.RESET, listener);
@@ -127,7 +127,7 @@ public class TestBasicConfigurationBuilderEvents {
      * Tests the use case that a listener on the request event triggers a reset of the builder.
      */
     @Test
-    public void testResetOnConfigurationRequestEvent() throws ConfigurationException {
+    void testResetOnConfigurationRequestEvent() throws ConfigurationException {
         final BasicConfigurationBuilder<PropertiesConfiguration> builder = new BasicConfigurationBuilder<>(PropertiesConfiguration.class);
         final PropertiesConfiguration configuration = builder.getConfiguration();
         final BuilderEventListenerImpl listener = new BuilderEventListenerImpl();
@@ -144,7 +144,7 @@ public class TestBasicConfigurationBuilderEvents {
      * Tests whether a result created event is correctly generated.
      */
     @Test
-    public void testResultCreatedEvent() throws ConfigurationException {
+    void testResultCreatedEvent() throws ConfigurationException {
         final BasicConfigurationBuilder<PropertiesConfiguration> builder = new BasicConfigurationBuilder<>(PropertiesConfiguration.class);
         final BuilderEventListenerImpl listener = new BuilderEventListenerImpl();
         builder.addEventListener(ConfigurationBuilderEvent.ANY, listener);
@@ -160,7 +160,7 @@ public class TestBasicConfigurationBuilderEvents {
      * Tries to create an event about a newly created configuration without a configuration instance.
      */
     @Test
-    public void testResultCreatedEventNoConfiguration() {
+    void testResultCreatedEventNoConfiguration() {
         final BasicConfigurationBuilder<Configuration> builder = new BasicConfigurationBuilder<>(Configuration.class);
         assertThrows(IllegalArgumentException.class,
                 () -> new ConfigurationBuilderResultCreatedEvent(builder, ConfigurationBuilderResultCreatedEvent.RESULT_CREATED, null));
@@ -170,7 +170,7 @@ public class TestBasicConfigurationBuilderEvents {
      * Tests whether the type of a result created event is correctly configured.
      */
     @Test
-    public void testResultCreatedEventType() {
+    void testResultCreatedEventType() {
         assertEquals(ConfigurationBuilderEvent.ANY, ConfigurationBuilderResultCreatedEvent.RESULT_CREATED.getSuperType());
     }
 }

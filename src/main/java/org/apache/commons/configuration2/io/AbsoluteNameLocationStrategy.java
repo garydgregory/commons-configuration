@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,6 +34,19 @@ import org.apache.commons.lang3.StringUtils;
  * @since 2.0
  */
 public class AbsoluteNameLocationStrategy implements FileLocationStrategy {
+
+    /**
+     * A singleton instance of this strategy.
+     */
+    static final AbsoluteNameLocationStrategy INSTANCE = new AbsoluteNameLocationStrategy();
+
+    /**
+     * Constructs a new instance.
+     */
+    public AbsoluteNameLocationStrategy() {
+        // empty
+    }
+
     /**
      * {@inheritDoc} This implementation constructs a {@code File} object from the locator's file name (if defined). If this
      * results in an absolute file name pointing to an existing file, the corresponding URL is returned.

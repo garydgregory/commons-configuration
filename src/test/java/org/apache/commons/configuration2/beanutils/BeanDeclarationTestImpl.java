@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,9 +22,8 @@ import java.util.Map;
 /**
  * A test implementation of the BeanDeclaration interface. This implementation allows setting the values directly, which
  * should be returned by the methods required by the BeanDeclaration interface. It is used by multiple test classes.
- *
  */
-class BeanDeclarationTestImpl implements BeanDeclaration {
+final class BeanDeclarationTestImpl implements BeanDeclaration {
     private String beanClassName;
 
     private String beanFactoryName;

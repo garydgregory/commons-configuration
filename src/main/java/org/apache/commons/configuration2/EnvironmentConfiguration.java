@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,7 +33,7 @@ import java.util.HashMap;
  *
  * <p>
  * Usage of this class is easy: After an instance has been created the get methods provided by the {@code Configuration}
- * interface can be used for querying environment variables, e.g.:
+ * interface can be used for querying environment variables, for example:
  * </p>
  *
  * <pre>
@@ -44,6 +44,7 @@ import java.util.HashMap;
  * @since 1.5
  */
 public class EnvironmentConfiguration extends MapConfiguration {
+
     /**
      * Create a Configuration based on the environment variables.
      *
@@ -66,6 +67,15 @@ public class EnvironmentConfiguration extends MapConfiguration {
     }
 
     /**
+     * Removes all properties from this configuration. Because this configuration is read-only, this operation is not
+     * allowed and will cause an exception.
+     */
+    @Override
+    protected void clearInternal() {
+        throw new UnsupportedOperationException("EnvironmentConfiguration is read-only!");
+    }
+
+    /**
      * Removes a property from this configuration. Because this configuration is read-only, this operation is not allowed
      * and will cause an exception.
      *
@@ -73,15 +83,6 @@ public class EnvironmentConfiguration extends MapConfiguration {
      */
     @Override
     protected void clearPropertyDirect(final String key) {
-        throw new UnsupportedOperationException("EnvironmentConfiguration is read-only!");
-    }
-
-    /**
-     * Removes all properties from this configuration. Because this configuration is read-only, this operation is not
-     * allowed and will cause an exception.
-     */
-    @Override
-    protected void clearInternal() {
         throw new UnsupportedOperationException("EnvironmentConfiguration is read-only!");
     }
 }

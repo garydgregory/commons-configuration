@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,9 +37,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code BaseHierarchicalConfiguration}.
- *
  */
 public class TestHierarchicalConfiguration {
+
     /** Constant for a changed name. */
     private static final String NEW_NAME = "alteredName";
 
@@ -135,7 +135,7 @@ public class TestHierarchicalConfiguration {
      * Tests the result of childConfigurationsAt() if the key does not point to an existing node.
      */
     @Test
-    public void testChildConfigurationsAtNotFound() {
+    void testChildConfigurationsAtNotFound() {
         assertTrue(config.childConfigurationsAt("not.existing.key").isEmpty());
     }
 
@@ -143,7 +143,7 @@ public class TestHierarchicalConfiguration {
      * Tests the result of childConfigurationsAt() if the key selects multiple nodes.
      */
     @Test
-    public void testChildConfigurationsAtNoUniqueKey() {
+    void testChildConfigurationsAtNoUniqueKey() {
         assertTrue(config.childConfigurationsAt("tables.table").isEmpty());
     }
 
@@ -151,7 +151,7 @@ public class TestHierarchicalConfiguration {
      * Tests whether sub configurations for the children of a given node can be queried if no updates are propagated.
      */
     @Test
-    public void testChildConfigurationsAtNoUpdates() {
+    void testChildConfigurationsAtNoUpdates() {
         checkChildConfigurationsAtWithUpdates(false, NodeStructureHelper.table(0));
     }
 
@@ -159,12 +159,12 @@ public class TestHierarchicalConfiguration {
      * Tests whether sub configurations for the children of a given node can be queried that support updates.
      */
     @Test
-    public void testChildConfigurationsAtWithUpdates() {
+    void testChildConfigurationsAtWithUpdates() {
         checkChildConfigurationsAtWithUpdates(true, NEW_NAME);
     }
 
     @Test
-    public void testClone() {
+    void testClone() {
         final Configuration copy = (Configuration) config.clone();
         assertInstanceOf(BaseHierarchicalConfiguration.class, copy);
         config.setProperty("tables.table(0).name", "changed table name");
@@ -175,7 +175,7 @@ public class TestHierarchicalConfiguration {
      * Tests configurationAt() if the passed in key selects an attribute result.
      */
     @Test
-    public void testConfigurationAtAttributeNode() {
+    void testConfigurationAtAttributeNode() {
         checkConfigurationAtAttributeNode(false);
     }
 
@@ -183,7 +183,7 @@ public class TestHierarchicalConfiguration {
      * Tests configurationAt() if the passed in key selects an attribute result and the updates flag is set.
      */
     @Test
-    public void testConfigurationAtAttributeNodeWithUpdates() {
+    void testConfigurationAtAttributeNodeWithUpdates() {
         checkConfigurationAtAttributeNode(true);
     }
 
@@ -192,7 +192,7 @@ public class TestHierarchicalConfiguration {
      * configuration.
      */
     @Test
-    public void testConfigurationAtClearAndDetach() {
+    void testConfigurationAtClearAndDetach() {
         config.addProperty("test.sub.test", "success");
         config.addProperty("test.other", "check");
         final HierarchicalConfiguration<ImmutableNode> sub = config.configurationAt("test.sub", true);
@@ -207,7 +207,7 @@ public class TestHierarchicalConfiguration {
      * Tests the configurationAt() method if the passed in key selects multiple nodes. This should cause an exception.
      */
     @Test
-    public void testConfigurationAtMultipleNodes() {
+    void testConfigurationAtMultipleNodes() {
         assertThrows(ConfigurationRuntimeException.class, () -> config.configurationAt("tables.table.name"));
     }
 
@@ -215,7 +215,7 @@ public class TestHierarchicalConfiguration {
      * Tests configurationAt() if the passed in key selects multiple nodes and the update flag is set.
      */
     @Test
-    public void testConfigurationAtMultipleNodesWithUpdates() {
+    void testConfigurationAtMultipleNodesWithUpdates() {
         assertThrows(ConfigurationRuntimeException.class, () -> config.configurationAt("tables.table.name", true));
     }
 
@@ -223,7 +223,7 @@ public class TestHierarchicalConfiguration {
      * Tests whether a configuration obtained via configurationAt() contains the expected properties.
      */
     @Test
-    public void testConfigurationAtReadAccess() {
+    void testConfigurationAtReadAccess() {
         final HierarchicalConfiguration<ImmutableNode> subConfig = config.configurationAt("tables.table(1)");
         assertEquals(NodeStructureHelper.table(1), subConfig.getString("name"));
         final List<Object> lstFlds = subConfig.getList("fields.field.name");
@@ -239,7 +239,7 @@ public class TestHierarchicalConfiguration {
      * Tests the configurationAt() method if the passed in key does not exist.
      */
     @Test
-    public void testConfigurationAtUnknownSubTree() {
+    void testConfigurationAtUnknownSubTree() {
         assertThrows(ConfigurationRuntimeException.class, () -> config.configurationAt("non.existing.key"));
     }
 
@@ -247,7 +247,7 @@ public class TestHierarchicalConfiguration {
      * Tests configurationAt() for a non existing key if the update flag is set.
      */
     @Test
-    public void testConfigurationAtUnknownSubTreeWithUpdates() {
+    void testConfigurationAtUnknownSubTreeWithUpdates() {
         assertThrows(ConfigurationRuntimeException.class, () -> config.configurationAt("non.existing.key", true));
     }
 
@@ -255,7 +255,7 @@ public class TestHierarchicalConfiguration {
      * Tests an update operation on a parent configuration if the sub configuration is connected.
      */
     @Test
-    public void testConfigurationAtUpdateParentConnected() {
+    void testConfigurationAtUpdateParentConnected() {
         final HierarchicalConfiguration<ImmutableNode> subConfig = config.configurationAt("tables.table(1)", true);
         config.setProperty("tables.table(1).fields.field(2).name", "testField");
         assertEquals("testField", subConfig.getString("fields.field(2).name"));
@@ -265,7 +265,7 @@ public class TestHierarchicalConfiguration {
      * Tests an update operation on a parent configuration if the sub configuration is independent.
      */
     @Test
-    public void testConfigurationAtUpdateParentIndependent() {
+    void testConfigurationAtUpdateParentIndependent() {
         final HierarchicalConfiguration<ImmutableNode> subConfig = config.configurationAt("tables.table(1)");
         config.setProperty("tables.table(1).fields.field(2).name", "testField");
         assertEquals(NodeStructureHelper.field(1, 2), subConfig.getString("fields.field(2).name"));
@@ -275,7 +275,7 @@ public class TestHierarchicalConfiguration {
      * Tests an update operation on a sub configuration which is connected to its parent.
      */
     @Test
-    public void testConfigurationAtUpdateSubConfigConnected() {
+    void testConfigurationAtUpdateSubConfigConnected() {
         final HierarchicalConfiguration<ImmutableNode> subConfig = config.configurationAt("tables.table(1)", true);
         subConfig.setProperty("name", "testTable");
         assertEquals("testTable", config.getString("tables.table(1).name"));
@@ -285,7 +285,7 @@ public class TestHierarchicalConfiguration {
      * Tests an update operation on a sub configuration which is independent on its parent.
      */
     @Test
-    public void testConfigurationAtUpdateSubConfigIndependent() {
+    void testConfigurationAtUpdateSubConfigIndependent() {
         final HierarchicalConfiguration<ImmutableNode> subConfig = config.configurationAt("tables.table(1)");
         subConfig.setProperty("name", "testTable");
         assertEquals("testTable", subConfig.getString("name"));
@@ -296,7 +296,7 @@ public class TestHierarchicalConfiguration {
      * Tests whether a connected configuration is correctly initialized with properties of its parent.
      */
     @Test
-    public void testConfigurationAtWithUpdateInitialized() {
+    void testConfigurationAtWithUpdateInitialized() {
         final String key = "tables.table";
         config.setListDelimiterHandler(new DefaultListDelimiterHandler(';'));
         config.setThrowExceptionOnMissing(true);
@@ -310,7 +310,7 @@ public class TestHierarchicalConfiguration {
      * Tests configurationsAt() if an attribute key is passed in.
      */
     @Test
-    public void testConfigurationsAtAttributeKey() {
+    void testConfigurationsAtAttributeKey() {
         final String attrKey = "tables.table(0)[@type]";
         config.addProperty(attrKey, "user");
         assertTrue(config.configurationsAt(attrKey).isEmpty());
@@ -320,15 +320,15 @@ public class TestHierarchicalConfiguration {
      * Tests the configurationsAt() method when the passed in key does not select any sub nodes.
      */
     @Test
-    public void testConfigurationsAtEmpty() {
+    void testConfigurationsAtEmpty() {
         assertTrue(config.configurationsAt("unknown.key").isEmpty());
     }
 
     /**
-     * Tests the configurationsAt() method if the sub configurations are not connected..
+     * Tests the configurationsAt() method if the sub configurations are not connected.
      */
     @Test
-    public void testConfigurationsAtNoUpdate() {
+    void testConfigurationsAtNoUpdate() {
         checkConfigurationsAtWithUpdate(false, NodeStructureHelper.field(1, 0));
     }
 
@@ -336,7 +336,7 @@ public class TestHierarchicalConfiguration {
      * Tests configurationsAt() if the sub configurations are connected.
      */
     @Test
-    public void testConfigurationsAtWithUpdates() {
+    void testConfigurationsAtWithUpdates() {
         checkConfigurationsAtWithUpdate(true, NEW_NAME);
     }
 
@@ -344,7 +344,7 @@ public class TestHierarchicalConfiguration {
      * Tests whether immutable configurations for the children of a given node can be queried.
      */
     @Test
-    public void testImmutableChildConfigurationsAt() {
+    void testImmutableChildConfigurationsAt() {
         final List<ImmutableHierarchicalConfiguration> children = config.immutableChildConfigurationsAt("tables.table(0)");
         assertEquals(2, children.size());
         final ImmutableHierarchicalConfiguration c1 = children.get(0);
@@ -359,7 +359,7 @@ public class TestHierarchicalConfiguration {
      * Tests whether an immutable configuration for a sub tree can be obtained.
      */
     @Test
-    public void testImmutableConfigurationAt() {
+    void testImmutableConfigurationAt() {
         final ImmutableHierarchicalConfiguration subConfig = config.immutableConfigurationAt("tables.table(1)");
         assertEquals(NodeStructureHelper.table(1), subConfig.getString("name"));
         final List<Object> lstFlds = subConfig.getList("fields.field.name");
@@ -375,7 +375,7 @@ public class TestHierarchicalConfiguration {
      * Tests whether the support updates flag is taken into account when creating an immutable sub configuration.
      */
     @Test
-    public void testImmutableConfigurationAtSupportUpdates() {
+    void testImmutableConfigurationAtSupportUpdates() {
         final String newTableName = NodeStructureHelper.table(1) + "_other";
         final ImmutableHierarchicalConfiguration subConfig = config.immutableConfigurationAt("tables.table(1)", true);
         config.addProperty("tables.table(-1).name", newTableName);
@@ -387,7 +387,7 @@ public class TestHierarchicalConfiguration {
      * Tests whether a list of immutable sub configurations can be queried.
      */
     @Test
-    public void testImmutableConfigurationsAt() {
+    void testImmutableConfigurationsAt() {
         final List<ImmutableHierarchicalConfiguration> lstFlds = config.immutableConfigurationsAt("tables.table(1).fields.field");
         checkSubConfigurations(lstFlds);
     }
@@ -396,7 +396,7 @@ public class TestHierarchicalConfiguration {
      * Tests the copy constructor.
      */
     @Test
-    public void testInitCopy() {
+    void testInitCopy() {
         final BaseHierarchicalConfiguration copy = new BaseHierarchicalConfiguration(config);
         checkContent(copy);
     }
@@ -405,7 +405,7 @@ public class TestHierarchicalConfiguration {
      * Tests the copy constructor when a null reference is passed.
      */
     @Test
-    public void testInitCopyNull() {
+    void testInitCopyNull() {
         final BaseHierarchicalConfiguration copy = new BaseHierarchicalConfiguration((HierarchicalConfiguration<ImmutableNode>) null);
         assertTrue(copy.isEmpty());
     }
@@ -414,7 +414,7 @@ public class TestHierarchicalConfiguration {
      * Tests whether the nodes of a copied configuration are independent from the source configuration.
      */
     @Test
-    public void testInitCopyUpdate() {
+    void testInitCopyUpdate() {
         final BaseHierarchicalConfiguration copy = new BaseHierarchicalConfiguration(config);
         config.setProperty("tables.table(0).name", "NewTable");
         checkContent(copy);
@@ -424,7 +424,7 @@ public class TestHierarchicalConfiguration {
      * Tests obtaining a configuration with all variables substituted.
      */
     @Test
-    public void testInterpolatedConfiguration() {
+    void testInterpolatedConfiguration() {
         config.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         final BaseHierarchicalConfiguration c = (BaseHierarchicalConfiguration) InterpolationTestHelper.testInterpolatedConfiguration(config);
 
@@ -436,7 +436,7 @@ public class TestHierarchicalConfiguration {
      * Tests whether interpolation works on an empty configuration.
      */
     @Test
-    public void testInterpolatedConfigurationEmpty() {
+    void testInterpolatedConfigurationEmpty() {
         config = new BaseHierarchicalConfiguration();
         assertTrue(config.interpolatedConfiguration().isEmpty());
     }
@@ -445,7 +445,7 @@ public class TestHierarchicalConfiguration {
      * Tests interpolation with a subset.
      */
     @Test
-    public void testInterpolationSubset() {
+    void testInterpolationSubset() {
         InterpolationTestHelper.testInterpolationSubset(config);
     }
 
@@ -453,7 +453,7 @@ public class TestHierarchicalConfiguration {
      * Tests whether interpolation with a subset configuration works over multiple layers.
      */
     @Test
-    public void testInterpolationSubsetMultipleLayers() {
+    void testInterpolationSubsetMultipleLayers() {
         config.clear();
         config.addProperty("var", "value");
         config.addProperty("prop2.prop[@attr]", "${var}");
@@ -463,7 +463,7 @@ public class TestHierarchicalConfiguration {
     }
 
     @Test
-    public void testSubset() {
+    void testSubset() {
         // test the subset on the first table
         Configuration subset = config.subset("tables.table(0)");
         assertEquals(NodeStructureHelper.table(0), subset.getProperty("name"));
@@ -503,7 +503,7 @@ public class TestHierarchicalConfiguration {
      * Tests subset() if the passed in key selects an attribute.
      */
     @Test
-    public void testSubsetAttributeResult() {
+    void testSubsetAttributeResult() {
         final String key = "tables.table(0)[@type]";
         config.addProperty(key, "system");
         final BaseHierarchicalConfiguration subset = (BaseHierarchicalConfiguration) config.subset(key);
@@ -516,7 +516,7 @@ public class TestHierarchicalConfiguration {
      * only if exactly one of the selected nodes has a value. Related to CONFIGURATION-295.
      */
     @Test
-    public void testSubsetMultipleNodesWithValues() {
+    void testSubsetMultipleNodesWithValues() {
         config.setProperty("tables.table(0).fields", "My fields");
         Configuration subset = config.subset("tables.table.fields");
         assertEquals("My fields", subset.getString(""));
@@ -530,7 +530,7 @@ public class TestHierarchicalConfiguration {
      * to CONFIGURATION-295.
      */
     @Test
-    public void testSubsetNodeWithValue() {
+    void testSubsetNodeWithValue() {
         config.setProperty("tables.table(0).fields", "My fields");
         final Configuration subset = config.subset("tables.table(0).fields");
         assertEquals(NodeStructureHelper.field(0, 0), subset.getString("field(0).name"));

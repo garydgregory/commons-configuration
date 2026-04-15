@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +18,6 @@
 package org.apache.commons.configuration2.plist;
 
 import static org.apache.commons.configuration2.TempDirUtils.newFile;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -34,6 +32,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -53,6 +52,7 @@ import org.junit.jupiter.api.io.TempDir;
 /**
  */
 public class TestXMLPropertyListConfiguration {
+
     /**
      * Loads a test configuration.
      *
@@ -84,7 +84,7 @@ public class TestXMLPropertyListConfiguration {
             values.append("<string>").append(v).append("</string>");
         }
         final String content = out.toString().replaceAll("[ \n\r]", "");
-        assertThat(content, containsString(String.format("<key>array</key><array>%s</array>", values)));
+        assertTrue(content.contains(String.format("<key>array</key><array>%s</array>", values)));
     }
 
     /**
@@ -107,7 +107,7 @@ public class TestXMLPropertyListConfiguration {
      * Tests whether an array can be added correctly. This test is related to CONFIGURATION-427.
      */
     @Test
-    public void testAddArray() throws ConfigurationException {
+    void testAddArray() throws ConfigurationException {
         final Object[] elems = {"arrayElem1", "arrayElem2", "arrayElem3"};
         config = new XMLPropertyListConfiguration();
         config.addProperty("array", elems);
@@ -119,7 +119,7 @@ public class TestXMLPropertyListConfiguration {
      * Ensure that addProperty doesn't alter an array of byte
      */
     @Test
-    public void testAddDataProperty() throws Exception {
+    void testAddDataProperty() throws Exception {
         final File savedFile = newFile(tempFolder);
         final byte[] expected = {1, 2, 3, 4};
         config = new XMLPropertyListConfiguration();
@@ -139,7 +139,7 @@ public class TestXMLPropertyListConfiguration {
      * Tests whether a list can be added correctly. This test is related to CONFIGURATION-427.
      */
     @Test
-    public void testAddList() throws ConfigurationException {
+    void testAddList() throws ConfigurationException {
         final List<String> elems = Arrays.asList("element1", "element2", "anotherElement");
         config = new XMLPropertyListConfiguration();
         config.addProperty("array", elems);
@@ -148,7 +148,7 @@ public class TestXMLPropertyListConfiguration {
     }
 
     @Test
-    public void testArray() {
+    void testArray() {
         final Object array = config.getProperty("array");
 
         assertInstanceOf(List.class, array);
@@ -157,13 +157,13 @@ public class TestXMLPropertyListConfiguration {
     }
 
     @Test
-    public void testBoolean() throws Exception {
+    void testBoolean() throws Exception {
         assertTrue(config.getBoolean("boolean1"));
         assertFalse(config.getBoolean("boolean2"));
     }
 
     @Test
-    public void testDate() throws Exception {
+    void testDate() throws Exception {
         final Calendar calendar = Calendar.getInstance();
         calendar.clear();
         calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -178,14 +178,14 @@ public class TestXMLPropertyListConfiguration {
     }
 
     @Test
-    public void testDictionary() {
+    void testDictionary() {
         assertEquals("value1", config.getProperty("dictionary.key1"));
         assertEquals("value2", config.getProperty("dictionary.key2"));
         assertEquals("value3", config.getProperty("dictionary.key3"));
     }
 
     @Test
-    public void testDictionaryArray() {
+    void testDictionaryArray() {
         final String key = "dictionary-array";
 
         final Object array = config.getProperty(key);
@@ -209,14 +209,14 @@ public class TestXMLPropertyListConfiguration {
     }
 
     @Test
-    public void testInitCopy() {
+    void testInitCopy() {
         final XMLPropertyListConfiguration copy = new XMLPropertyListConfiguration(config);
         final StrictConfigurationComparator comp = new StrictConfigurationComparator();
         assertTrue(comp.compare(config, copy));
     }
 
     @Test
-    public void testInteger() throws Exception {
+    void testInteger() throws Exception {
         assertEquals(12345678900L, config.getLong("integer"));
     }
 
@@ -225,7 +225,7 @@ public class TestXMLPropertyListConfiguration {
      * related to CONFIGURATION-405.
      */
     @Test
-    public void testLoadNoDict() throws ConfigurationException {
+    void testLoadNoDict() throws ConfigurationException {
         final XMLPropertyListConfiguration plist = new XMLPropertyListConfiguration();
         load(plist, ConfigurationAssert.getTestFile("test2.plist.xml"));
         assertFalse(plist.isEmpty());
@@ -236,19 +236,19 @@ public class TestXMLPropertyListConfiguration {
      * test case is related to CONFIGURATION-405.
      */
     @Test
-    public void testLoadNoDictConstr() throws ConfigurationException {
+    void testLoadNoDictConstr() throws ConfigurationException {
         final XMLPropertyListConfiguration plist = new XMLPropertyListConfiguration();
         load(plist, ConfigurationAssert.getTestFile("test2.plist.xml"));
         assertFalse(plist.isEmpty());
     }
 
     @Test
-    public void testNested() {
+    void testNested() {
         assertEquals("value", config.getString("nested.node1.node2.node3"));
     }
 
     @Test
-    public void testNestedArray() {
+    void testNestedArray() {
         final String key = "nested-array";
 
         final Object array = config.getProperty(key);
@@ -270,12 +270,12 @@ public class TestXMLPropertyListConfiguration {
     }
 
     @Test
-    public void testReal() throws Exception {
+    void testReal() throws Exception {
         assertEquals(-12.345, config.getDouble("real"), 0);
     }
 
     @Test
-    public void testSave() throws Exception {
+    void testSave() throws Exception {
         final File savedFile = newFile(tempFolder);
 
         // add an array of strings to the configuration
@@ -336,7 +336,7 @@ public class TestXMLPropertyListConfiguration {
     }
 
     @Test
-    public void testSaveEmptyDictionary() throws Exception {
+    void testSaveEmptyDictionary() throws Exception {
         final File savedFile = newFile(tempFolder);
 
         // save the configuration
@@ -355,30 +355,30 @@ public class TestXMLPropertyListConfiguration {
      * Tests the header of a saved file if no encoding is specified.
      */
     @Test
-    public void testSaveNoEncoding() throws ConfigurationException {
+    void testSaveNoEncoding() throws ConfigurationException {
         final StringWriter writer = new StringWriter();
         new FileHandler(config).save(writer);
-        assertTrue(writer.toString().indexOf("<?xml version=\"1.0\"?>") >= 0);
+        assertTrue(writer.toString().contains("<?xml version=\"1.0\"?>"));
     }
 
     /**
      * Tests whether the encoding is written when saving a configuration.
      */
     @Test
-    public void testSaveWithEncoding() throws ConfigurationException {
-        final String encoding = "UTF-8";
+    void testSaveWithEncoding() throws ConfigurationException {
+        final String encoding = StandardCharsets.UTF_8.name();
         final FileHandler handler = new FileHandler(config);
         handler.setEncoding(encoding);
         final StringWriter writer = new StringWriter();
         handler.save(writer);
-        assertTrue(writer.toString().indexOf("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>") >= 0);
+        assertTrue(writer.toString().contains("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>"));
     }
 
     /**
      * Tests whether an array can be set correctly. This test is related to CONFIGURATION-750.
      */
     @Test
-    public void testSetArray() throws ConfigurationException {
+    void testSetArray() throws ConfigurationException {
         final Object[] elems = {"arrayElem1", "arrayElem2", "arrayElem3"};
         config = new XMLPropertyListConfiguration();
         config.setProperty("array", elems);
@@ -390,7 +390,7 @@ public class TestXMLPropertyListConfiguration {
      * Ensure that setProperty doesn't alter an array of byte since it's a first class type in plist file
      */
     @Test
-    public void testSetDataProperty() throws Exception {
+    void testSetDataProperty() throws Exception {
         final File savedFile = newFile(tempFolder);
         final byte[] expected = {1, 2, 3, 4};
         config = new XMLPropertyListConfiguration();
@@ -410,7 +410,7 @@ public class TestXMLPropertyListConfiguration {
      * Tests a configuration file which contains an invalid date property value. This test is related to CONFIGURATION-501.
      */
     @Test
-    public void testSetDatePropertyInvalid() throws ConfigurationException {
+    void testSetDatePropertyInvalid() throws ConfigurationException {
         config.clear();
         load(config, ConfigurationAssert.getTestFile("test_invalid_date.plist.xml"));
         assertEquals("value1", config.getString("string"));
@@ -421,7 +421,7 @@ public class TestXMLPropertyListConfiguration {
      * Tests whether a list can be set correctly. This test is related to CONFIGURATION-750.
      */
     @Test
-    public void testSetList() throws ConfigurationException {
+    void testSetList() throws ConfigurationException {
         final List<String> elems = Arrays.asList("element1", "element2", "anotherElement");
         config = new XMLPropertyListConfiguration();
         config.setProperty("array", elems);
@@ -430,12 +430,12 @@ public class TestXMLPropertyListConfiguration {
     }
 
     @Test
-    public void testString() throws Exception {
+    void testString() throws Exception {
         assertEquals("value1", config.getString("string"));
     }
 
     @Test
-    public void testSubset() {
+    void testSubset() {
         final Configuration subset = config.subset("dictionary");
         final Iterator<String> keys = subset.getKeys();
 
@@ -458,13 +458,13 @@ public class TestXMLPropertyListConfiguration {
      * Tests a direct invocation of the write() method. This test is related to CONFIGURATION-641.
      */
     @Test
-    public void testWriteCalledDirectly() throws IOException {
+    void testWriteCalledDirectly() throws IOException {
         config = new XMLPropertyListConfiguration();
         config.addProperty("foo", "bar");
 
         try (Writer out = new FileWriter(newFile(tempFolder))) {
             final ConfigurationException e = assertThrows(ConfigurationException.class, () -> config.write(out));
-            assertThat(e.getMessage(), containsString("FileHandler"));
+            assertTrue(e.getMessage().contains("FileHandler"));
         }
     }
 }

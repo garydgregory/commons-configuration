@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,13 +28,14 @@ import org.apache.commons.configuration2.beanutils.XMLBeanDeclaration;
  * <p>
  * Instances of this class are able to extract all information about a configuration source from the configuration
  * definition file. The declaration of a configuration source is very similar to a bean declaration processed by
- * {@code XMLBeanDeclaration}. There are very few differences, e.g. some reserved attributes like {@code optional} and
+ * {@code XMLBeanDeclaration}. There are very few differences, for example some reserved attributes like {@code optional} and
  * {@code at}, and the fact that a bean factory is never needed.
  * </p>
  *
  * @since 2.0
  */
 public class ConfigurationDeclaration extends XMLBeanDeclaration {
+
     /** Stores a reference to the associated configuration builder. */
     private final CombinedConfigurationBuilder configurationBuilder;
 
@@ -50,71 +51,27 @@ public class ConfigurationDeclaration extends XMLBeanDeclaration {
     }
 
     /**
-     * Returns the associated configuration builder.
+     * Gets the value of the {@code at} attribute.
      *
-     * @return the configuration builder
-     */
-    public CombinedConfigurationBuilder getConfigurationBuilder() {
-        return configurationBuilder;
-    }
-
-    /**
-     * Returns the value of the {@code at} attribute.
-     *
-     * @return the value of the {@code at} attribute (can be <b>null</b>)
+     * @return the value of the {@code at} attribute (can be <strong>null</strong>)
      */
     public String getAt() {
-        final String result = this.getConfiguration().getString(CombinedConfigurationBuilder.ATTR_AT_RES);
-        return result == null ? this.getConfiguration().getString(CombinedConfigurationBuilder.ATTR_AT) : result;
+        final String result = getConfiguration().getString(CombinedConfigurationBuilder.ATTR_AT_RES);
+        return result == null ? getConfiguration().getString(CombinedConfigurationBuilder.ATTR_AT) : result;
     }
 
     /**
-     * Returns a flag whether this is an optional configuration.
+     * Gets the bean's class name. This implementation will always return <strong>null</strong>.
      *
-     * @return a flag if this declaration points to an optional configuration
+     * @return the name of the bean's class
      */
-    public boolean isOptional() {
-        Boolean value = this.getConfiguration().getBoolean(CombinedConfigurationBuilder.ATTR_OPTIONAL_RES, null);
-        if (value == null) {
-            value = this.getConfiguration().getBoolean(CombinedConfigurationBuilder.ATTR_OPTIONAL, Boolean.FALSE);
-        }
-        return value.booleanValue();
+    @Override
+    public String getBeanClassName() {
+        return null;
     }
 
     /**
-     * Returns a flag whether this configuration should always be created and added to the resulting combined configuration.
-     * This flag is evaluated only for optional configurations whose normal creation has caused an error. If for such a
-     * configuration the {@code forceCreate} attribute is set and the corresponding configuration provider supports this
-     * mode, an empty configuration will be created and added to the resulting combined configuration.
-     *
-     * @return the value of the {@code forceCreate} attribute
-     */
-    public boolean isForceCreate() {
-        return this.getConfiguration().getBoolean(CombinedConfigurationBuilder.ATTR_FORCECREATE, false);
-    }
-
-    /**
-     * Returns a flag whether a builder with reloading support should be created. This may not be supported by all
-     * configuration builder providers.
-     *
-     * @return a flag whether a reloading builder should be created
-     */
-    public boolean isReload() {
-        return getConfiguration().getBoolean(CombinedConfigurationBuilder.ATTR_RELOAD, false);
-    }
-
-    /**
-     * Returns the name for the represented configuration source. The name is optional, so this method can return
-     * <b>null</b>.
-     *
-     * @return the name of the associated configuration source or <b>null</b>
-     */
-    public String getName() {
-        return getConfiguration().getString(CombinedConfigurationBuilder.ATTR_NAME);
-    }
-
-    /**
-     * Returns the name of the bean factory. For configuration source declarations always a reserved factory is used. This
+     * Gets the name of the bean factory. For configuration source declarations always a reserved factory is used. This
      * factory's name is returned by this implementation.
      *
      * @return the name of the bean factory
@@ -125,13 +82,57 @@ public class ConfigurationDeclaration extends XMLBeanDeclaration {
     }
 
     /**
-     * Returns the bean's class name. This implementation will always return <b>null</b>.
+     * Gets the associated configuration builder.
      *
-     * @return the name of the bean's class
+     * @return the configuration builder
      */
-    @Override
-    public String getBeanClassName() {
-        return null;
+    public CombinedConfigurationBuilder getConfigurationBuilder() {
+        return configurationBuilder;
+    }
+
+    /**
+     * Gets the name for the represented configuration source. The name is optional, so this method can return
+     * <strong>null</strong>.
+     *
+     * @return the name of the associated configuration source or <strong>null</strong>
+     */
+    public String getName() {
+        return getConfiguration().getString(CombinedConfigurationBuilder.ATTR_NAME);
+    }
+
+    /**
+     * Gets a flag whether this configuration should always be created and added to the resulting combined configuration.
+     * This flag is evaluated only for optional configurations whose normal creation has caused an error. If for such a
+     * configuration the {@code forceCreate} attribute is set and the corresponding configuration provider supports this
+     * mode, an empty configuration will be created and added to the resulting combined configuration.
+     *
+     * @return the value of the {@code forceCreate} attribute
+     */
+    public boolean isForceCreate() {
+        return getConfiguration().getBoolean(CombinedConfigurationBuilder.ATTR_FORCECREATE, false);
+    }
+
+    /**
+     * Gets a flag whether this is an optional configuration.
+     *
+     * @return a flag if this declaration points to an optional configuration
+     */
+    public boolean isOptional() {
+        Boolean value = getConfiguration().getBoolean(CombinedConfigurationBuilder.ATTR_OPTIONAL_RES, null);
+        if (value == null) {
+            value = getConfiguration().getBoolean(CombinedConfigurationBuilder.ATTR_OPTIONAL, Boolean.FALSE);
+        }
+        return value.booleanValue();
+    }
+
+    /**
+     * Returns a flag whether a builder with reloading support should be created. This may not be supported by all
+     * configuration builder providers.
+     *
+     * @return a flag whether a reloading builder should be created
+     */
+    public boolean isReload() {
+        return getConfiguration().getBoolean(CombinedConfigurationBuilder.ATTR_RELOAD, false);
     }
 
     /**

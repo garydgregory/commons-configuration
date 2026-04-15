@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,10 +42,24 @@ import java.util.List;
  * operation) and the new node</li>
  * </ul>
  *
- * @since 1.3
  * @param <T> the type of nodes this class can handle
+ * @since 1.3
  */
 public class NodeAddData<T> {
+
+    /**
+     * Creates the list with path nodes. Handles null input.
+     *
+     * @param intermediateNodes the nodes passed to the constructor
+     * @return an unmodifiable list of path nodes
+     */
+    private static List<String> createPathNodes(final Collection<String> intermediateNodes) {
+        if (intermediateNodes == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(new ArrayList<>(intermediateNodes));
+    }
+
     /** Stores the parent node of the add operation. */
     private final T parent;
 
@@ -76,16 +90,7 @@ public class NodeAddData<T> {
     }
 
     /**
-     * Returns a flag if the new node to be added is an attribute.
-     *
-     * @return <b>true</b> for an attribute node, <b>false</b> for a child node
-     */
-    public boolean isAttribute() {
-        return attribute;
-    }
-
-    /**
-     * Returns the name of the new node.
+     * Gets the name of the new node.
      *
      * @return the new node's name
      */
@@ -94,7 +99,7 @@ public class NodeAddData<T> {
     }
 
     /**
-     * Returns the parent node.
+     * Gets the parent node.
      *
      * @return the parent node
      */
@@ -103,28 +108,24 @@ public class NodeAddData<T> {
     }
 
     /**
-     * Returns a list with further nodes that must be added. This is needed if a complete branch is to be added at once. For
+     * Gets a list with further nodes that must be added. This is needed if a complete branch is to be added at once. For
      * instance, imagine that there exists only a node {@code database}. Now the key
      * {@code database.connection.settings.username} (assuming the syntax of the default expression engine) is to be added.
      * Then {@code username} is the name of the new node, but the nodes {@code connection} and {@code settings} must be
      * added to the parent node first. In this example these names would be returned by this method.
      *
-     * @return a list with the names of nodes that must be added as parents of the new node (never <b>null</b>)
+     * @return a list with the names of nodes that must be added as parents of the new node (never <strong>null</strong>)
      */
     public List<String> getPathNodes() {
         return pathNodes;
     }
 
     /**
-     * Creates the list with path nodes. Handles null input.
+     * Returns a flag if the new node to be added is an attribute.
      *
-     * @param intermediateNodes the nodes passed to the constructor
-     * @return an unmodifiable list of path nodes
+     * @return <strong>true</strong> for an attribute node, <strong>false</strong> for a child node
      */
-    private static List<String> createPathNodes(final Collection<String> intermediateNodes) {
-        if (intermediateNodes == null) {
-            return Collections.emptyList();
-        }
-        return Collections.unmodifiableList(new ArrayList<>(intermediateNodes));
+    public boolean isAttribute() {
+        return attribute;
     }
 }

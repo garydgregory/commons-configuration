@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -104,6 +104,7 @@ import java.util.List;
  * @since 1.3
  */
 public class UnionCombiner extends NodeCombiner {
+
     /**
      * Combines the given nodes to a new union node.
      *
@@ -156,13 +157,13 @@ public class UnionCombiner extends NodeCombiner {
      * </ul>
      * <p>
      * If all of these tests are successful, the matching child node of the second source node is returned. Otherwise the
-     * result is <b>null</b>.
+     * result is <strong>null</strong>.
      * </p>
      *
      * @param node1 the first source node
      * @param node2 the second source node
      * @param child the child node of the first source node to be checked
-     * @return the matching child node of the second source node or <b>null</b> if there is none
+     * @return the matching child node of the second source node or <strong>null</strong> if there is none
      */
     protected ImmutableNode findCombineNode(final ImmutableNode node1, final ImmutableNode node2, final ImmutableNode child) {
         if (child.getValue() == null && !isListNode(child) && HANDLER.getChildrenCount(node1, child.getNodeName()) == 1

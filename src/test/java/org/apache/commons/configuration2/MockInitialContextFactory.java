@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,8 +44,12 @@ public class MockInitialContextFactory implements InitialContextFactory {
 
         private final Iterator<NameClassPair> iterator;
 
-        private ListBasedNamingEnumeration(List<NameClassPair> pairs) {
+        private ListBasedNamingEnumeration(final List<NameClassPair> pairs) {
             this.iterator = pairs.iterator();
+        }
+
+        @Override
+        public void close() throws NamingException {
         }
 
         @Override
@@ -66,10 +70,6 @@ public class MockInitialContextFactory implements InitialContextFactory {
         @Override
         public NameClassPair nextElement() {
             return iterator.next();
-        }
-
-        @Override
-        public void close() throws NamingException {
         }
     }
 
@@ -149,18 +149,6 @@ public class MockInitialContextFactory implements InitialContextFactory {
     }
 
     /**
-     * Creates and initializes a naming enumeration. This is a shortcut of wrapping the result of
-     * {@link #createNameClassPairs(String[], Object[])} in an instance of {@link ListBasedNamingEnumeration}.
-     *
-     * @param names the names contained in the iteration
-     * @param values the corresponding values
-     * @return the mock for the enumeration
-     */
-    private NamingEnumeration<NameClassPair> createNamingEnumeration(final String[] names, final Object[] values) {
-        return new ListBasedNamingEnumeration(createNameClassPairs(names, values));
-    }
-
-    /**
      * Creates and initializes a list of {@link NameClassPair}s that can be used to create a naming enumeration.
      *
      * @param names the names contained in the iteration
@@ -173,6 +161,18 @@ public class MockInitialContextFactory implements InitialContextFactory {
             addEnumPair(pairs, names[i], values[i]);
         }
         return pairs;
+    }
+
+    /**
+     * Creates and initializes a naming enumeration. This is a shortcut of wrapping the result of
+     * {@link #createNameClassPairs(String[], Object[])} in an instance of {@link ListBasedNamingEnumeration}.
+     *
+     * @param names the names contained in the iteration
+     * @param values the corresponding values
+     * @return the mock for the enumeration
+     */
+    private NamingEnumeration<NameClassPair> createNamingEnumeration(final String[] names, final Object[] values) {
+        return new ListBasedNamingEnumeration(createNameClassPairs(names, values));
     }
 
     /**

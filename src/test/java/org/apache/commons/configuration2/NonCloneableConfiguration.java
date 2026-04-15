@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,18 +21,20 @@ import java.util.Iterator;
 /**
  * A specialized configuration implementation that does not support cloning. This class is only used in some test cases
  * for testing implementations of clone() methods. It does not make much sense otherwise; all methods are just dummies.
- *
  */
 public class NonCloneableConfiguration extends AbstractConfiguration {
+
     /**
      * Dummy implementation of this method.
      */
     @Override
     protected void addPropertyDirect(final String key, final Object value) {
+        // noop
     }
 
     @Override
     protected void clearPropertyDirect(final String key) {
+        // noop
     }
 
     /**
@@ -40,6 +42,16 @@ public class NonCloneableConfiguration extends AbstractConfiguration {
      */
     @Override
     protected boolean containsKeyInternal(final String key) {
+        return false;
+    }
+
+    /**
+     * Dummy implementation of this method.
+     *
+     * @since 2.11.0
+     */
+    @Override
+    protected boolean containsValueInternal(final Object value) {
         return false;
     }
 

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,46 +45,33 @@ import org.apache.commons.logging.impl.NoOpLog;
  * @since 2.0
  */
 public class ConfigurationLogger {
-    /** The internal logger. */
-    private final Log log;
 
     /**
-     * Creates a new instance of {@code ConfigurationLogger} that uses the specified logger name.
+     * Creates an internal logger for the given class. Throws an exception if the class is undefined.
      *
-     * @param loggerName the logger name (must not be <b>null</b>)
-     * @throws IllegalArgumentException if the logger name is <b>null</b>
+     * @param cls the logger class
+     * @return the logger object
+     * @throws IllegalArgumentException if the logger class is undefined
      */
-    public ConfigurationLogger(final String loggerName) {
-        this(createLoggerForName(loggerName));
+    private static Log createLoggerForClass(final Class<?> cls) {
+        if (cls == null) {
+            throw new IllegalArgumentException("Logger class must not be null!");
+        }
+        return LogFactory.getLog(cls);
     }
 
     /**
-     * Creates a new instance of {@code ConfigurationLogger} that uses a logger whose name is derived from the provided
-     * class.
+     * Creates an internal logger for the given name. Throws an exception if the name is undefined.
      *
-     * @param logCls the class whose name is to be used for logging (must not be <b>null</b>)
-     * @throws IllegalArgumentException if the logger class is <b>null</b>
+     * @param name the name of the logger
+     * @return the logger object
+     * @throws IllegalArgumentException if the logger name is undefined
      */
-    public ConfigurationLogger(final Class<?> logCls) {
-        this(createLoggerForClass(logCls));
-    }
-
-    /**
-     * Creates a new, uninitialized instance of {@code ConfigurationLogger}. This constructor can be used by derived classes
-     * that implement their own specific logging mechanism. Such classes must override all methods because the default
-     * implementations do not work in this uninitialized state.
-     */
-    protected ConfigurationLogger() {
-        this((Log) null);
-    }
-
-    /**
-     * Creates a new instance of {@code ConfigurationLogger} which wraps the specified logger.
-     *
-     * @param wrapped the logger to be wrapped
-     */
-    ConfigurationLogger(final Log wrapped) {
-        log = wrapped;
+    private static Log createLoggerForName(final String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Logger name must not be null!");
+        }
+        return LogFactory.getLog(name);
     }
 
     /**
@@ -97,13 +84,46 @@ public class ConfigurationLogger {
         return new ConfigurationLogger(new NoOpLog());
     }
 
+    /** The internal logger. */
+    private final Log log;
+
     /**
-     * Returns a flag whether logging on debug level is enabled.
-     *
-     * @return <b>true</b> if debug logging is enabled, <b>false</b> otherwise
+     * Creates a new, uninitialized instance of {@code ConfigurationLogger}. This constructor can be used by derived classes
+     * that implement their own specific logging mechanism. Such classes must override all methods because the default
+     * implementations do not work in this uninitialized state.
      */
-    public boolean isDebugEnabled() {
-        return getLog().isDebugEnabled();
+    protected ConfigurationLogger() {
+        this((Log) null);
+    }
+
+    /**
+     * Creates a new instance of {@code ConfigurationLogger} that uses a logger whose name is derived from the provided
+     * class.
+     *
+     * @param logCls the class whose name is to be used for logging (must not be <strong>null</strong>)
+     * @throws IllegalArgumentException if the logger class is <strong>null</strong>
+     */
+    public ConfigurationLogger(final Class<?> logCls) {
+        this(createLoggerForClass(logCls));
+    }
+
+    /**
+     * Creates a new instance of {@code ConfigurationLogger} which wraps the specified logger.
+     *
+     * @param wrapped the logger to be wrapped
+     */
+    ConfigurationLogger(final Log wrapped) {
+        log = wrapped;
+    }
+
+    /**
+     * Creates a new instance of {@code ConfigurationLogger} that uses the specified logger name.
+     *
+     * @param loggerName the logger name (must not be <strong>null</strong>)
+     * @throws IllegalArgumentException if the logger name is <strong>null</strong>
+     */
+    public ConfigurationLogger(final String loggerName) {
+        this(createLoggerForName(loggerName));
     }
 
     /**
@@ -113,43 +133,6 @@ public class ConfigurationLogger {
      */
     public void debug(final String msg) {
         getLog().debug(msg);
-    }
-
-    /**
-     * Returns a flag whether logging on info level is enabled.
-     *
-     * @return <b>true</b> if debug logging is enabled, <b>false</b> otherwise
-     */
-    public boolean isInfoEnabled() {
-        return getLog().isInfoEnabled();
-    }
-
-    /**
-     * Logs the specified message on info level.
-     *
-     * @param msg the message to be logged
-     */
-    public void info(final String msg) {
-        getLog().info(msg);
-    }
-
-    /**
-     * Logs the specified message on warn level.
-     *
-     * @param msg the message to be logged
-     */
-    public void warn(final String msg) {
-        getLog().warn(msg);
-    }
-
-    /**
-     * Logs the specified exception on warn level.
-     *
-     * @param msg the message to be logged
-     * @param ex the exception to be logged
-     */
-    public void warn(final String msg, final Throwable ex) {
-        getLog().warn(msg, ex);
     }
 
     /**
@@ -172,7 +155,7 @@ public class ConfigurationLogger {
     }
 
     /**
-     * Returns the internal logger.
+     * Gets the internal logger.
      *
      * @return the internal logger
      */
@@ -181,30 +164,48 @@ public class ConfigurationLogger {
     }
 
     /**
-     * Creates an internal logger for the given name. Throws an exception if the name is undefined.
+     * Logs the specified message on info level.
      *
-     * @param name the name of the logger
-     * @return the logger object
-     * @throws IllegalArgumentException if the logger name is undefined
+     * @param msg the message to be logged
      */
-    private static Log createLoggerForName(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("Logger name must not be null!");
-        }
-        return LogFactory.getLog(name);
+    public void info(final String msg) {
+        getLog().info(msg);
     }
 
     /**
-     * Creates an internal logger for the given class. Throws an exception if the class is undefined.
+     * Returns a flag whether logging on debug level is enabled.
      *
-     * @param cls the logger class
-     * @return the logger object
-     * @throws IllegalArgumentException if the logger class is undefined
+     * @return <strong>true</strong> if debug logging is enabled, <strong>false</strong> otherwise
      */
-    private static Log createLoggerForClass(final Class<?> cls) {
-        if (cls == null) {
-            throw new IllegalArgumentException("Logger class must not be null!");
-        }
-        return LogFactory.getLog(cls);
+    public boolean isDebugEnabled() {
+        return getLog().isDebugEnabled();
+    }
+
+    /**
+     * Returns a flag whether logging on info level is enabled.
+     *
+     * @return <strong>true</strong> if debug logging is enabled, <strong>false</strong> otherwise
+     */
+    public boolean isInfoEnabled() {
+        return getLog().isInfoEnabled();
+    }
+
+    /**
+     * Logs the specified message on warn level.
+     *
+     * @param msg the message to be logged
+     */
+    public void warn(final String msg) {
+        getLog().warn(msg);
+    }
+
+    /**
+     * Logs the specified exception on warn level.
+     *
+     * @param msg the message to be logged
+     * @param ex the exception to be logged
+     */
+    public void warn(final String msg, final Throwable ex) {
+        getLog().warn(msg, ex);
     }
 }

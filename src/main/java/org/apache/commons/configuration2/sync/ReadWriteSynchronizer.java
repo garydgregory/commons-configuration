@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,19 +36,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @since 2.0
  */
 public class ReadWriteSynchronizer implements Synchronizer {
-    /** The lock object used by this Synchronizer. */
-    private final ReadWriteLock lock;
 
     /**
-     * Creates a new instance of {@code ReadWriteSynchronizer} and initializes it with the given lock object. This
-     * constructor can be used to pass a lock object which has been configured externally. If the lock object is
-     * <b>null</b>, a default lock object is created.
+     * Returns a new default lock object which is used if no lock is passed to the constructor.
      *
-     * @param l the lock object to be used (can be <b>null</b>)
+     * @return the new default lock object
      */
-    public ReadWriteSynchronizer(final ReadWriteLock l) {
-        lock = l != null ? l : createDefaultLock();
+    private static ReadWriteLock createDefaultLock() {
+        return new ReentrantReadWriteLock();
     }
+
+    /** The lock object used by this Synchronizer. */
+    private final ReadWriteLock lock;
 
     /**
      * Creates a new instance of {@code ReadWriteSynchronizer} and initializes it with a lock object of type
@@ -58,14 +57,20 @@ public class ReadWriteSynchronizer implements Synchronizer {
         this(null);
     }
 
-    @Override
-    public void beginRead() {
-        lock.readLock().lock();
+    /**
+     * Creates a new instance of {@code ReadWriteSynchronizer} and initializes it with the given lock object. This
+     * constructor can be used to pass a lock object which has been configured externally. If the lock object is
+     * <strong>null</strong>, a default lock object is created.
+     *
+     * @param l the lock object to be used (can be <strong>null</strong>)
+     */
+    public ReadWriteSynchronizer(final ReadWriteLock l) {
+        lock = l != null ? l : createDefaultLock();
     }
 
     @Override
-    public void endRead() {
-        lock.readLock().unlock();
+    public void beginRead() {
+        lock.readLock().lock();
     }
 
     @Override
@@ -74,16 +79,12 @@ public class ReadWriteSynchronizer implements Synchronizer {
     }
 
     @Override
-    public void endWrite() {
-        lock.writeLock().unlock();
+    public void endRead() {
+        lock.readLock().unlock();
     }
 
-    /**
-     * Returns a new default lock object which is used if no lock is passed to the constructor.
-     *
-     * @return the new default lock object
-     */
-    private static ReadWriteLock createDefaultLock() {
-        return new ReentrantReadWriteLock();
+    @Override
+    public void endWrite() {
+        lock.writeLock().unlock();
     }
 }

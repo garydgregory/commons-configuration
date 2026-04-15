@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,6 +38,7 @@ import java.util.List;
  * @since 2.0
  */
 public class DisabledListDelimiterHandler extends AbstractListDelimiterHandler {
+
     /**
      * A default instance of this class. Because it is safe to share {@code DisabledListDelimiterHandler} objects this
      * instance can be used whenever such an object is needed.
@@ -45,11 +46,26 @@ public class DisabledListDelimiterHandler extends AbstractListDelimiterHandler {
     public static final ListDelimiterHandler INSTANCE = new DisabledListDelimiterHandler();
 
     /**
+     * Constructs a new instance.
+     */
+    public DisabledListDelimiterHandler() {
+        // empty
+    }
+
+    /**
      * {@inheritDoc} This implementation always throws an {@code UnsupportedOperationException} exception.
      */
     @Override
     public Object escapeList(final List<?> values, final ValueTransformer transformer) {
         throw new UnsupportedOperationException("Escaping lists is not supported!");
+    }
+
+    /**
+     * {@inheritDoc} This implementation returns the passed in string without any changes.
+     */
+    @Override
+    protected String escapeString(final String s) {
+        return s;
     }
 
     /**
@@ -62,13 +78,5 @@ public class DisabledListDelimiterHandler extends AbstractListDelimiterHandler {
         final Collection<String> result = new ArrayList<>(1);
         result.add(s);
         return result;
-    }
-
-    /**
-     * {@inheritDoc} This implementation returns the passed in string without any changes.
-     */
-    @Override
-    protected String escapeString(final String s) {
-        return s;
     }
 }

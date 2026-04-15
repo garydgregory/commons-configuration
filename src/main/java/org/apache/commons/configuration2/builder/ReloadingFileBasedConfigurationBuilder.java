@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,16 +45,28 @@ import org.apache.commons.configuration2.reloading.ReloadingDetector;
  * </p>
  * <p>
  * This builder does not actively trigger the {@code ReloadingController} to perform a reload check. This has to be done
- * by an external component, e.g. a timer.
+ * by an external component, for example a timer.
  * </p>
  *
- * @since 2.0
  * @param <T> the concrete type of {@code Configuration} objects created by this builder
+ * @since 2.0
  */
 public class ReloadingFileBasedConfigurationBuilder<T extends FileBasedConfiguration> extends FileBasedConfigurationBuilder<T>
     implements ReloadingControllerSupport {
+
     /** The default factory for creating reloading detector objects. */
     private static final ReloadingDetectorFactory DEFAULT_DETECTOR_FACTORY = new DefaultReloadingDetectorFactory();
+
+    /**
+     * Returns a {@code ReloadingDetectorFactory} either from the passed in parameters or a default factory.
+     *
+     * @param params the current parameters object
+     * @return the {@code ReloadingDetectorFactory} to be used
+     */
+    private static ReloadingDetectorFactory fetchDetectorFactory(final FileBasedBuilderParametersImpl params) {
+        final ReloadingDetectorFactory factory = params.getReloadingDetectorFactory();
+        return factory != null ? factory : DEFAULT_DETECTOR_FACTORY;
+    }
 
     /** The reloading controller associated with this object. */
     private final ReloadingController reloadingController;
@@ -68,11 +80,23 @@ public class ReloadingFileBasedConfigurationBuilder<T extends FileBasedConfigura
 
     /**
      * Creates a new instance of {@code ReloadingFileBasedConfigurationBuilder} which produces result objects of the
+     * specified class.
+     *
+     * @param resCls the result class (must not be <strong>null</strong>
+     * @throws IllegalArgumentException if the result class is <strong>null</strong>
+     */
+    public ReloadingFileBasedConfigurationBuilder(final Class<? extends T> resCls) {
+        super(resCls);
+        reloadingController = createReloadingController();
+    }
+
+    /**
+     * Creates a new instance of {@code ReloadingFileBasedConfigurationBuilder} which produces result objects of the
      * specified class and sets initialization parameters.
      *
-     * @param resCls the result class (must not be <b>null</b>
+     * @param resCls the result class (must not be <strong>null</strong>
      * @param params a map with initialization parameters
-     * @throws IllegalArgumentException if the result class is <b>null</b>
+     * @throws IllegalArgumentException if the result class is <strong>null</strong>
      */
     public ReloadingFileBasedConfigurationBuilder(final Class<? extends T> resCls, final Map<String, Object> params) {
         super(resCls, params);
@@ -83,37 +107,14 @@ public class ReloadingFileBasedConfigurationBuilder<T extends FileBasedConfigura
      * Creates a new instance of {@code ReloadingFileBasedConfigurationBuilder} which produces result objects of the
      * specified class and sets initialization parameters and the <em>allowFailOnInit</em> flag.
      *
-     * @param resCls the result class (must not be <b>null</b>
+     * @param resCls the result class (must not be <strong>null</strong>
      * @param params a map with initialization parameters
      * @param allowFailOnInit the <em>allowFailOnInit</em> flag
-     * @throws IllegalArgumentException if the result class is <b>null</b>
+     * @throws IllegalArgumentException if the result class is <strong>null</strong>
      */
     public ReloadingFileBasedConfigurationBuilder(final Class<? extends T> resCls, final Map<String, Object> params, final boolean allowFailOnInit) {
         super(resCls, params, allowFailOnInit);
         reloadingController = createReloadingController();
-    }
-
-    /**
-     * Creates a new instance of {@code ReloadingFileBasedConfigurationBuilder} which produces result objects of the
-     * specified class.
-     *
-     * @param resCls the result class (must not be <b>null</b>
-     * @throws IllegalArgumentException if the result class is <b>null</b>
-     */
-    public ReloadingFileBasedConfigurationBuilder(final Class<? extends T> resCls) {
-        super(resCls);
-        reloadingController = createReloadingController();
-    }
-
-    /**
-     * Returns the {@code ReloadingController} associated with this builder. This controller is directly created. However,
-     * it becomes active (i.e. associated with a meaningful reloading detector) not before a result object was created.
-     *
-     * @return the {@code ReloadingController}
-     */
-    @Override
-    public ReloadingController getReloadingController() {
-        return reloadingController;
     }
 
     /**
@@ -123,6 +124,22 @@ public class ReloadingFileBasedConfigurationBuilder<T extends FileBasedConfigura
     public ReloadingFileBasedConfigurationBuilder<T> configure(final BuilderParameters... params) {
         super.configure(params);
         return this;
+    }
+
+    /**
+     * Creates the {@code ReloadingController} associated with this object. The controller is assigned a specialized
+     * reloading detector which delegates to the detector for the current result object. (
+     * {@code FileHandlerReloadingDetector} does not support changing the file handler, and {@code ReloadingController} does
+     * not support changing the reloading detector; therefore, this level of indirection is needed to change the monitored
+     * file dynamically.)
+     *
+     * @return the new {@code ReloadingController}
+     */
+    private ReloadingController createReloadingController() {
+        final ReloadingDetector ctrlDetector = createReloadingDetectorForController();
+        final ReloadingController ctrl = new ReloadingController(ctrlDetector);
+        connectToReloadingController(ctrl);
+        return ctrl;
     }
 
     /**
@@ -143,6 +160,41 @@ public class ReloadingFileBasedConfigurationBuilder<T extends FileBasedConfigura
     }
 
     /**
+     * Creates a {@code ReloadingDetector} wrapper to be passed to the associated {@code ReloadingController}. This detector
+     * wrapper simply delegates to the current {@code ReloadingDetector} if it is available.
+     *
+     * @return the wrapper {@code ReloadingDetector}
+     */
+    private ReloadingDetector createReloadingDetectorForController() {
+        return new ReloadingDetector() {
+            @Override
+            public boolean isReloadingRequired() {
+                final ReloadingDetector detector = resultReloadingDetector;
+                return detector != null && detector.isReloadingRequired();
+            }
+
+            @Override
+            public void reloadingPerformed() {
+                final ReloadingDetector detector = resultReloadingDetector;
+                if (detector != null) {
+                    detector.reloadingPerformed();
+                }
+            }
+        };
+    }
+
+    /**
+     * Gets the {@code ReloadingController} associated with this builder. This controller is directly created. However,
+     * it becomes active (i.e. associated with a meaningful reloading detector) not before a result object was created.
+     *
+     * @return the {@code ReloadingController}
+     */
+    @Override
+    public ReloadingController getReloadingController() {
+        return reloadingController;
+    }
+
+    /**
      * {@inheritDoc} This implementation also takes care that a new {@code ReloadingDetector} for the new current
      * {@code FileHandler} is created. Also, the reloading controller's reloading state has to be reset; after the creation
      * of a new result object changes in the underlying configuration source have to be monitored again.
@@ -152,56 +204,5 @@ public class ReloadingFileBasedConfigurationBuilder<T extends FileBasedConfigura
         super.initFileHandler(handler);
 
         resultReloadingDetector = createReloadingDetector(handler, FileBasedBuilderParametersImpl.fromParameters(getParameters(), true));
-    }
-
-    /**
-     * Creates the {@code ReloadingController} associated with this object. The controller is assigned a specialized
-     * reloading detector which delegates to the detector for the current result object. (
-     * {@code FileHandlerReloadingDetector} does not support changing the file handler, and {@code ReloadingController} does
-     * not support changing the reloading detector; therefore, this level of indirection is needed to change the monitored
-     * file dynamically.)
-     *
-     * @return the new {@code ReloadingController}
-     */
-    private ReloadingController createReloadingController() {
-        final ReloadingDetector ctrlDetector = createReloadingDetectorForController();
-        final ReloadingController ctrl = new ReloadingController(ctrlDetector);
-        connectToReloadingController(ctrl);
-        return ctrl;
-    }
-
-    /**
-     * Creates a {@code ReloadingDetector} wrapper to be passed to the associated {@code ReloadingController}. This detector
-     * wrapper simply delegates to the current {@code ReloadingDetector} if it is available.
-     *
-     * @return the wrapper {@code ReloadingDetector}
-     */
-    private ReloadingDetector createReloadingDetectorForController() {
-        return new ReloadingDetector() {
-            @Override
-            public void reloadingPerformed() {
-                final ReloadingDetector detector = resultReloadingDetector;
-                if (detector != null) {
-                    detector.reloadingPerformed();
-                }
-            }
-
-            @Override
-            public boolean isReloadingRequired() {
-                final ReloadingDetector detector = resultReloadingDetector;
-                return detector != null && detector.isReloadingRequired();
-            }
-        };
-    }
-
-    /**
-     * Returns a {@code ReloadingDetectorFactory} either from the passed in parameters or a default factory.
-     *
-     * @param params the current parameters object
-     * @return the {@code ReloadingDetectorFactory} to be used
-     */
-    private static ReloadingDetectorFactory fetchDetectorFactory(final FileBasedBuilderParametersImpl params) {
-        final ReloadingDetectorFactory factory = params.getReloadingDetectorFactory();
-        return factory != null ? factory : DEFAULT_DETECTOR_FACTORY;
     }
 }

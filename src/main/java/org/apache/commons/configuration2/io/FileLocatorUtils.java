@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * </p>
  * <p>
  * The methods of this class are used behind the scenes when retrieving configuration files based on different criteria,
- * e.g. URLs, files, or more complex search strategies. They also implement functionality required by the default
+ * for example URLs, files, or more complex search strategies. They also implement functionality required by the default
  * {@link FileSystem} implementations. Most methods are intended to be used internally only by other classes in the
  * {@code io} package.
  * </p>
@@ -43,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
  * @since 2.0
  */
 public final class FileLocatorUtils {
+
     /**
      * Constant for the default {@code FileSystem}. This file system is used by operations of this class if no specific file
      * system is provided. An instance of {@link DefaultFileSystem} is used.
@@ -69,7 +70,7 @@ public final class FileLocatorUtils {
      * file can be found there, its URL is returned.</li>
      * <li>Otherwise, a resource with the name of the locator's file name is searched in the classpath. If it can be found,
      * its URL is returned.</li>
-     * <li>Otherwise, the strategy gives up and returns <b>null</b> indicating that the file cannot be resolved.</li>
+     * <li>Otherwise, the strategy gives up and returns <strong>null</strong> indicating that the file cannot be resolved.</li>
      * </ul>
      */
     public static final FileLocationStrategy DEFAULT_LOCATION_STRATEGY = initDefaultLocationStrategy();
@@ -97,12 +98,6 @@ public final class FileLocatorUtils {
 
     /** Property key for the source URL. */
     private static final String PROP_SOURCE_URL = "sourceURL";
-
-    /**
-     * Private constructor so that no instances can be created.
-     */
-    private FileLocatorUtils() {
-    }
 
     /**
      * Extends a path by another component. The given extension is added to the already existing path adding a separator if
@@ -140,7 +135,7 @@ public final class FileLocatorUtils {
      * passed to {@code getURL()} does not seem to be a valid URL.
      *
      * @param basePath the base path
-     * @param fileName the file name (must not be <b>null</b>)
+     * @param fileName the file name (must not be <strong>null</strong>)
      * @return the resulting file
      */
     static File constructFile(final String basePath, final String fileName) {
@@ -157,20 +152,20 @@ public final class FileLocatorUtils {
     }
 
     /**
-     * Tries to convert the specified file to a URL. If this causes an exception, result is <b>null</b>.
+     * Tries to convert the specified file to a URL. If this causes an exception, result is <strong>null</strong>.
      *
      * @param file the file to be converted
-     * @return the resulting URL or <b>null</b>
+     * @return the resulting URL or <strong>null</strong>
      */
     static URL convertFileToURL(final File file) {
         return convertURIToURL(file.toURI());
     }
 
     /**
-     * Tries to convert the specified URI to a URL. If this causes an exception, result is <b>null</b>.
+     * Tries to convert the specified URI to a URL. If this causes an exception, result is <strong>null</strong>.
      *
      * @param uri the URI to be converted
-     * @return the resulting URL or <b>null</b>
+     * @return the resulting URL or <strong>null</strong>
      */
     static URL convertURIToURL(final URI uri) {
         try {
@@ -202,7 +197,7 @@ public final class FileLocatorUtils {
     }
 
     /**
-     * Tries to convert the specified URL to a file object. If this fails, <b>null</b> is returned.
+     * Tries to convert the specified URL to a file object. If this fails, <strong>null</strong> is returned.
      *
      * @param url the URL
      * @return the resulting file object
@@ -228,7 +223,7 @@ public final class FileLocatorUtils {
     /**
      * Returns a {@code FileLocatorBuilder} which is already initialized with the properties of the passed in
      * {@code FileLocator}. This builder can be used to create a {@code FileLocator} object which shares properties of the
-     * original locator (e.g. the {@code FileSystem} or the encoding), but points to a different file. An example use case
+     * original locator (for example the {@code FileSystem} or the encoding), but points to a different file. An example use case
      * is as follows:
      *
      * <pre>
@@ -238,7 +233,7 @@ public final class FileLocatorUtils {
      *     .create();
      * </pre>
      *
-     * @param src the source {@code FileLocator} (may be <b>null</b>)
+     * @param src the source {@code FileLocator} (may be <strong>null</strong>)
      * @return an initialized builder object for defining a {@code FileLocator}
      */
     public static FileLocator.FileLocatorBuilder fileLocator(final FileLocator src) {
@@ -248,7 +243,7 @@ public final class FileLocatorUtils {
     /**
      * Creates a new {@code FileLocator} object with the properties defined in the given map. The map must be conform to the
      * structure generated by the {@link #put(FileLocator, Map)} method; unexpected data can cause
-     * {@code ClassCastException} exceptions. The map can be <b>null</b>, then an uninitialized {@code FileLocator} is
+     * {@code ClassCastException} exceptions. The map can be <strong>null</strong>, then an uninitialized {@code FileLocator} is
      * returned.
      *
      * @param map the map
@@ -275,11 +270,11 @@ public final class FileLocatorUtils {
      * <li>{@link #locate(FileLocator)} is called to determine a unique URL pointing to the referenced file. If this is
      * successful, a new {@code FileLocator} is created as a copy of the passed in one, but with all components pointing to
      * the file derived from this URL.</li>
-     * <li>Otherwise, result is <b>null</b>.</li>
+     * <li>Otherwise, result is <strong>null</strong>.</li>
      * </ul>
      *
      * @param locator the {@code FileLocator} to be completed
-     * @return a {@code FileLocator} with a fully initialized location if possible or <b>null</b>
+     * @return a {@code FileLocator} with a fully initialized location if possible or <strong>null</strong>
      */
     public static FileLocator fullyInitializedLocator(final FileLocator locator) {
         if (isFullyInitialized(locator)) {
@@ -292,7 +287,7 @@ public final class FileLocatorUtils {
     }
 
     /**
-     * Return the path without the file name, for example http://xyz.net/foo/bar.xml results in http://xyz.net/foo/
+     * Gets the path without the file name, for example https://xyz.net/foo/bar.xml results in https://xyz.net/foo/
      *
      * @param url the URL from which to extract the path
      * @return the path component of the passed in URL
@@ -314,13 +309,42 @@ public final class FileLocatorUtils {
     }
 
     /**
-     * Tries to convert the specified base path and file name into a file object. This method is called e.g. by the save()
+     * Tries to find a resource with the given name in the classpath.
+     *
+     * @param resourceName the name of the resource
+     * @return the URL to the found resource or <strong>null</strong> if the resource cannot be found
+     */
+    static URL getClasspathResource(final String resourceName) {
+        URL url = null;
+        // attempt to load from the context classpath
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        if (loader != null) {
+            url = loader.getResource(resourceName);
+
+            if (url != null) {
+                LOG.debug("Loading configuration from the context classpath (" + resourceName + ")");
+            }
+        }
+
+        // attempt to load from the system classpath
+        if (url == null) {
+            url = ClassLoader.getSystemResource(resourceName);
+
+            if (url != null) {
+                LOG.debug("Loading configuration from the system classpath (" + resourceName + ")");
+            }
+        }
+        return url;
+    }
+
+    /**
+     * Tries to convert the specified base path and file name into a file object. This method is called for example by the save()
      * methods of file based configurations. The parameter strings can be relative files, absolute files and URLs as well.
      * This implementation checks first whether the passed in file name is absolute. If this is the case, it is returned.
      * Otherwise further checks are performed whether the base path and file name can be combined to a valid URL or a valid
      * file name. <em>Note:</em> The test if the passed in file name is absolute is performed using
-     * {@code java.io.File.isAbsolute()}. If the file name starts with a slash, this method will return <b>true</b> on Unix,
-     * but <b>false</b> on Windows. So to ensure correct behavior for relative file names on all platforms you should never
+     * {@code java.io.File.isAbsolute()}. If the file name starts with a slash, this method will return <strong>true</strong> on Unix,
+     * but <strong>false</strong> on Windows. So to ensure correct behavior for relative file names on all platforms you should never
      * let relative paths start with a slash. E.g. in a configuration definition file do not use something like that:
      *
      * <pre>
@@ -331,8 +355,8 @@ public final class FileLocatorUtils {
      * treated as an absolute path name.
      *
      * @param basePath the base path
-     * @param fileName the file name (must not be <b>null</b>)
-     * @return the file object (<b>null</b> if no file can be obtained)
+     * @param fileName the file name (must not be <strong>null</strong>)
+     * @return the file object (<strong>null</strong> if no file can be obtained)
      */
     static File getFile(final String basePath, final String fileName) {
         // Check if the file name is absolute
@@ -380,14 +404,46 @@ public final class FileLocatorUtils {
     }
 
     /**
+     * Obtains a non-<strong>null</strong> {@code FileSystem} object from the passed in {@code FileLocator}. If the passed in
+     * {@code FileLocator} has a {@code FileSystem} object, it is returned. Otherwise, result is the default
+     * {@code FileSystem}.
+     *
+     * @param locator the {@code FileLocator} (may be <strong>null</strong>)
+     * @return the {@code FileSystem} to be used for this {@code FileLocator}
+     */
+    static FileSystem getFileSystem(final FileLocator locator) {
+        return locator != null ? ObjectUtils.getIfNull(locator.getFileSystem(), DEFAULT_FILE_SYSTEM) : DEFAULT_FILE_SYSTEM;
+    }
+
+    /**
+     * Gets a non <strong>null</strong> {@code FileLocationStrategy} object from the passed in {@code FileLocator}. If the
+     * {@code FileLocator} is not <strong>null</strong> and has a {@code FileLocationStrategy} defined, this strategy is returned.
+     * Otherwise, result is the default {@code FileLocationStrategy}.
+     *
+     * @param locator the {@code FileLocator}
+     * @return the {@code FileLocationStrategy} for this {@code FileLocator}
+     */
+    static FileLocationStrategy getLocationStrategy(final FileLocator locator) {
+        return locator != null ? ObjectUtils.getIfNull(locator.getLocationStrategy(), DEFAULT_LOCATION_STRATEGY) : DEFAULT_LOCATION_STRATEGY;
+    }
+
+    /**
      * Creates the default location strategy. This method creates a combined location strategy as described in the comment
      * of the {@link #DEFAULT_LOCATION_STRATEGY} member field.
      *
      * @return the default {@code FileLocationStrategy}
      */
     private static FileLocationStrategy initDefaultLocationStrategy() {
-        final FileLocationStrategy[] subStrategies = {new ProvidedURLLocationStrategy(), new FileSystemLocationStrategy(), new AbsoluteNameLocationStrategy(),
-            new BasePathLocationStrategy(), new HomeDirectoryLocationStrategy(true), new HomeDirectoryLocationStrategy(false), new ClasspathLocationStrategy()};
+        // @formatter:off
+        final FileLocationStrategy[] subStrategies = {
+                ProvidedURLLocationStrategy.INSTANCE,
+                FileSystemLocationStrategy.INSTANCE,
+                AbsoluteNameLocationStrategy.INSTANCE,
+                BasePathLocationStrategy.INSTANCE,
+                new HomeDirectoryLocationStrategy(true),
+                new HomeDirectoryLocationStrategy(false),
+                ClasspathLocationStrategy.INSTANCE};
+        // @formatter:on
         return new CombinedLocationStrategy(Arrays.asList(subStrategies));
     }
 
@@ -399,9 +455,9 @@ public final class FileLocatorUtils {
      * If only the file name is set (and optionally the base path), each time the file is accessed a {@code locate()}
      * operation has to be performed to uniquely identify the file. If however the URL is determined once based on the other
      * components and stored in a fully defined {@code FileLocator}, it can be used directly to identify the file. If the
-     * passed in {@code FileLocator} is <b>null</b>, result is <b>false</b>.
+     * passed in {@code FileLocator} is <strong>null</strong>, result is <strong>false</strong>.
      *
-     * @param locator the {@code FileLocator} to be checked (may be <b>null</b>)
+     * @param locator the {@code FileLocator} to be checked (may be <strong>null</strong>)
      * @return a flag whether all components describing the referenced file are initialized
      */
     public static boolean isFullyInitialized(final FileLocator locator) {
@@ -413,7 +469,7 @@ public final class FileLocatorUtils {
 
     /**
      * Checks whether the specified {@code FileLocator} contains enough information to locate a file. This is the case if a
-     * file name or a URL is defined. If the passed in {@code FileLocator} is <b>null</b>, result is <b>false</b>.
+     * file name or a URL is defined. If the passed in {@code FileLocator} is <strong>null</strong>, result is <strong>false</strong>.
      *
      * @param locator the {@code FileLocator} to check
      * @return a flag whether a file location is defined by this {@code FileLocator}
@@ -427,10 +483,10 @@ public final class FileLocatorUtils {
      * {@link FileLocationStrategy} to locate the file the passed in {@code FileLocator} points to. If the
      * {@code FileLocator} contains itself a {@code FileLocationStrategy}, it is used. Otherwise, the default
      * {@code FileLocationStrategy} is applied. The strategy is passed the locator and a {@code FileSystem}. The resulting
-     * URL is returned. If the {@code FileLocator} is <b>null</b>, result is <b>null</b>.
+     * URL is returned. If the {@code FileLocator} is <strong>null</strong>, result is <strong>null</strong>.
      *
      * @param locator the {@code FileLocator} to be resolved
-     * @return the URL pointing to the referenced file or <b>null</b> if the {@code FileLocator} could not be resolved
+     * @return the URL pointing to the referenced file or <strong>null</strong> if the {@code FileLocator} could not be resolved
      * @see #DEFAULT_LOCATION_STRATEGY
      */
     public static URL locate(final FileLocator locator) {
@@ -438,36 +494,7 @@ public final class FileLocatorUtils {
             return null;
         }
 
-        return obtainLocationStrategy(locator).locate(obtainFileSystem(locator), locator);
-    }
-
-    /**
-     * Tries to find a resource with the given name in the classpath.
-     *
-     * @param resourceName the name of the resource
-     * @return the URL to the found resource or <b>null</b> if the resource cannot be found
-     */
-    static URL locateFromClasspath(final String resourceName) {
-        URL url = null;
-        // attempt to load from the context classpath
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        if (loader != null) {
-            url = loader.getResource(resourceName);
-
-            if (url != null) {
-                LOG.debug("Loading configuration from the context classpath (" + resourceName + ")");
-            }
-        }
-
-        // attempt to load from the system classpath
-        if (url == null) {
-            url = ClassLoader.getSystemResource(resourceName);
-
-            if (url != null) {
-                LOG.debug("Loading configuration from the system classpath (" + resourceName + ")");
-            }
-        }
-        return url;
+        return getLocationStrategy(locator).locate(getFileSystem(locator), locator);
     }
 
     /**
@@ -481,33 +508,9 @@ public final class FileLocatorUtils {
     public static URL locateOrThrow(final FileLocator locator) throws ConfigurationException {
         final URL url = locate(locator);
         if (url == null) {
-            throw new ConfigurationException("Could not locate: " + locator);
+            throw new ConfigurationException("Could not locate: %s", locator);
         }
         return url;
-    }
-
-    /**
-     * Obtains a non-<b>null</b> {@code FileSystem} object from the passed in {@code FileLocator}. If the passed in
-     * {@code FileLocator} has a {@code FileSystem} object, it is returned. Otherwise, result is the default
-     * {@code FileSystem}.
-     *
-     * @param locator the {@code FileLocator} (may be <b>null</b>)
-     * @return the {@code FileSystem} to be used for this {@code FileLocator}
-     */
-    static FileSystem obtainFileSystem(final FileLocator locator) {
-        return locator != null ? ObjectUtils.defaultIfNull(locator.getFileSystem(), DEFAULT_FILE_SYSTEM) : DEFAULT_FILE_SYSTEM;
-    }
-
-    /**
-     * Obtains a non <b>null</b> {@code FileLocationStrategy} object from the passed in {@code FileLocator}. If the
-     * {@code FileLocator} is not <b>null</b> and has a {@code FileLocationStrategy} defined, this strategy is returned.
-     * Otherwise, result is the default {@code FileLocationStrategy}.
-     *
-     * @param locator the {@code FileLocator}
-     * @return the {@code FileLocationStrategy} for this {@code FileLocator}
-     */
-    static FileLocationStrategy obtainLocationStrategy(final FileLocator locator) {
-        return locator != null ? ObjectUtils.defaultIfNull(locator.getLocationStrategy(), DEFAULT_LOCATION_STRATEGY) : DEFAULT_LOCATION_STRATEGY;
     }
 
     /**
@@ -515,8 +518,8 @@ public final class FileLocatorUtils {
      * {@code FileLocator} with the same properties as the original one can be created.
      *
      * @param locator the {@code FileLocator} to be stored
-     * @param map the map in which to store the {@code FileLocator} (must not be <b>null</b>)
-     * @throws IllegalArgumentException if the map is <b>null</b>
+     * @param map the map in which to store the {@code FileLocator} (must not be <strong>null</strong>)
+     * @throws IllegalArgumentException if the map is <strong>null</strong>
      */
     public static void put(final FileLocator locator, final Map<String, Object> map) {
         if (map == null) {
@@ -546,6 +549,12 @@ public final class FileLocatorUtils {
      */
     static URL toURL(final File file) throws MalformedURLException {
         return file.toURI().toURL();
+    }
+
+    /**
+     * Private constructor so that no instances can be created.
+     */
+    private FileLocatorUtils() {
     }
 
 }

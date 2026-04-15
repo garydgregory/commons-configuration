@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,9 +29,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code AbsoluteNameLocationStrategy}.
- *
  */
 public class TestAbsoluteNameLocationStrategy {
+
     /** A mock for the file system. */
     private FileSystem fileSystem;
 
@@ -48,7 +48,7 @@ public class TestAbsoluteNameLocationStrategy {
      * Tests a successful locate() operation.
      */
     @Test
-    public void testExistingAbsoluteFile() {
+    void testExistingAbsoluteFile() {
         final File file = ConfigurationAssert.getTestFile("test.xml");
         final FileLocator locator = FileLocatorUtils.fileLocator().fileName(file.getAbsolutePath()).create();
         final URL url = strategy.locate(fileSystem, locator);
@@ -59,7 +59,7 @@ public class TestAbsoluteNameLocationStrategy {
      * Tests a locate() operation if no absolute file name is provided.
      */
     @Test
-    public void testNoAbsoluteFileName() {
+    void testNoAbsoluteFileName() {
         final FileLocator locator = FileLocatorUtils.fileLocator().fileName("test.xml").create();
         assertNull(strategy.locate(fileSystem, locator));
     }
@@ -68,7 +68,7 @@ public class TestAbsoluteNameLocationStrategy {
      * Tests a locate() operation if no file name is provided.
      */
     @Test
-    public void testNoFileName() {
+    void testNoFileName() {
         final FileLocator locator = FileLocatorUtils.fileLocator().create();
         assertNull(strategy.locate(fileSystem, locator));
     }
@@ -77,7 +77,7 @@ public class TestAbsoluteNameLocationStrategy {
      * Tests a locate() operation if an absolute file name is provided, but this file does not exist.
      */
     @Test
-    public void testNonExistingAbsoluteFile() {
+    void testNonExistingAbsoluteFile() {
         final File file = ConfigurationAssert.getOutFile("NotExistingFile.tst");
         final FileLocator locator = FileLocatorUtils.fileLocator().fileName(file.getAbsolutePath()).create();
         assertNull(strategy.locate(fileSystem, locator));

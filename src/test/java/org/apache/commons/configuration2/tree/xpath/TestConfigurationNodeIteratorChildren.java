@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,6 @@
  */
 package org.apache.commons.configuration2.tree.xpath;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.endsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,9 +38,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for ConfigurationNodeIteratorChildren.
- *
  */
 public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
+
     /** Constant for a namespace prefix. */
     private static final String PREFIX = "commons";
 
@@ -63,7 +61,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
         final List<NodePointer> nodes = iterationElements(iterator);
         for (int i = 0; i < expectedIndices.length; i++) {
             final ImmutableNode child = (ImmutableNode) nodes.get(i).getImmediateNode();
-            assertThat(child.getValue().toString(), endsWith(String.valueOf(expectedIndices[i])));
+            assertTrue(child.getValue().toString().endsWith(String.valueOf(expectedIndices[i])));
         }
     }
 
@@ -99,7 +97,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests to iterate over all children of the root node.
      */
     @Test
-    public void testIterateAllChildren() {
+    void testIterateAllChildren() {
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, null, false, null);
         assertEquals(CHILD_COUNT, iteratorSize(it));
         checkValues(it, 1, 2, 3, 4, 5);
@@ -109,7 +107,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests a reverse iteration.
      */
     @Test
-    public void testIterateReverse() {
+    void testIterateReverse() {
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, null, true, null);
         assertEquals(CHILD_COUNT, iteratorSize(it));
         checkValues(it, 5, 4, 3, 2, 1);
@@ -119,7 +117,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests defining a start node for the iteration.
      */
     @Test
-    public void testIterateStartsWith() {
+    void testIterateStartsWith() {
         final ConfigurationNodePointer<ImmutableNode> childPointer = new ConfigurationNodePointer<>(rootPointer, root.getChildren().get(2), handler);
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, null, false, childPointer);
         assertEquals(0, it.getPosition());
@@ -137,7 +135,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests iteration with an invalid start node. This should cause the iteration to start at the first position.
      */
     @Test
-    public void testIterateStartsWithInvalid() {
+    void testIterateStartsWithInvalid() {
         final ConfigurationNodePointer<ImmutableNode> childPointer = new ConfigurationNodePointer<>(rootPointer,
             new ImmutableNode.Builder().name("newNode").create(), handler);
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, null, false, childPointer);
@@ -151,7 +149,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests defining a start node for a reverse iteration.
      */
     @Test
-    public void testIterateStartsWithReverse() {
+    void testIterateStartsWithReverse() {
         final ConfigurationNodePointer<ImmutableNode> childPointer = new ConfigurationNodePointer<>(rootPointer, root.getChildren().get(3), handler);
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, null, true, childPointer);
         int value = 3;
@@ -166,7 +164,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests whether nodes with a matching namespace prefix can be obtained.
      */
     @Test
-    public void testIterateWithMatchingPrefixTest() {
+    void testIterateWithMatchingPrefixTest() {
         final NodeNameTest test = new NodeNameTest(new QName(PREFIX, PREFIX_NODE));
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(createPointerWithNamespace(), test, false, null);
         assertEquals(1, iteratorSize(it));
@@ -179,7 +177,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests using a node test that selects a certain sub node name.
      */
     @Test
-    public void testIterateWithNameTest() {
+    void testIterateWithNameTest() {
         final NodeNameTest test = new NodeNameTest(new QName(null, CHILD_NAME2));
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, test, false, null);
         assertTrue(iteratorSize(it) > 0);
@@ -192,7 +190,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests using a type test for nodes. This should return all nodes.
      */
     @Test
-    public void testIterateWithNodeType() {
+    void testIterateWithNodeType() {
         final NodeTypeTest test = new NodeTypeTest(Compiler.NODE_TYPE_NODE);
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, test, false, null);
         assertEquals(CHILD_COUNT, iteratorSize(it));
@@ -203,7 +201,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * in the iteration.
      */
     @Test
-    public void testIterateWithPrefixTest() {
+    void testIterateWithPrefixTest() {
         final NodeNameTest test = new NodeNameTest(new QName("prefix", "*"));
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, test, false, null);
         assertNull(it.getNodePointer());
@@ -214,7 +212,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests using a not supported test class. This should yield an empty iteration.
      */
     @Test
-    public void testIterateWithUnknownTest() {
+    void testIterateWithUnknownTest() {
         final NodeTest test = new ProcessingInstructionTest("test");
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, test, false, null);
         assertEquals(0, iteratorSize(it));
@@ -224,7 +222,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests using a type test for a non supported type. This should return an empty iteration.
      */
     @Test
-    public void testIterateWithUnknownType() {
+    void testIterateWithUnknownType() {
         final NodeTypeTest test = new NodeTypeTest(Compiler.NODE_TYPE_COMMENT);
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, test, false, null);
         assertEquals(0, iteratorSize(it));
@@ -234,7 +232,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests using a node test with a wildcard name.
      */
     @Test
-    public void testIterateWithWildcardTest() {
+    void testIterateWithWildcardTest() {
         final NodeNameTest test = new NodeNameTest(new QName(null, "*"));
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(rootPointer, test, false, null);
         assertEquals(CHILD_COUNT, iteratorSize(it));
@@ -244,7 +242,7 @@ public class TestConfigurationNodeIteratorChildren extends AbstractXPathTest {
      * Tests whether all nodes with a specific prefix can be obtained.
      */
     @Test
-    public void testIterateWithWildcardTestPrefix() {
+    void testIterateWithWildcardTestPrefix() {
         final NodeNameTest test = new NodeNameTest(new QName(PREFIX, "*"));
         final ConfigurationNodeIteratorChildren<ImmutableNode> it = new ConfigurationNodeIteratorChildren<>(createPointerWithNamespace(), test, false, null);
         assertEquals(1, iteratorSize(it));

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,9 +37,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code DefaultConversionHandler}.
- *
  */
 public class TestDefaultConversionHandler {
+
     /** Constant for a variable. */
     private static final String VAR = "${test}";
 
@@ -85,7 +85,7 @@ public class TestDefaultConversionHandler {
      * Tests whether the default date format is used if no format has been set.
      */
     @Test
-    public void testGetDateFormatNotSet() {
+    void testGetDateFormatNotSet() {
         assertEquals(DefaultConversionHandler.DEFAULT_DATE_FORMAT, handler.getDateFormat());
     }
 
@@ -105,7 +105,7 @@ public class TestDefaultConversionHandler {
      * Tests whether the date format can be changed.
      */
     @Test
-    public void testSetDateFormat() {
+    void testSetDateFormat() {
         final String dateFormat = "dd.MM.yyyy";
         handler.setDateFormat(dateFormat);
         assertEquals(dateFormat, handler.getDateFormat());
@@ -115,7 +115,7 @@ public class TestDefaultConversionHandler {
      * Tests a conversion to an array from an empty string. An empty string should be interpreted as an empty array.
      */
     @Test
-    public void testToArrayEmptyString() {
+    void testToArrayEmptyString() {
         final int[] array = (int[]) handler.toArray("", Integer.TYPE, null);
         assertEquals(0, array.length);
     }
@@ -124,7 +124,7 @@ public class TestDefaultConversionHandler {
      * Tests toArray() if the source object is null.
      */
     @Test
-    public void testToArrayNullInput() {
+    void testToArrayNullInput() {
         assertNull(handler.toArray(null, Integer.class, null));
     }
 
@@ -132,7 +132,7 @@ public class TestDefaultConversionHandler {
      * Tests a conversion to an array of Objects.
      */
     @Test
-    public void testToArrayObject() {
+    void testToArrayObject() {
         final List<String> src = Arrays.asList(VAR, "100");
         final Integer[] array = (Integer[]) handler.toArray(src, Integer.class, createInterpolator());
         assertArrayEquals(new Integer[] {Integer.valueOf(REPLACEMENT), Integer.valueOf(src.get(1))}, array);
@@ -142,7 +142,7 @@ public class TestDefaultConversionHandler {
      * Tests a conversion to an array of primitive type if the source object is something else.
      */
     @Test
-    public void testToArrayPrimitiveOtherType() {
+    void testToArrayPrimitiveOtherType() {
         final List<String> src = Arrays.asList(VAR, "100");
         final int[] array = (int[]) handler.toArray(src, Integer.TYPE, createInterpolator());
         assertArrayEquals(new int[] {Integer.parseInt(REPLACEMENT), Integer.parseInt(src.get(1))}, array);
@@ -152,7 +152,7 @@ public class TestDefaultConversionHandler {
      * Tests a conversion to an array of primitive type if the source array already has the correct type.
      */
     @Test
-    public void testToArrayPrimitiveSameType() {
+    void testToArrayPrimitiveSameType() {
         final int[] src = {1, 2, 3, 4, 5, 6};
         final int[] array = (int[]) handler.toArray(src, Integer.TYPE, createInterpolator());
         assertArrayEquals(src, array);
@@ -162,7 +162,7 @@ public class TestDefaultConversionHandler {
      * Tests a conversion to an array of primitive type if the source array is of the corresponding wrapper type.
      */
     @Test
-    public void testToArrayPrimitiveWrapperType() {
+    void testToArrayPrimitiveWrapperType() {
         final Integer[] src = {0, 1, 2, 4, 8, 16, 32, 64, 128};
         final int[] array = (int[]) handler.toArray(src, Integer.TYPE, createInterpolator());
         assertArrayEquals(new int[] {0, 1, 2, 4, 8, 16, 32, 64, 128}, array);
@@ -172,7 +172,7 @@ public class TestDefaultConversionHandler {
      * Tests a conversion to a Calendar object using the default format.
      */
     @Test
-    public void testToCalendarWithDefaultFormat() {
+    void testToCalendarWithDefaultFormat() {
         final Calendar cal = handler.to("2013-08-19 21:17:22", Calendar.class, null);
         assertEquals(19, cal.get(Calendar.DATE));
         assertEquals(Calendar.AUGUST, cal.get(Calendar.MONTH));
@@ -187,7 +187,7 @@ public class TestDefaultConversionHandler {
      * with no values.
      */
     @Test
-    public void testToCollectionEmptyString() {
+    void testToCollectionEmptyString() {
         final List<Integer> col = new ArrayList<>(1);
         handler.toCollection("", Integer.class, null, col);
         assertTrue(col.isEmpty());
@@ -197,8 +197,8 @@ public class TestDefaultConversionHandler {
      * Tries to pass a null collection to toCollection().
      */
     @Test
-    public void testToCollectionNullCollection() {
-        List<Integer> src = Arrays.asList(1, 2, 3);
+    void testToCollectionNullCollection() {
+        final List<Integer> src = Arrays.asList(1, 2, 3);
         assertThrows(IllegalArgumentException.class, () -> handler.toCollection(src, Integer.class, null, null));
     }
 
@@ -206,7 +206,7 @@ public class TestDefaultConversionHandler {
      * Tests a conversion to a collection if the source object is null.
      */
     @Test
-    public void testToCollectionNullInput() {
+    void testToCollectionNullInput() {
         final ArrayList<Integer> col = new ArrayList<>();
         handler.toCollection(null, Integer.class, null, col);
         assertTrue(col.isEmpty());
@@ -216,18 +216,32 @@ public class TestDefaultConversionHandler {
      * Tests a successful conversion to a collection.
      */
     @Test
-    public void testToCollectionSuccess() {
+    void testToCollectionSuccess() {
         final Object[] src = {VAR, "100"};
         final List<Integer> col = new ArrayList<>(src.length);
         handler.toCollection(src, Integer.class, createInterpolator(), col);
         assertEquals(Arrays.asList(Integer.valueOf(REPLACEMENT), Integer.valueOf(src[1].toString())), col);
     }
 
+    @Test
+    void testToCustomNumber() {
+        // convertValue()
+        assertEquals(new MyNumber(1), DefaultConversionHandler.INSTANCE.convertValue(new MyNumber(1), MyNumber.class, null));
+        assertEquals(new MyNumber(2), DefaultConversionHandler.INSTANCE.convertValue(new MyNumber(2), MyNumber.class, null));
+        assertEquals(new MyNumber(3), DefaultConversionHandler.INSTANCE.convertValue("3", MyNumber.class, null));
+        assertNull(DefaultConversionHandler.INSTANCE.convertValue(null, MyNumber.class, null));
+        // to()
+        assertEquals(new MyNumber(1), DefaultConversionHandler.INSTANCE.to(new MyNumber(1), MyNumber.class, null));
+        assertEquals(new MyNumber(2), DefaultConversionHandler.INSTANCE.to(new MyNumber(2), MyNumber.class, null));
+        assertEquals(new MyNumber(3), DefaultConversionHandler.INSTANCE.to("3", MyNumber.class, null));
+        assertNull(DefaultConversionHandler.INSTANCE.to(null, MyNumber.class, null));
+    }
+
     /**
      * Tests whether a conversion to a date object is possible if a specific date format is used.
      */
     @Test
-    public void testToDateWithFormat() {
+    void testToDateWithFormat() {
         handler.setDateFormat("dd.MM.yyyy");
         final Date dt = handler.to("19.08.2013", Date.class, null);
         final Calendar cal = Calendar.getInstance();
@@ -241,7 +255,7 @@ public class TestDefaultConversionHandler {
      * Tests a failed conversion.
      */
     @Test
-    public void testToFailedConversion() {
+    void testToFailedConversion() {
         assertThrows(ConversionException.class, () -> handler.to(VAR, Integer.class, null));
     }
 
@@ -249,7 +263,7 @@ public class TestDefaultConversionHandler {
      * Tests whether a conversion from an array is possible.
      */
     @Test
-    public void testToFromArray() {
+    void testToFromArray() {
         final Object[] src = {VAR, true, 20130808221759L};
         checkSingleValue(handler.to(src, Integer.class, createInterpolator()));
     }
@@ -258,7 +272,7 @@ public class TestDefaultConversionHandler {
      * Tests whether a conversion from a collection is possible.
      */
     @Test
-    public void testToFromCollection() {
+    void testToFromCollection() {
         final Collection<String> src = Arrays.asList(VAR, "true", "1000");
         checkSingleValue(handler.to(src, Integer.class, createInterpolator()));
     }
@@ -267,7 +281,7 @@ public class TestDefaultConversionHandler {
      * Tests whether empty complex objects are handled when converting to a single value.
      */
     @Test
-    public void testToFromEmptyCollection() {
+    void testToFromEmptyCollection() {
         assertNull(handler.to(new ArrayList<>(), Integer.class, createInterpolator()));
     }
 
@@ -275,7 +289,7 @@ public class TestDefaultConversionHandler {
      * Tests whether a conversion from an iterator is possible.
      */
     @Test
-    public void testToFromIterator() {
+    void testToFromIterator() {
         final Iterator<String> src = Arrays.asList(VAR, "true", "1000").iterator();
         checkSingleValue(handler.to(src, Integer.class, createInterpolator()));
     }
@@ -284,7 +298,7 @@ public class TestDefaultConversionHandler {
      * Tests whether a ConfigurationInterpolator is optional.
      */
     @Test
-    public void testToNoInterpolator() {
+    void testToNoInterpolator() {
         final Integer result = handler.to(REPLACEMENT, Integer.class, null);
         checkSingleValue(result);
     }
@@ -293,7 +307,7 @@ public class TestDefaultConversionHandler {
      * Tests whether null input is handled by to().
      */
     @Test
-    public void testToNull() {
+    void testToNull() {
         assertNull(handler.to(null, Integer.class, null));
     }
 
@@ -301,7 +315,7 @@ public class TestDefaultConversionHandler {
      * Tests a conversion to a primitive type.
      */
     @Test
-    public void testToPrimitive() {
+    void testToPrimitive() {
         final Long value = 20130819214935L;
         final Object result = handler.to(value.toString(), Long.TYPE, null);
         assertEquals(value, result);
@@ -311,7 +325,7 @@ public class TestDefaultConversionHandler {
      * Tests a conversion with a ConfigurationInterpolator.
      */
     @Test
-    public void testToWithInterpolator() {
+    void testToWithInterpolator() {
         final Integer result = handler.to(VAR, Integer.class, createInterpolator());
         checkSingleValue(result);
     }

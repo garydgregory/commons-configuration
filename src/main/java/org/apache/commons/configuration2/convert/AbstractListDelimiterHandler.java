@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,9 +16,13 @@
  */
 package org.apache.commons.configuration2.convert;
 
+import java.lang.reflect.Array;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * <p>
@@ -27,13 +31,38 @@ import java.util.Iterator;
  * <p>
  * This base class provides a fully functional implementation for parsing a value object which can deal with different
  * cases like collections, arrays, iterators, etc. This logic is typically needed by every concrete subclass. Other
- * methods are partly implemented handling special corner cases like <b>null</b> values; concrete subclasses do not have
+ * methods are partly implemented handling special corner cases like <strong>null</strong> values; concrete subclasses do not have
  * do implement the corresponding checks.
  * </p>
  *
  * @since 2.0
  */
 public abstract class AbstractListDelimiterHandler implements ListDelimiterHandler {
+
+    static Collection<?> flatten(final ListDelimiterHandler handler, final Object value, final int limit, final Set<Object> dejaVu) {
+        if (value instanceof String) {
+            return handler.split((String) value, true);
+        }
+        dejaVu.add(value);
+        final Collection<Object> result = new LinkedList<>();
+        if (value instanceof Path) {
+            // Don't handle as an Iterable.
+            result.add(value);
+        } else if (value instanceof Iterable) {
+            flattenIterator(handler, result, ((Iterable<?>) value).iterator(), limit, dejaVu);
+        } else if (value instanceof Iterator) {
+            flattenIterator(handler, result, (Iterator<?>) value, limit, dejaVu);
+        } else if (value != null) {
+            if (value.getClass().isArray()) {
+                for (int len = Array.getLength(value), idx = 0, size = 0; idx < len && size < limit; idx++, size = result.size()) {
+                    result.addAll(handler.flatten(Array.get(value, idx), limit - size));
+                }
+            } else {
+                result.add(value);
+            }
+        }
+        return result;
+    }
 
     /**
      * Flattens the given iterator. For each element in the iteration {@code flatten()} is called recursively.
@@ -42,13 +71,25 @@ public abstract class AbstractListDelimiterHandler implements ListDelimiterHandl
      * @param target the target collection
      * @param iterator the iterator to process
      * @param limit a limit for the number of elements to extract
+     * @param dejaVue Previously visited objects.
      */
-    static void flattenIterator(final ListDelimiterHandler handler, final Collection<Object> target, final Iterator<?> iterator, final int limit) {
+    static void flattenIterator(final ListDelimiterHandler handler, final Collection<Object> target, final Iterator<?> iterator, final int limit,
+            final Set<Object> dejaVue) {
         int size = target.size();
         while (size < limit && iterator.hasNext()) {
-            target.addAll(handler.flatten(iterator.next(), limit - size));
-            size = target.size();
+            final Object next = iterator.next();
+            if (!dejaVue.contains(next)) {
+                target.addAll(flatten(handler, next, limit - size, dejaVue));
+                size = target.size();
+            }
         }
+    }
+
+    /**
+     * Constructs a new instance.
+     */
+    public AbstractListDelimiterHandler() {
+        // empty
     }
 
     /**
@@ -66,7 +107,7 @@ public abstract class AbstractListDelimiterHandler implements ListDelimiterHandl
      * subclasses have to implement their specific escaping logic here, so that the list delimiters they support are
      * properly escaped.
      *
-     * @param s the string to be escaped (not <b>null</b>)
+     * @param s the string to be escaped (not <strong>null</strong>)
      * @return the escaped string
      */
     protected abstract String escapeString(String s);
@@ -91,7 +132,7 @@ public abstract class AbstractListDelimiterHandler implements ListDelimiterHandl
      * contained elements are added to the resulting iteration.</li>
      * <li>Arrays are treated as {@code Iterable} objects.</li>
      * <li>All other types are directly inserted.</li>
-     * <li>Recursive combinations are supported, e.g. a collection containing an array that contains strings: The resulting
+     * <li>Recursive combinations are supported, for example a collection containing an array that contains strings: The resulting
      * collection will only contain primitive objects.</li>
      * </ul>
      */
@@ -101,7 +142,7 @@ public abstract class AbstractListDelimiterHandler implements ListDelimiterHandl
     }
 
     /**
-     * {@inheritDoc} This implementation handles the case that the passed in string is <b>null</b>. In this case, an empty
+     * {@inheritDoc} This implementation handles the case that the passed in string is <strong>null</strong>. In this case, an empty
      * collection is returned. Otherwise, this method delegates to {@link #splitString(String, boolean)}.
      */
     @Override
@@ -110,10 +151,10 @@ public abstract class AbstractListDelimiterHandler implements ListDelimiterHandl
     }
 
     /**
-     * Actually splits the passed in string which is guaranteed to be not <b>null</b>. This method is called by the base
+     * Actually splits the passed in string which is guaranteed to be not <strong>null</strong>. This method is called by the base
      * implementation of the {@code split()} method. Here the actual splitting logic has to be implemented.
      *
-     * @param s the string to be split (not <b>null</b>)
+     * @param s the string to be split (not <strong>null</strong>)
      * @param trim a flag whether the single components have to be trimmed
      * @return a collection with the extracted components of the passed in string
      */

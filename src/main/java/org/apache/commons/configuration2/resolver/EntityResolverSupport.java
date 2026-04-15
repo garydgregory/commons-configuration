@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,15 +24,16 @@ import org.xml.sax.EntityResolver;
  * @since 1.7
  */
 public interface EntityResolverSupport {
+
     /**
-     * Return the EntityResolver associated with the class.
+     * Gets the EntityResolver associated with the class.
      *
      * @return The EntityResolver.
      */
     EntityResolver getEntityResolver();
 
     /**
-     * Set the EntityResolver to associate with this class.
+     * Sets the EntityResolver to associate with this class.
      *
      * @param resolver The EntityResolver
      */

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,6 +31,7 @@ import org.apache.commons.configuration2.event.EventType;
  * @since 2.0
  */
 public class ReloadingEvent extends Event {
+
     /** The common event super type for all reloading events. */
     public static final EventType<ReloadingEvent> ANY = new EventType<>(Event.ANY, "RELOAD");
 
@@ -54,7 +55,7 @@ public class ReloadingEvent extends Event {
     }
 
     /**
-     * Returns the {@code ReloadingController} which caused this event.
+     * Gets the {@code ReloadingController} which caused this event.
      *
      * @return the responsible {@code ReloadingController}
      */
@@ -63,11 +64,11 @@ public class ReloadingEvent extends Event {
     }
 
     /**
-     * Returns an object with additional data about the reload operation. This is the object that was passed to the
+     * Gets an object with additional data about the reload operation. This is the object that was passed to the
      * {@link ReloadingController} when it was asked to do a reloading check. This is a generic mechanism to pass arbitrary
      * data to reloading listeners.
      *
-     * @return additional data about the reload operation (can be <b>null</b>)
+     * @return additional data about the reload operation (can be <strong>null</strong>)
      */
     public Object getData() {
         return data;

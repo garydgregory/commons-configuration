@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,14 +27,15 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code NodeTreeWalker}.
- *
  */
 public class TestNodeTreeWalker {
+
     /**
      * A visitor implementation used for testing purposes. The visitor produces a list with the names of the nodes visited
      * in the order it was called. With this it can be tested whether the nodes were visited in the correct order.
      */
-    private static class TestVisitor implements ConfigurationNodeVisitor<ImmutableNode> {
+    private static final class TestVisitor implements ConfigurationNodeVisitor<ImmutableNode> {
+
         /** A list with the names of the visited nodes. */
         private final List<String> visitedNodes = new LinkedList<>();
 
@@ -176,7 +177,7 @@ public class TestNodeTreeWalker {
      * Tests a traversal in BFS mode.
      */
     @Test
-    public void testWalkBFS() {
+    void testWalkBFS() {
         final List<String> expected = expectBFS();
         final TestVisitor visitor = new TestVisitor();
         NodeTreeWalker.INSTANCE.walkBFS(NodeStructureHelper.ROOT_AUTHORS_TREE, visitor, createHandler());
@@ -187,7 +188,7 @@ public class TestNodeTreeWalker {
      * Tests a BFS walk if node is passed in.
      */
     @Test
-    public void testWalkBFSNoNode() {
+    void testWalkBFSNoNode() {
         final ConfigurationNodeVisitor<ImmutableNode> visitor = visitorMock();
         final NodeHandler<ImmutableNode> handler = handlerMock();
         NodeTreeWalker.INSTANCE.walkBFS(null, visitor, handler);
@@ -197,7 +198,7 @@ public class TestNodeTreeWalker {
      * Tests whether the terminate flag is evaluated in BFS mode.
      */
     @Test
-    public void testWalkBFSTerminate() {
+    void testWalkBFSTerminate() {
         final TestVisitor visitor = new TestVisitor();
         final int nodeCount = 9;
         visitor.setMaxNodeCount(nodeCount);
@@ -209,7 +210,7 @@ public class TestNodeTreeWalker {
      * Tests a DFS traversal.
      */
     @Test
-    public void testWalkDFS() {
+    void testWalkDFS() {
         final List<String> expected = expectDFS();
         final TestVisitor visitor = new TestVisitor();
         NodeTreeWalker.INSTANCE.walkDFS(NodeStructureHelper.ROOT_AUTHORS_TREE, visitor, createHandler());
@@ -220,7 +221,7 @@ public class TestNodeTreeWalker {
      * Tests whether walkDFS() can handle a null node.
      */
     @Test
-    public void testWalkDFSNoNode() {
+    void testWalkDFSNoNode() {
         final ConfigurationNodeVisitor<ImmutableNode> visitor = visitorMock();
         final NodeHandler<ImmutableNode> handler = handlerMock();
         NodeTreeWalker.INSTANCE.walkDFS(null, visitor, handler);
@@ -230,7 +231,7 @@ public class TestNodeTreeWalker {
      * Tests whether the terminate flag is taken into account during a DFS walk.
      */
     @Test
-    public void testWalkDFSTerminate() {
+    void testWalkDFSTerminate() {
         final TestVisitor visitor = new TestVisitor();
         final int nodeCount = 5;
         visitor.setMaxNodeCount(nodeCount);
@@ -242,7 +243,7 @@ public class TestNodeTreeWalker {
      * Tries a walk() operation without a node handler.
      */
     @Test
-    public void testWalkNoNodeHandler() {
+    void testWalkNoNodeHandler() {
         final TestVisitor visitor = new TestVisitor();
         assertThrows(IllegalArgumentException.class, () -> NodeTreeWalker.INSTANCE.walkDFS(NodeStructureHelper.ROOT_AUTHORS_TREE, visitor, null));
     }
@@ -251,7 +252,7 @@ public class TestNodeTreeWalker {
      * Tries a walk operation without a visitor.
      */
     @Test
-    public void testWalkNoVisitor() {
+    void testWalkNoVisitor() {
         final NodeHandler<ImmutableNode> handler = createHandler();
         assertThrows(IllegalArgumentException.class, () -> NodeTreeWalker.INSTANCE.walkDFS(NodeStructureHelper.ROOT_AUTHORS_TREE, null, handler));
     }

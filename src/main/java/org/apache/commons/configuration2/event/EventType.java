@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,15 +36,53 @@ import java.util.Set;
  * listener interfaces and a natural selection of events to be processed.
  * </p>
  *
- * @since 2.0
  * @param <T> the event associated with this type
+ * @since 2.0
  */
 public class EventType<T extends Event> implements Serializable {
+
     /** Serial version UID. */
     private static final long serialVersionUID = 20150416L;
 
     /** Constant for the format used by toString(). */
     private static final String FMT_TO_STRING = "%s [ %s ]";
+
+    /**
+     * Returns a set with all event types that are super types of the specified type. This set contains the direct and
+     * indirect super types and also includes the given type itself. The passed in type may be <strong>null</strong>, then an empty
+     * set is returned.
+     *
+     * @param eventType the event type in question
+     * @return a set with all super event types
+     */
+    public static Set<EventType<?>> fetchSuperEventTypes(final EventType<?> eventType) {
+        final Set<EventType<?>> types = new HashSet<>();
+        EventType<?> currentType = eventType;
+        while (currentType != null) {
+            types.add(currentType);
+            currentType = currentType.getSuperType();
+        }
+        return types;
+    }
+
+    /**
+     * Checks whether an event type is derived from another type. This implementation tests whether {@code baseType} is a
+     * direct or indirect super type of {@code derivedType}. If one of the types is <strong>null</strong>, result is <strong>false</strong>.
+     *
+     * @param derivedType the derived event type
+     * @param baseType the base event type
+     * @return <strong>true</strong> if the derived type is an instance of the base type, <strong>false</strong> otherwise
+     */
+    public static boolean isInstanceOf(final EventType<?> derivedType, final EventType<?> baseType) {
+        EventType<?> currentType = derivedType;
+        while (currentType != null) {
+            if (currentType == baseType) {
+                return true;
+            }
+            currentType = currentType.getSuperType();
+        }
+        return false;
+    }
 
     /** Stores the super type of this type. */
     private final EventType<? super T> superType;
@@ -65,22 +103,22 @@ public class EventType<T extends Event> implements Serializable {
     }
 
     /**
-     * Returns the super event type. Result is <b>null</b> for the root event type.
-     *
-     * @return the super event type
-     */
-    public EventType<? super T> getSuperType() {
-        return superType;
-    }
-
-    /**
-     * Returns the name of this event type. The name has no specific semantic meaning. It is just used for debugging
+     * Gets the name of this event type. The name has no specific semantic meaning. It is just used for debugging
      * purposes and also part of the string representation of this event type.
      *
      * @return the event type name
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Gets the super event type. Result is <strong>null</strong> for the root event type.
+     *
+     * @return the super event type
+     */
+    public EventType<? super T> getSuperType() {
+        return superType;
     }
 
     /**
@@ -92,42 +130,5 @@ public class EventType<T extends Event> implements Serializable {
     @Override
     public String toString() {
         return String.format(FMT_TO_STRING, getClass().getSimpleName(), getName());
-    }
-
-    /**
-     * Returns a set with all event types that are super types of the specified type. This set contains the direct and
-     * indirect super types and also includes the given type itself. The passed in type may be <b>null</b>, then an empty
-     * set is returned.
-     *
-     * @param eventType the event type in question
-     * @return a set with all super event types
-     */
-    public static Set<EventType<?>> fetchSuperEventTypes(final EventType<?> eventType) {
-        final Set<EventType<?>> types = new HashSet<>();
-        EventType<?> currentType = eventType;
-        while (currentType != null) {
-            types.add(currentType);
-            currentType = currentType.getSuperType();
-        }
-        return types;
-    }
-
-    /**
-     * Checks whether an event type is derived from another type. This implementation tests whether {@code baseType} is a
-     * direct or indirect super type of {@code derivedType}. If one of the types is <b>null</b>, result is <b>false</b>.
-     *
-     * @param derivedType the derived event type
-     * @param baseType the base event type
-     * @return <b>true</b> if the derived type is an instance of the base type, <b>false</b> otherwise
-     */
-    public static boolean isInstanceOf(final EventType<?> derivedType, final EventType<?> baseType) {
-        EventType<?> currentType = derivedType;
-        while (currentType != null) {
-            if (currentType == baseType) {
-                return true;
-            }
-            currentType = currentType.getSuperType();
-        }
-        return false;
     }
 }

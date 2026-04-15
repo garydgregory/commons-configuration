@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,6 +44,7 @@ import org.apache.commons.configuration2.io.URLConnectionOptions;
  * @since 2.0
  */
 public class FileBasedBuilderParametersImpl extends BasicBuilderParameters implements FileBasedBuilderProperties<FileBasedBuilderParametersImpl> {
+
     /** Constant for the key in the parameters map used by this class. */
     private static final String PARAM_KEY = RESERVED_PARAMETER_PREFIX + "fileBased";
 
@@ -52,6 +53,61 @@ public class FileBasedBuilderParametersImpl extends BasicBuilderParameters imple
 
     /** Property name of the reloading detector factory. */
     private static final String PROP_DETECTOR_FACTORY = "reloadingDetectorFactory";
+
+    /**
+     * Creates a new {@code FileBasedBuilderParametersImpl} object from the content of the given map. While
+     * {@code fromParameters()} expects that an object already exists and is stored in the given map, this method creates a
+     * new instance based on the content of the map. The map can contain properties of a {@code FileHandler} and some
+     * additional settings which are stored directly in the newly created object. If the map is <strong>null</strong>, an
+     * uninitialized instance is returned.
+     *
+     * @param map the map with properties (must not be <strong>null</strong>)
+     * @return the newly created instance
+     * @throws ClassCastException if the map contains invalid data
+     */
+    public static FileBasedBuilderParametersImpl fromMap(final Map<String, ?> map) {
+        final FileBasedBuilderParametersImpl params = new FileBasedBuilderParametersImpl(FileHandler.fromMap(map));
+        if (map != null) {
+            params.setReloadingRefreshDelay((Long) map.get(PROP_REFRESH_DELAY));
+            params.setReloadingDetectorFactory((ReloadingDetectorFactory) map.get(PROP_DETECTOR_FACTORY));
+        }
+        return params;
+    }
+
+    /**
+     * Looks up an instance of this class in the specified parameters map. This is equivalent to
+     * {@code fromParameters(params, false};}
+     *
+     * @param params the map with parameters (must not be <strong>null</strong>
+     * @return the instance obtained from the map or <strong>null</strong>
+     * @throws IllegalArgumentException if the map is <strong>null</strong>
+     */
+    public static FileBasedBuilderParametersImpl fromParameters(final Map<String, ?> params) {
+        return fromParameters(params, false);
+    }
+
+    /**
+     * Looks up an instance of this class in the specified parameters map and optionally creates a new one if none is found.
+     * This method can be used to obtain an instance of this class which has been stored in a parameters map. It is
+     * compatible with the {@code getParameters()} method.
+     *
+     * @param params the map with parameters (must not be <strong>null</strong>
+     * @param createIfMissing determines the behavior if no instance is found in the map; if <strong>true</strong>, a new instance
+     *        with default settings is created; if <strong>false</strong>, <strong>null</strong> is returned
+     * @return the instance obtained from the map or <strong>null</strong>
+     * @throws IllegalArgumentException if the map is <strong>null</strong>
+     */
+    public static FileBasedBuilderParametersImpl fromParameters(final Map<String, ?> params, final boolean createIfMissing) {
+        if (params == null) {
+            throw new IllegalArgumentException("Parameters map must not be null!");
+        }
+
+        FileBasedBuilderParametersImpl instance = (FileBasedBuilderParametersImpl) params.get(PARAM_KEY);
+        if (instance == null && createIfMissing) {
+            instance = new FileBasedBuilderParametersImpl();
+        }
+        return instance;
+    }
 
     /**
      * Stores the associated file handler for the location of the configuration.
@@ -73,68 +129,12 @@ public class FileBasedBuilderParametersImpl extends BasicBuilderParameters imple
 
     /**
      * Creates a new instance of {@code FileBasedBuilderParametersImpl} and associates it with the given {@code FileHandler}
-     * object. If the handler is <b>null</b>, a new handler instance is created.
+     * object. If the handler is <strong>null</strong>, a new handler instance is created.
      *
-     * @param handler the associated {@code FileHandler} (can be <b>null</b>)
+     * @param handler the associated {@code FileHandler} (can be <strong>null</strong>)
      */
     public FileBasedBuilderParametersImpl(final FileHandler handler) {
         fileHandler = handler != null ? handler : new FileHandler();
-    }
-
-
-    /**
-     * Creates a new {@code FileBasedBuilderParametersImpl} object from the content of the given map. While
-     * {@code fromParameters()} expects that an object already exists and is stored in the given map, this method creates a
-     * new instance based on the content of the map. The map can contain properties of a {@code FileHandler} and some
-     * additional settings which are stored directly in the newly created object. If the map is <b>null</b>, an
-     * uninitialized instance is returned.
-     *
-     * @param map the map with properties (must not be <b>null</b>)
-     * @return the newly created instance
-     * @throws ClassCastException if the map contains invalid data
-     */
-    public static FileBasedBuilderParametersImpl fromMap(final Map<String, ?> map) {
-        final FileBasedBuilderParametersImpl params = new FileBasedBuilderParametersImpl(FileHandler.fromMap(map));
-        if (map != null) {
-            params.setReloadingRefreshDelay((Long) map.get(PROP_REFRESH_DELAY));
-            params.setReloadingDetectorFactory((ReloadingDetectorFactory) map.get(PROP_DETECTOR_FACTORY));
-        }
-        return params;
-    }
-
-    /**
-     * Looks up an instance of this class in the specified parameters map. This is equivalent to
-     * {@code fromParameters(params, false};}
-     *
-     * @param params the map with parameters (must not be <b>null</b>
-     * @return the instance obtained from the map or <b>null</b>
-     * @throws IllegalArgumentException if the map is <b>null</b>
-     */
-    public static FileBasedBuilderParametersImpl fromParameters(final Map<String, ?> params) {
-        return fromParameters(params, false);
-    }
-
-    /**
-     * Looks up an instance of this class in the specified parameters map and optionally creates a new one if none is found.
-     * This method can be used to obtain an instance of this class which has been stored in a parameters map. It is
-     * compatible with the {@code getParameters()} method.
-     *
-     * @param params the map with parameters (must not be <b>null</b>
-     * @param createIfMissing determines the behavior if no instance is found in the map; if <b>true</b>, a new instance
-     *        with default settings is created; if <b>false</b>, <b>null</b> is returned
-     * @return the instance obtained from the map or <b>null</b>
-     * @throws IllegalArgumentException if the map is <b>null</b>
-     */
-    public static FileBasedBuilderParametersImpl fromParameters(final Map<String, ?> params, final boolean createIfMissing) {
-        if (params == null) {
-            throw new IllegalArgumentException("Parameters map must not be null!");
-        }
-
-        FileBasedBuilderParametersImpl instance = (FileBasedBuilderParametersImpl) params.get(PARAM_KEY);
-        if (instance == null && createIfMissing) {
-            instance = new FileBasedBuilderParametersImpl();
-        }
-        return instance;
     }
 
     /**
@@ -148,7 +148,7 @@ public class FileBasedBuilderParametersImpl extends BasicBuilderParameters imple
     }
 
     /**
-     * Returns the {@code FileHandler} managed by this object. This object is updated every time the file location is
+     * Gets the {@code FileHandler} managed by this object. This object is updated every time the file location is
      * changed.
      *
      * @return the managed {@code FileHandler}
@@ -170,7 +170,7 @@ public class FileBasedBuilderParametersImpl extends BasicBuilderParameters imple
     }
 
     /**
-     * Returns the {@code ReloadingDetectorFactory}. Result may be <b>null</b> which means that the default factory is to be
+     * Gets the {@code ReloadingDetectorFactory}. Result may be <strong>null</strong> which means that the default factory is to be
      * used.
      *
      * @return the {@code ReloadingDetectorFactory}
@@ -180,7 +180,7 @@ public class FileBasedBuilderParametersImpl extends BasicBuilderParameters imple
     }
 
     /**
-     * Returns the refresh delay for reload operations. Result may be <b>null</b> if this value has not been set.
+     * Gets the refresh delay for reload operations. Result may be <strong>null</strong> if this value has not been set.
      *
      * @return the reloading refresh delay
      */

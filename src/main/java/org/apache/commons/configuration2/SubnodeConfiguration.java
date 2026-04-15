@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,7 +59,7 @@ import org.apache.commons.configuration2.tree.TrackedNodeModel;
  * longer overlapping nodes, there is no way to have a synchronization here).
  * </p>
  * <p>
- * When a subnode configuration is created, it inherits the settings of its parent configuration, e.g. some flags like
+ * When a subnode configuration is created, it inherits the settings of its parent configuration, for example some flags like
  * the {@code throwExceptionOnMissing} flag or the settings for handling list delimiters) or the expression engine. If
  * these settings are changed later in either the subnode or the parent configuration, the changes are not visible for
  * each other. So you could create a subnode configuration, and change its expression engine without affecting the
@@ -89,6 +89,7 @@ import org.apache.commons.configuration2.tree.TrackedNodeModel;
  * @since 1.3
  */
 public class SubnodeConfiguration extends BaseHierarchicalConfiguration {
+
     /** Stores the parent configuration. */
     private final BaseHierarchicalConfiguration parent;
 
@@ -116,21 +117,16 @@ public class SubnodeConfiguration extends BaseHierarchicalConfiguration {
     }
 
     /**
-     * Returns the parent configuration of this subnode configuration.
+     * {@inheritDoc} This implementation returns a copy of the current node model with the same settings. However, it has to
+     * be ensured that the track count for the node selector is increased.
      *
-     * @return the parent configuration
+     * @return the node model for the clone
      */
-    public BaseHierarchicalConfiguration getParent() {
-        return parent;
-    }
-
-    /**
-     * Returns the selector to the root node of this configuration.
-     *
-     * @return the {@code NodeSelector} to the root node
-     */
-    public NodeSelector getRootSelector() {
-        return rootSelector;
+    @Override
+    protected NodeModel<ImmutableNode> cloneNodeModel() {
+        final InMemoryNodeModel parentModel = (InMemoryNodeModel) getParent().getModel();
+        parentModel.trackNode(getRootSelector(), getParent());
+        return new TrackedNodeModel(getParent(), getRootSelector(), true);
     }
 
     /**
@@ -141,6 +137,15 @@ public class SubnodeConfiguration extends BaseHierarchicalConfiguration {
      */
     public void close() {
         getTrackedModel().close();
+    }
+
+    /**
+     * {@inheritDoc} This implementation makes sure that the correct node model (the one of the parent) is used for the new
+     * sub configuration.
+     */
+    @Override
+    protected SubnodeConfiguration createSubConfigurationForTrackedNode(final NodeSelector selector, final InMemoryNodeModelSupport parentModelSupport) {
+        return super.createSubConfigurationForTrackedNode(selector, getParent());
     }
 
     /**
@@ -155,7 +160,16 @@ public class SubnodeConfiguration extends BaseHierarchicalConfiguration {
     }
 
     /**
-     * Returns the node model of the root configuration. {@code SubnodeConfiguration} instances created from a hierarchical
+     * Gets the parent configuration of this subnode configuration.
+     *
+     * @return the parent configuration
+     */
+    public BaseHierarchicalConfiguration getParent() {
+        return parent;
+    }
+
+    /**
+     * Gets the node model of the root configuration. {@code SubnodeConfiguration} instances created from a hierarchical
      * configuration operate on the same node model, using different nodes as their local root nodes. With this method the
      * top-level node model can be obtained. It works even in constellations where a {@code SubnodeConfiguration} has been
      * created from another {@code SubnodeConfiguration}.
@@ -171,16 +185,12 @@ public class SubnodeConfiguration extends BaseHierarchicalConfiguration {
     }
 
     /**
-     * {@inheritDoc} This implementation returns a copy of the current node model with the same settings. However, it has to
-     * be ensured that the track count for the node selector is increased.
+     * Gets the selector to the root node of this configuration.
      *
-     * @return the node model for the clone
+     * @return the {@code NodeSelector} to the root node
      */
-    @Override
-    protected NodeModel<ImmutableNode> cloneNodeModel() {
-        final InMemoryNodeModel parentModel = (InMemoryNodeModel) getParent().getModel();
-        parentModel.trackNode(getRootSelector(), getParent());
-        return new TrackedNodeModel(getParent(), getRootSelector(), true);
+    public NodeSelector getRootSelector() {
+        return rootSelector;
     }
 
     /**
@@ -198,15 +208,6 @@ public class SubnodeConfiguration extends BaseHierarchicalConfiguration {
     @Override
     protected InMemoryNodeModel getSubConfigurationParentModel() {
         return getTrackedModel().getParentModel();
-    }
-
-    /**
-     * {@inheritDoc} This implementation makes sure that the correct node model (the one of the parent) is used for the new
-     * sub configuration.
-     */
-    @Override
-    protected SubnodeConfiguration createSubConfigurationForTrackedNode(final NodeSelector selector, final InMemoryNodeModelSupport parentModelSupport) {
-        return super.createSubConfigurationForTrackedNode(selector, getParent());
     }
 
     /**

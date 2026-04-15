@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -60,16 +60,17 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for CombinedConfiguration.
- *
  */
 public class TestCombinedConfiguration {
+
     /**
      * Test event listener class for checking if the expected invalidate events are fired.
      */
-    private static class CombinedListener implements EventListener<ConfigurationEvent> {
-        int invalidateEvents;
+    private static final class CombinedListener implements EventListener<ConfigurationEvent> {
 
-        int otherEvents;
+        private int invalidateEvents;
+
+        private int otherEvents;
 
         /**
          * Checks if the expected number of events was fired.
@@ -96,7 +97,8 @@ public class TestCombinedConfiguration {
      * A test thread performing reads on a combined configuration. This thread reads a certain property from the
      * configuration. If everything works well, this property should have at least one and at most two values.
      */
-    private static class ReadThread extends Thread {
+    private static final class ReadThread extends Thread {
+
         /** The configuration to be accessed. */
         private final Configuration config;
 
@@ -166,7 +168,8 @@ public class TestCombinedConfiguration {
      * another one (which contained it before). So if concurrent reads are performed, the test property should always have
      * between 1 and 2 values.
      */
-    private static class WriteThread extends Thread {
+    private static final class WriteThread extends Thread {
+
         /** The list with the child configurations. */
         private final List<Configuration> testConfigs;
 
@@ -346,7 +349,7 @@ public class TestCombinedConfiguration {
      * Tests accessing properties if no configurations have been added.
      */
     @Test
-    public void testAccessPropertyEmpty() {
+    void testAccessPropertyEmpty() {
         assertFalse(config.containsKey(TEST_KEY));
         assertNull(config.getString("test.comment"));
         assertTrue(config.isEmpty());
@@ -356,7 +359,7 @@ public class TestCombinedConfiguration {
      * Tests accessing properties if multiple configurations have been added.
      */
     @Test
-    public void testAccessPropertyMulti() {
+    void testAccessPropertyMulti() {
         config.addConfiguration(setUpTestConfiguration());
         config.addConfiguration(setUpTestConfiguration(), null, "prefix1");
         config.addConfiguration(setUpTestConfiguration(), null, "prefix2");
@@ -371,7 +374,7 @@ public class TestCombinedConfiguration {
      * Tests adding a configuration (without further information).
      */
     @Test
-    public void testAddConfiguration() {
+    void testAddConfiguration() {
         final AbstractConfiguration c = setUpTestConfiguration();
         config.addConfiguration(c);
         checkAddConfig(c);
@@ -386,7 +389,7 @@ public class TestCombinedConfiguration {
      * Tests adding a configuration and specifying an at position.
      */
     @Test
-    public void testAddConfigurationAt() {
+    void testAddConfigurationAt() {
         final AbstractConfiguration c = setUpTestConfiguration();
         config.addConfiguration(c, null, "my");
         checkAddConfig(c);
@@ -397,7 +400,7 @@ public class TestCombinedConfiguration {
      * Tests adding a configuration with a complex at position. Here the at path contains a dot, which must be escaped.
      */
     @Test
-    public void testAddConfigurationComplexAt() {
+    void testAddConfigurationComplexAt() {
         final AbstractConfiguration c = setUpTestConfiguration();
         config.addConfiguration(c, null, "This..is.a.complex");
         checkAddConfig(c);
@@ -408,7 +411,7 @@ public class TestCombinedConfiguration {
      * Tests whether adding a new configuration is synchronized.
      */
     @Test
-    public void testAddConfigurationSynchronized() {
+    void testAddConfigurationSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         config.addConfiguration(new BaseHierarchicalConfiguration());
         sync.verify(Methods.BEGIN_WRITE, Methods.END_WRITE);
@@ -419,7 +422,7 @@ public class TestCombinedConfiguration {
      * Tests adding a configuration with a name.
      */
     @Test
-    public void testAddConfigurationWithName() {
+    void testAddConfigurationWithName() {
         final AbstractConfiguration c = setUpTestConfiguration();
         config.addConfiguration(c, TEST_NAME);
         checkAddConfig(c);
@@ -437,7 +440,7 @@ public class TestCombinedConfiguration {
      * Tests adding a configuration with a name when this name already exists. This should cause an exception.
      */
     @Test
-    public void testAddConfigurationWithNameTwice() {
+    void testAddConfigurationWithNameTwice() {
         config.addConfiguration(setUpTestConfiguration(), TEST_NAME);
         final Configuration configuration = setUpTestConfiguration();
         assertThrows(ConfigurationRuntimeException.class, () -> config.addConfiguration(configuration, TEST_NAME, "prefix"));
@@ -447,7 +450,7 @@ public class TestCombinedConfiguration {
      * Tests adding a null configuration. This should cause an exception to be thrown.
      */
     @Test
-    public void testAddNullConfiguration() {
+    void testAddNullConfiguration() {
         assertThrows(IllegalArgumentException.class, () -> config.addConfiguration(null));
     }
 
@@ -455,7 +458,7 @@ public class TestCombinedConfiguration {
      * Tests clearing a combined configuration. This should remove all contained configurations.
      */
     @Test
-    public void testClear() {
+    void testClear() {
         config.addConfiguration(setUpTestConfiguration(), TEST_NAME, "test");
         config.addConfiguration(setUpTestConfiguration());
 
@@ -472,7 +475,7 @@ public class TestCombinedConfiguration {
      * operation. This test is related to CONFIGURATION-572.
      */
     @Test
-    public void testClearRemoveChildListener() {
+    void testClearRemoveChildListener() {
         final AbstractConfiguration child = setUpTestConfiguration();
         config.addConfiguration(child);
 
@@ -486,7 +489,7 @@ public class TestCombinedConfiguration {
      * Tests cloning a combined configuration.
      */
     @Test
-    public void testClone() {
+    void testClone() {
         config.addConfiguration(setUpTestConfiguration());
         config.addConfiguration(setUpTestConfiguration(), TEST_NAME, "conf2");
         config.addConfiguration(new PropertiesConfiguration(), "props");
@@ -512,7 +515,7 @@ public class TestCombinedConfiguration {
      * Tests if the cloned configuration is decoupled from the original.
      */
     @Test
-    public void testCloneModify() {
+    void testCloneModify() {
         config.addConfiguration(setUpTestConfiguration(), TEST_NAME);
         final CombinedConfiguration cc2 = (CombinedConfiguration) config.clone();
         assertTrue(cc2.getConfigurationNames().contains(TEST_NAME));
@@ -524,7 +527,7 @@ public class TestCombinedConfiguration {
      * Tests whether cloning of a configuration is correctly synchronized.
      */
     @Test
-    public void testCloneSynchronized() {
+    void testCloneSynchronized() {
         setUpSourceTest();
         config.lock(LockMode.READ); // Causes the root node to be constructed
         config.unlock(LockMode.READ);
@@ -541,7 +544,7 @@ public class TestCombinedConfiguration {
      * CONFIGURATION-445.
      */
     @Test
-    public void testCombinedCopyToXML() throws ConfigurationException {
+    void testCombinedCopyToXML() throws ConfigurationException {
         final XMLConfiguration x1 = new XMLConfiguration();
         x1.addProperty("key1", "value1");
         x1.addProperty("key1[@override]", "USER1");
@@ -570,7 +573,7 @@ public class TestCombinedConfiguration {
      * writer thread. It is checked that no inconsistencies occur.
      */
     @Test
-    public void testConcurrentAccess() throws ConfigurationException, InterruptedException {
+    void testConcurrentAccess() throws ConfigurationException, InterruptedException {
         // populate the test combined configuration
         setUpSourceTest();
         final XMLConfiguration xmlConf = new XMLConfiguration();
@@ -618,7 +621,7 @@ public class TestCombinedConfiguration {
      * Tests whether sub configurations can be created from a key.
      */
     @Test
-    public void testConfigurationsAt() {
+    void testConfigurationsAt() {
         checkConfigurationsAt(false);
     }
 
@@ -626,7 +629,7 @@ public class TestCombinedConfiguration {
      * Tests whether sub configurations can be created which are attached.
      */
     @Test
-    public void testConfigurationsAtWithUpdates() {
+    void testConfigurationsAtWithUpdates() {
         checkConfigurationsAt(true);
     }
 
@@ -635,7 +638,7 @@ public class TestCombinedConfiguration {
      * CONFIGURATION-336.
      */
     @Test
-    public void testConversionExpressionEngine() {
+    void testConversionExpressionEngine() {
         final PropertiesConfiguration child = new PropertiesConfiguration();
         child.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         child.addProperty("test(a)", "1,2,3");
@@ -655,7 +658,7 @@ public class TestCombinedConfiguration {
      * Tests whether escaped list delimiters are treated correctly.
      */
     @Test
-    public void testEscapeListDelimiters() {
+    void testEscapeListDelimiters() {
         final PropertiesConfiguration sub = new PropertiesConfiguration();
         sub.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         sub.addProperty("test.pi", "3\\,1415");
@@ -667,7 +670,7 @@ public class TestCombinedConfiguration {
      * Tests whether access to a configuration by index is correctly synchronized.
      */
     @Test
-    public void testGetConfigurationByIdxSynchronized() {
+    void testGetConfigurationByIdxSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         assertNotNull(config.getConfiguration(0));
         sync.verify(Methods.BEGIN_READ, Methods.END_READ);
@@ -678,7 +681,7 @@ public class TestCombinedConfiguration {
      * Tests whether access to a configuration by name is correctly synchronized.
      */
     @Test
-    public void testGetConfigurationByNameSynchronized() {
+    void testGetConfigurationByNameSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         assertNotNull(config.getConfiguration(CHILD1));
         sync.verify(Methods.BEGIN_READ, Methods.END_READ);
@@ -686,7 +689,7 @@ public class TestCombinedConfiguration {
     }
 
     @Test
-    public void testGetConfigurationNameList() throws Exception {
+    void testGetConfigurationNameList() throws Exception {
         config.addConfiguration(setUpTestConfiguration());
         config.addConfiguration(setUpTestConfiguration(), TEST_NAME, "conf2");
         final AbstractConfiguration pc = new PropertiesConfiguration();
@@ -703,7 +706,7 @@ public class TestCombinedConfiguration {
      * Tests whether querying the name list of child configurations is synchronized.
      */
     @Test
-    public void testGetConfigurationNameListSynchronized() {
+    void testGetConfigurationNameListSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         assertFalse(config.getConfigurationNameList().isEmpty());
         sync.verify(Methods.BEGIN_READ, Methods.END_READ);
@@ -714,7 +717,7 @@ public class TestCombinedConfiguration {
      * Tests whether querying the name set of child configurations is synchronized.
      */
     @Test
-    public void testGetConfigurationNamesSynchronized() {
+    void testGetConfigurationNamesSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         assertFalse(config.getConfigurationNames().isEmpty());
         sync.verify(Methods.BEGIN_READ, Methods.END_READ);
@@ -722,7 +725,7 @@ public class TestCombinedConfiguration {
     }
 
     @Test
-    public void testGetConfigurations() throws Exception {
+    void testGetConfigurations() throws Exception {
         config.addConfiguration(setUpTestConfiguration());
         config.addConfiguration(setUpTestConfiguration(), TEST_NAME, "conf2");
         final AbstractConfiguration pc = new PropertiesConfiguration();
@@ -738,7 +741,7 @@ public class TestCombinedConfiguration {
      * Tests whether querying the list of child configurations is synchronized.
      */
     @Test
-    public void testGetConfigurationsSynchronized() {
+    void testGetConfigurationsSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         assertFalse(config.getConfigurations().isEmpty());
         sync.verify(Methods.BEGIN_READ, Methods.END_READ);
@@ -749,7 +752,7 @@ public class TestCombinedConfiguration {
      * Tests whether read access to the conversion expression engine is synchronized.
      */
     @Test
-    public void testGetConversionExpressionEngineSynchronized() {
+    void testGetConversionExpressionEngineSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         assertNull(config.getConversionExpressionEngine());
         sync.verify(Methods.BEGIN_READ, Methods.END_READ);
@@ -760,14 +763,16 @@ public class TestCombinedConfiguration {
      * Tests CONFIGURATION-799.
      */
     @Test
-    public void testGetKeys() {
+    void testGetKeys() {
         // Set up
         final BaseConfiguration conf1 = new BaseConfiguration();
         final String key = "x1";
         conf1.addProperty(key, 1);
+        assertEquals(1, conf1.getProperty(key));
 
         final CombinedConfiguration conf2 = new CombinedConfiguration();
         conf2.addConfiguration(conf1, null, "");
+        assertEquals(conf1, conf2.getConfiguration(0));
 
         // Actual test
         final Iterator<String> keys = conf2.getKeys();
@@ -779,7 +784,7 @@ public class TestCombinedConfiguration {
      * Tests whether getNodeCombiner() is correctly synchronized.
      */
     @Test
-    public void testGetNodeCombinerSynchronized() {
+    void testGetNodeCombinerSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         assertNotNull(config.getNodeCombiner());
         sync.verify(Methods.BEGIN_READ, Methods.END_READ);
@@ -790,7 +795,7 @@ public class TestCombinedConfiguration {
      * Tests whether querying the number of child configurations is synchronized.
      */
     @Test
-    public void testGetNumberOfConfigurationsSynchronized() {
+    void testGetNumberOfConfigurationsSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         assertEquals(2, config.getNumberOfConfigurations());
         sync.verify(Methods.BEGIN_READ, Methods.END_READ);
@@ -801,7 +806,7 @@ public class TestCombinedConfiguration {
      * Tests the getSource() method when the passed in key belongs to the combined configuration itself.
      */
     @Test
-    public void testGetSourceCombined() {
+    void testGetSourceCombined() {
         setUpSourceTest();
         final String key = "yet.another.key";
         config.addProperty(key, Boolean.TRUE);
@@ -812,7 +817,7 @@ public class TestCombinedConfiguration {
      * Tests the gestSource() method when the source property is defined in a hierarchical configuration.
      */
     @Test
-    public void testGetSourceHierarchical() {
+    void testGetSourceHierarchical() {
         setUpSourceTest();
         assertEquals(config.getConfiguration(CHILD1), config.getSource(TEST_KEY));
     }
@@ -822,7 +827,7 @@ public class TestCombinedConfiguration {
      * source configuration.
      */
     @Test
-    public void testGetSourceMulti() {
+    void testGetSourceMulti() {
         setUpSourceTest();
         final String key = "list.key";
         config.getConfiguration(CHILD1).addProperty(key, "1,2,3");
@@ -834,7 +839,7 @@ public class TestCombinedConfiguration {
      * should cause an exception.
      */
     @Test
-    public void testGetSourceMultiSources() {
+    void testGetSourceMultiSources() {
         setUpSourceTest();
         final String key = "list.key";
         config.getConfiguration(CHILD1).addProperty(key, "1,2,3");
@@ -846,7 +851,7 @@ public class TestCombinedConfiguration {
      * Tests whether the source configuration can be detected for non hierarchical configurations.
      */
     @Test
-    public void testGetSourceNonHierarchical() {
+    void testGetSourceNonHierarchical() {
         setUpSourceTest();
         assertEquals(config.getConfiguration(CHILD2), config.getSource("another.key"));
     }
@@ -855,7 +860,7 @@ public class TestCombinedConfiguration {
      * Tests the getSource() method when a null key is passed in. This should cause an exception.
      */
     @Test
-    public void testGetSourceNull() {
+    void testGetSourceNull() {
         assertThrows(IllegalArgumentException.class, () -> config.getSource(null));
     }
 
@@ -863,7 +868,7 @@ public class TestCombinedConfiguration {
      * Tests whether multiple sources of a key can be retrieved.
      */
     @Test
-    public void testGetSourcesMultiSources() {
+    void testGetSourcesMultiSources() {
         setUpSourceTest();
         final String key = "list.key";
         config.getConfiguration(CHILD1).addProperty(key, "1,2,3");
@@ -878,7 +883,7 @@ public class TestCombinedConfiguration {
      * Tests getSources() for a non existing key.
      */
     @Test
-    public void testGetSourcesUnknownKey() {
+    void testGetSourcesUnknownKey() {
         setUpSourceTest();
         assertTrue(config.getSources("non.existing,key").isEmpty());
     }
@@ -887,7 +892,7 @@ public class TestCombinedConfiguration {
      * Tests whether getSource() is correctly synchronized.
      */
     @Test
-    public void testGetSourceSynchronized() {
+    void testGetSourceSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         assertNotNull(config.getSource(TEST_KEY));
         sync.verifyStart(Methods.BEGIN_READ);
@@ -898,7 +903,7 @@ public class TestCombinedConfiguration {
      * Tests the getSource() method when the passed in key is not contained. Result should be null in this case.
      */
     @Test
-    public void testGetSourceUnknown() {
+    void testGetSourceUnknown() {
         setUpSourceTest();
         assertNull(config.getSource("an.unknown.key"));
     }
@@ -907,7 +912,7 @@ public class TestCombinedConfiguration {
      * Tests getSource() if a child configuration is again a combined configuration.
      */
     @Test
-    public void testGetSourceWithCombinedChildConfiguration() {
+    void testGetSourceWithCombinedChildConfiguration() {
         setUpSourceTest();
         final CombinedConfiguration cc = new CombinedConfiguration();
         cc.addConfiguration(config);
@@ -918,7 +923,7 @@ public class TestCombinedConfiguration {
      * Tests accessing a newly created combined configuration.
      */
     @Test
-    public void testInit() {
+    void testInit() {
         assertEquals(0, config.getNumberOfConfigurations());
         assertTrue(config.getConfigurationNames().isEmpty());
         assertInstanceOf(UnionCombiner.class, config.getNodeCombiner());
@@ -929,7 +934,7 @@ public class TestCombinedConfiguration {
      * Tests whether only a single invalidate event is fired for a change. This test is related to CONFIGURATION-315.
      */
     @Test
-    public void testInvalidateEventBeforeAndAfterChange() {
+    void testInvalidateEventBeforeAndAfterChange() {
         ConfigurationEvent event = new ConfigurationEvent(config, ConfigurationEvent.ANY, null, null, true);
         config.onEvent(event);
         assertEquals(1, listener.invalidateEvents);
@@ -942,7 +947,7 @@ public class TestCombinedConfiguration {
      * Tests whether invalidate() performs correct synchronization.
      */
     @Test
-    public void testInvalidateSynchronized() {
+    void testInvalidateSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         config.invalidate();
         sync.verify(Methods.BEGIN_WRITE, Methods.END_WRITE);
@@ -952,7 +957,7 @@ public class TestCombinedConfiguration {
      * Tests whether requested locks are freed correctly if an exception occurs while constructing the root node.
      */
     @Test
-    public void testLockHandlingWithExceptionWhenConstructingRootNode() {
+    void testLockHandlingWithExceptionWhenConstructingRootNode() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         final RuntimeException testEx = new ConfigurationRuntimeException("Test exception");
         final BaseHierarchicalConfiguration childEx = new BaseHierarchicalConfiguration() {
@@ -972,7 +977,7 @@ public class TestCombinedConfiguration {
      * Tests removing a configuration.
      */
     @Test
-    public void testRemoveConfiguration() {
+    void testRemoveConfiguration() {
         final AbstractConfiguration c = setUpTestConfiguration();
         config.addConfiguration(c);
         checkAddConfig(c);
@@ -984,7 +989,7 @@ public class TestCombinedConfiguration {
      * Tests removing a configuration by index.
      */
     @Test
-    public void testRemoveConfigurationAt() {
+    void testRemoveConfigurationAt() {
         final AbstractConfiguration c = setUpTestConfiguration();
         config.addConfiguration(c);
         assertSame(c, config.removeConfigurationAt(0));
@@ -995,7 +1000,7 @@ public class TestCombinedConfiguration {
      * Tests removing a configuration by name.
      */
     @Test
-    public void testRemoveConfigurationByName() {
+    void testRemoveConfigurationByName() {
         final AbstractConfiguration c = setUpTestConfiguration();
         config.addConfiguration(c, TEST_NAME);
         assertSame(c, config.removeConfiguration(TEST_NAME));
@@ -1006,7 +1011,7 @@ public class TestCombinedConfiguration {
      * Tests removing a configuration by name, which is not contained.
      */
     @Test
-    public void testRemoveConfigurationByUnknownName() {
+    void testRemoveConfigurationByUnknownName() {
         assertNull(config.removeConfiguration("unknownName"));
         listener.checkEvent(0, 0);
     }
@@ -1015,7 +1020,7 @@ public class TestCombinedConfiguration {
      * Tests removing a configuration with a name.
      */
     @Test
-    public void testRemoveNamedConfiguration() {
+    void testRemoveNamedConfiguration() {
         final AbstractConfiguration c = setUpTestConfiguration();
         config.addConfiguration(c, TEST_NAME);
         config.removeConfiguration(c);
@@ -1026,7 +1031,7 @@ public class TestCombinedConfiguration {
      * Tests removing a named configuration by index.
      */
     @Test
-    public void testRemoveNamedConfigurationAt() {
+    void testRemoveNamedConfigurationAt() {
         final AbstractConfiguration c = setUpTestConfiguration();
         config.addConfiguration(c, TEST_NAME);
         assertSame(c, config.removeConfigurationAt(0));
@@ -1037,7 +1042,7 @@ public class TestCombinedConfiguration {
      * Tests removing a configuration that was not added prior.
      */
     @Test
-    public void testRemoveNonContainedConfiguration() {
+    void testRemoveNonContainedConfiguration() {
         assertFalse(config.removeConfiguration(setUpTestConfiguration()));
         listener.checkEvent(0, 0);
     }
@@ -1046,7 +1051,7 @@ public class TestCombinedConfiguration {
      * Tests whether write access to the conversion expression engine is synchronized.
      */
     @Test
-    public void testSetConversionExpressionEngineSynchronized() {
+    void testSetConversionExpressionEngineSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         config.setConversionExpressionEngine(new DefaultExpressionEngine(DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS));
         sync.verify(Methods.BEGIN_WRITE, Methods.END_WRITE);
@@ -1057,7 +1062,7 @@ public class TestCombinedConfiguration {
      * Tests if setting a node combiner causes an invalidation.
      */
     @Test
-    public void testSetNodeCombiner() {
+    void testSetNodeCombiner() {
         final NodeCombiner combiner = new UnionCombiner();
         config.setNodeCombiner(combiner);
         assertSame(combiner, config.getNodeCombiner());
@@ -1068,7 +1073,7 @@ public class TestCombinedConfiguration {
      * Tests whether setNodeCombiner() is correctly synchronized.
      */
     @Test
-    public void testSetNodeCombinerSynchronized() {
+    void testSetNodeCombinerSynchronized() {
         final SynchronizerTestImpl sync = setUpSynchronizerTest();
         config.setNodeCombiner(new UnionCombiner());
         sync.verify(Methods.BEGIN_WRITE, Methods.END_WRITE);
@@ -1079,7 +1084,7 @@ public class TestCombinedConfiguration {
      * Tests setting a null node combiner. This should cause an exception.
      */
     @Test
-    public void testSetNullNodeCombiner() {
+    void testSetNullNodeCombiner() {
         assertThrows(IllegalArgumentException.class, () -> config.setNodeCombiner(null));
     }
 
@@ -1087,7 +1092,7 @@ public class TestCombinedConfiguration {
      * Tests whether a sub configuration survives updates of its parent.
      */
     @Test
-    public void testSubConfigurationWithUpdates() {
+    void testSubConfigurationWithUpdates() {
         final AbstractConfiguration srcConfig = setUpSubConfigTest();
         final HierarchicalConfiguration<ImmutableNode> sub = config.configurationAt(SUB_KEY, true);
         assertTrue(sub.getBoolean(TEST_KEY));
@@ -1100,7 +1105,7 @@ public class TestCombinedConfiguration {
      * Tests if an update of a contained configuration leeds to an invalidation of the combined configuration.
      */
     @Test
-    public void testUpdateContainedConfiguration() {
+    void testUpdateContainedConfiguration() {
         final AbstractConfiguration c = setUpTestConfiguration();
         config.addConfiguration(c);
         c.addProperty("test.otherTest", "yes");

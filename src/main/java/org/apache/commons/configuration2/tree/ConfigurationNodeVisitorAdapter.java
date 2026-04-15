@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,11 +28,21 @@ package org.apache.commons.configuration2.tree;
  * @param <T> the type of the nodes processed by this visitor
  */
 public class ConfigurationNodeVisitorAdapter<T> implements ConfigurationNodeVisitor<T> {
+
     /**
-     * {@inheritDoc} Empty dummy implementation of this interface method.
+     * Constructs a new instance.
+     */
+    public ConfigurationNodeVisitorAdapter() {
+        // empty
+    }
+
+    /**
+     * {@inheritDoc} This implementation returns always <strong>false</strong>; this means that all nodes in the current hierarchy are
+     * traversed.
      */
     @Override
-    public void visitBeforeChildren(final T node, final NodeHandler<T> handler) {
+    public boolean terminate() {
+        return false;
     }
 
     /**
@@ -40,14 +50,14 @@ public class ConfigurationNodeVisitorAdapter<T> implements ConfigurationNodeVisi
      */
     @Override
     public void visitAfterChildren(final T node, final NodeHandler<T> handler) {
+        // empty
     }
 
     /**
-     * {@inheritDoc} This implementation returns always <b>false</b>; this means that all nodes in the current hierarchy are
-     * traversed.
+     * {@inheritDoc} Empty dummy implementation of this interface method.
      */
     @Override
-    public boolean terminate() {
-        return false;
+    public void visitBeforeChildren(final T node, final NodeHandler<T> handler) {
+        // empty
     }
 }

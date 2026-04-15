@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@
 package org.apache.commons.configuration2.web;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -39,16 +40,16 @@ import org.mockito.ArgumentMatchers;
 
 /**
  * Test case for the {@link ServletRequestConfiguration} class.
- *
  */
 public class TestServletRequestConfiguration extends TestAbstractConfiguration {
+
     /**
      * Returns a new servlet request configuration that is backed by the passed in configuration.
      *
      * @param base the configuration with the underlying values
      * @return the servlet request configuration
      */
-    private ServletRequestConfiguration createConfiguration(final Configuration base) {
+    private AbstractConfiguration createConfiguration(final Configuration base) {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getParameterMap()).thenAnswer(invocation -> new ConfigurationMap(base));
         when(request.getParameterValues(ArgumentMatchers.any())).thenAnswer(invocation -> {
@@ -56,7 +57,7 @@ public class TestServletRequestConfiguration extends TestAbstractConfiguration {
             return base.getStringArray(key);
         });
 
-        final ServletRequestConfiguration config = new ServletRequestConfiguration(request);
+        final AbstractConfiguration config = new ServletRequestConfiguration(request);
         config.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         return config;
     }
@@ -94,11 +95,18 @@ public class TestServletRequestConfiguration extends TestAbstractConfiguration {
         assertThrows(UnsupportedOperationException.class, super::testClearProperty);
     }
 
+    @Override
+    @Test
+    public void testContainsValue() {
+        assertFalse(getConfiguration().containsValue(null));
+        assertFalse(getConfiguration().containsValue(""));
+    }
+
     /**
      * Tests a list with elements that contain an escaped list delimiter.
      */
     @Test
-    public void testListWithEscapedElements() {
+    void testListWithEscapedElements() {
         final String[] values = {"test1", "test2\\,test3", "test4\\,test5"};
         final String listKey = "test.list";
 
@@ -111,8 +119,8 @@ public class TestServletRequestConfiguration extends TestAbstractConfiguration {
         final List<?> v = c.getList(listKey);
 
         final List<String> expected = new ArrayList<>();
-        for (int i = 0; i < values.length; i++) {
-            expected.add(values[i].replace("\\", ""));
+        for (final String value : values) {
+            expected.add(value.replace("\\", ""));
         }
         assertEquals(expected, v);
     }

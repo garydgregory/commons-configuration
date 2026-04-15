@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,9 +35,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code CombinedBeanDeclaration}.
- *
  */
 public class TestCombinedBeanDeclaration {
+
     /** An array with the mocks for the child bean declarations. */
     private BeanDeclaration[] declarations;
 
@@ -68,7 +68,7 @@ public class TestCombinedBeanDeclaration {
      * Tests whether the bean class name can be obtained if it is set for one of the child declarations.
      */
     @Test
-    public void testGetBeanClassNameDefined() {
+    void testGetBeanClassNameDefined() {
         final CombinedBeanDeclaration cd = createCombinedDeclaration();
 
         when(decl(0).getBeanClassName()).thenReturn(null);
@@ -85,7 +85,7 @@ public class TestCombinedBeanDeclaration {
      * Tests getBeanClassName() if none of the child declarations provide a value.
      */
     @Test
-    public void testGetBeanClassNameUndefined() {
+    void testGetBeanClassNameUndefined() {
         final CombinedBeanDeclaration cd = new CombinedBeanDeclaration();
         assertNull(cd.getBeanClassName());
     }
@@ -94,7 +94,7 @@ public class TestCombinedBeanDeclaration {
      * Tests whether the bean factory can be obtained if it is set for one child declarations.
      */
     @Test
-    public void testGetBeanFactoryNameDefined() {
+    void testGetBeanFactoryNameDefined() {
         final CombinedBeanDeclaration cd = createCombinedDeclaration();
         final String name = "someTestBeanFactory";
 
@@ -112,7 +112,7 @@ public class TestCombinedBeanDeclaration {
      * Tests getBeanFactoryName() if none of the child declarations provide a value.
      */
     @Test
-    public void testGetBeanFactoryNameUndefined() {
+    void testGetBeanFactoryNameUndefined() {
         final CombinedBeanDeclaration cd = new CombinedBeanDeclaration();
         assertNull(cd.getBeanFactoryName());
     }
@@ -121,7 +121,7 @@ public class TestCombinedBeanDeclaration {
      * Tests whether the bean factory parameter can be obtained if it is set for one of the child declarations.
      */
     @Test
-    public void testGetBeanFactoryParameterDefined() {
+    void testGetBeanFactoryParameterDefined() {
         final CombinedBeanDeclaration cd = createCombinedDeclaration();
         final Object param = new Object();
 
@@ -139,7 +139,7 @@ public class TestCombinedBeanDeclaration {
      * Tests getBeanFactoryParameter() if none of the child declarations provide a value.
      */
     @Test
-    public void testGetBeanFactoryParameterUndefined() {
+    void testGetBeanFactoryParameterUndefined() {
         final CombinedBeanDeclaration cd = new CombinedBeanDeclaration();
         assertNull(cd.getBeanFactoryParameter());
     }
@@ -148,7 +148,7 @@ public class TestCombinedBeanDeclaration {
      * Tests whether a combined map of bean properties can be obtained.
      */
     @Test
-    public void testGetBeanProperties() {
+    void testGetBeanProperties() {
         final Map<String, Object> props1 = new HashMap<>();
         final Map<String, Object> props2 = new HashMap<>();
         final Map<String, Object> props3 = new HashMap<>();
@@ -183,7 +183,7 @@ public class TestCombinedBeanDeclaration {
      * Tests whether null return values of bean property maps are handled correctly.
      */
     @Test
-    public void testGetBeanPropertiesNull() {
+    void testGetBeanPropertiesNull() {
         final BeanDeclaration child = mock(BeanDeclaration.class);
 
         when(child.getBeanProperties()).thenReturn(null);
@@ -199,7 +199,7 @@ public class TestCombinedBeanDeclaration {
      * Tests whether constructor arguments can be obtained if one of the child declarations provide this data.
      */
     @Test
-    public void testGetConstructorArgsDefined() {
+    void testGetConstructorArgsDefined() {
         final CombinedBeanDeclaration cd = createCombinedDeclaration();
         final Collection<ConstructorArg> args = Arrays.asList(ConstructorArg.forValue(42));
 
@@ -217,7 +217,7 @@ public class TestCombinedBeanDeclaration {
      * Tests getConstructorArgs() if none of the child declarations provide a value.
      */
     @Test
-    public void testGetConstructorArgsUndefined() {
+    void testGetConstructorArgsUndefined() {
         final CombinedBeanDeclaration cd = createCombinedDeclaration();
 
         when(decl(0).getConstructorArgs()).thenReturn(null);
@@ -236,7 +236,7 @@ public class TestCombinedBeanDeclaration {
      * Tests whether a combined map of nested bean declarations can be obtained.
      */
     @Test
-    public void testGetNestedBeanDeclarations() {
+    void testGetNestedBeanDeclarations() {
         final Map<String, Object> decls1 = new HashMap<>();
         final Map<String, Object> decls2 = new HashMap<>();
         final Map<String, Object> decls3 = new HashMap<>();
@@ -271,7 +271,7 @@ public class TestCombinedBeanDeclaration {
      * Tests whether null return values of bean declaration maps are handled correctly.
      */
     @Test
-    public void testGetNestedBeanDeclarationsNull() {
+    void testGetNestedBeanDeclarationsNull() {
         final BeanDeclaration child = mock(BeanDeclaration.class);
 
         when(child.getNestedBeanDeclarations()).thenReturn(null);

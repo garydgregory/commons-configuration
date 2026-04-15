@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,9 +55,9 @@ import org.xml.sax.SAXException;
 
 /**
  * Test class for {@code XMLDocumentHelper}.
- *
  */
 public class TestXMLDocumentHelper {
+
     /** Constant for the name of an element. */
     private static final String ELEMENT = "testElementName";
 
@@ -160,7 +160,7 @@ public class TestXMLDocumentHelper {
      * Tests whether a document can be copied.
      */
     @Test
-    public void testCopyDocument() throws Exception {
+    void testCopyDocument() throws Exception {
         final XMLDocumentHelper helper = XMLDocumentHelper.forSourceDocument(loadDocument());
         final XMLDocumentHelper copy = helper.createCopy();
         assertNotSame(helper.getDocument(), copy.getDocument());
@@ -173,7 +173,7 @@ public class TestXMLDocumentHelper {
      * Tests the element mapping of a copied document.
      */
     @Test
-    public void testCopyElementMapping() throws Exception {
+    void testCopyElementMapping() throws Exception {
         checkCopyElementMapping(TEST_FILE);
     }
 
@@ -181,7 +181,7 @@ public class TestXMLDocumentHelper {
      * Tests whether the element is correctly constructed for a more complex document.
      */
     @Test
-    public void testCopyElementMappingForComplexDocument() throws Exception {
+    void testCopyElementMappingForComplexDocument() throws Exception {
         checkCopyElementMapping("test.xml");
     }
 
@@ -189,7 +189,7 @@ public class TestXMLDocumentHelper {
      * Tests whether an exception thrown by a document builder factory is handled correctly.
      */
     @Test
-    public void testCreateDocumentBuilderFromFactoryException() throws ParserConfigurationException {
+    void testCreateDocumentBuilderFromFactoryException() throws ParserConfigurationException {
         final DocumentBuilderFactory factory = mock(DocumentBuilderFactory.class);
         final ParserConfigurationException pcex = new ParserConfigurationException();
 
@@ -203,7 +203,7 @@ public class TestXMLDocumentHelper {
      * Tests whether a correct transformer factory can be created.
      */
     @Test
-    public void testCreateTransformerFactory() {
+    void testCreateTransformerFactory() {
         assertNotNull(XMLDocumentHelper.createTransformerFactory());
     }
 
@@ -211,7 +211,7 @@ public class TestXMLDocumentHelper {
      * Tests whether exceptions while creating transformers are correctly handled.
      */
     @Test
-    public void testCreateTransformerFactoryException() throws TransformerConfigurationException {
+    void testCreateTransformerFactoryException() throws TransformerConfigurationException {
         final TransformerFactory factory = mock(TransformerFactory.class);
         final TransformerConfigurationException cause = new TransformerConfigurationException();
 
@@ -225,7 +225,7 @@ public class TestXMLDocumentHelper {
      * Tests the content of the element mapping for a newly created document.
      */
     @Test
-    public void testElementMappingForNewDocument() throws ConfigurationException {
+    void testElementMappingForNewDocument() throws ConfigurationException {
         final XMLDocumentHelper helper = XMLDocumentHelper.forNewDocument(ELEMENT);
         assertTrue(helper.getElementMapping().isEmpty());
     }
@@ -234,7 +234,7 @@ public class TestXMLDocumentHelper {
      * Tests the content of the element mapping for a source document.
      */
     @Test
-    public void testElementMappingForSourceDocument() throws Exception {
+    void testElementMappingForSourceDocument() throws Exception {
         final Document doc = loadDocument();
         final XMLDocumentHelper helper = XMLDocumentHelper.forSourceDocument(doc);
         assertTrue(helper.getElementMapping().isEmpty());
@@ -244,7 +244,7 @@ public class TestXMLDocumentHelper {
      * Tests whether an instance can be created wrapping a new document.
      */
     @Test
-    public void testInitForNewDocument() throws ConfigurationException {
+    void testInitForNewDocument() throws ConfigurationException {
         final XMLDocumentHelper helper = XMLDocumentHelper.forNewDocument(ELEMENT);
         final Document doc = helper.getDocument();
         final Element rootElement = doc.getDocumentElement();
@@ -259,7 +259,7 @@ public class TestXMLDocumentHelper {
      * Tests whether an instance can be created based on a source document.
      */
     @Test
-    public void testInitForSourceDocument() throws Exception {
+    void testInitForSourceDocument() throws Exception {
         final Document doc = loadDocument();
         final XMLDocumentHelper helper = XMLDocumentHelper.forSourceDocument(doc);
         assertNotSame(doc, helper.getDocument());
@@ -270,7 +270,7 @@ public class TestXMLDocumentHelper {
      * Tests whether transform() handles a TransformerException.
      */
     @Test
-    public void testTransformException() throws TransformerException {
+    void testTransformException() throws TransformerException {
         final Transformer transformer = mock(Transformer.class);
         final Source src = mock(Source.class);
         final Result res = mock(Result.class);

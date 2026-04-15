@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,8 +43,40 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * @since 2.0
  */
 public class FileExtensionConfigurationBuilderProvider extends BaseConfigurationBuilderProvider {
+
     /** Constant for the file extension separator. */
     private static final char EXT_SEPARATOR = '.';
+
+    /**
+     * Extracts the extension from the given file name. The name can be <strong>null</strong>.
+     *
+     * @param fileName the file name
+     * @return the extension (<strong>null</strong> if there is none)
+     */
+    private static String extractExtension(final String fileName) {
+        if (fileName == null) {
+            return null;
+        }
+
+        final int pos = fileName.lastIndexOf(EXT_SEPARATOR);
+        return pos < 0 ? null : fileName.substring(pos + 1);
+    }
+
+    /**
+     * Tries to obtain the current file name from the given list of parameter objects.
+     *
+     * @param params the parameter objects
+     * @return the file name or <strong>null</strong> if unspecified
+     */
+    private static String fetchCurrentFileName(final Collection<BuilderParameters> params) {
+        for (final BuilderParameters p : params) {
+            if (p instanceof FileBasedBuilderParametersImpl) {
+                final FileBasedBuilderParametersImpl fp = (FileBasedBuilderParametersImpl) p;
+                return fp.getFileHandler().getFileName();
+            }
+        }
+        return null;
+    }
 
     /** The matching configuration class. */
     private final String matchingConfigurationClass;
@@ -56,16 +88,16 @@ public class FileExtensionConfigurationBuilderProvider extends BaseConfiguration
      * Creates a new instance of {@code FileExtensionConfigurationBuilderProvider}.
      *
      * @param bldrCls the name of the builder class
-     * @param reloadBldrCls the name of a builder class to be used if reloading support is required (<b>null</b> if
+     * @param reloadBldrCls the name of a builder class to be used if reloading support is required (<strong>null</strong> if
      *        reloading is not supported)
      * @param matchingConfigCls the name of the configuration class to be used if the provided file extension matches (must
-     *        not be <b>null</b>)
+     *        not be <strong>null</strong>)
      * @param defConfigClass the name of the configuration class to be used if the provided file extension does not match
-     *        (must not be <b>null</b>)
-     * @param ext the file extension to select the configuration class (must not be <b>null</b>)
+     *        (must not be <strong>null</strong>)
+     * @param ext the file extension to select the configuration class (must not be <strong>null</strong>)
      * @param paramCls a collection with the names of parameters classes; an instance of a parameters object with basic
      *        properties is created automatically and does not need to be contained in this list; the collection can be
-     *        <b>null</b> if no additional parameter objects are needed
+     *        <strong>null</strong> if no additional parameter objects are needed
      * @throws IllegalArgumentException if a required parameter is missing
      */
     public FileExtensionConfigurationBuilderProvider(final String bldrCls, final String reloadBldrCls, final String matchingConfigCls,
@@ -83,25 +115,6 @@ public class FileExtensionConfigurationBuilderProvider extends BaseConfiguration
     }
 
     /**
-     * Returns the name of the matching configuration class. This class is used if the file extension matches the extension
-     * of this provider.
-     *
-     * @return the matching configuration class
-     */
-    public String getMatchingConfigurationClass() {
-        return matchingConfigurationClass;
-    }
-
-    /**
-     * Returns the file extension of this provider.
-     *
-     * @return the file extension to match
-     */
-    public String getExtension() {
-        return extension;
-    }
-
-    /**
      * {@inheritDoc} This implementation tries to find a {@link FileBasedBuilderParametersImpl} object in the parameter
      * objects. If one is found, the extension of the file name is obtained and compared against the stored file extension.
      * In case of a match, the matching configuration class is selected, otherwise the default one.
@@ -114,33 +127,21 @@ public class FileExtensionConfigurationBuilderProvider extends BaseConfiguration
     }
 
     /**
-     * Tries to obtain the current file name from the given list of parameter objects.
+     * Gets the file extension of this provider.
      *
-     * @param params the parameter objects
-     * @return the file name or <b>null</b> if unspecified
+     * @return the file extension to match
      */
-    private static String fetchCurrentFileName(final Collection<BuilderParameters> params) {
-        for (final BuilderParameters p : params) {
-            if (p instanceof FileBasedBuilderParametersImpl) {
-                final FileBasedBuilderParametersImpl fp = (FileBasedBuilderParametersImpl) p;
-                return fp.getFileHandler().getFileName();
-            }
-        }
-        return null;
+    public String getExtension() {
+        return extension;
     }
 
     /**
-     * Extracts the extension from the given file name. The name can be <b>null</b>.
+     * Gets the name of the matching configuration class. This class is used if the file extension matches the extension
+     * of this provider.
      *
-     * @param fileName the file name
-     * @return the extension (<b>null</b> if there is none)
+     * @return the matching configuration class
      */
-    private static String extractExtension(final String fileName) {
-        if (fileName == null) {
-            return null;
-        }
-
-        final int pos = fileName.lastIndexOf(EXT_SEPARATOR);
-        return pos < 0 ? null : fileName.substring(pos + 1);
+    public String getMatchingConfigurationClass() {
+        return matchingConfigurationClass;
     }
 }

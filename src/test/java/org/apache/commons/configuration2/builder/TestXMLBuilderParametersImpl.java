@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.commons.configuration2.beanutils.BeanHelper;
@@ -30,9 +31,9 @@ import org.xml.sax.EntityResolver;
 
 /**
  * Test class for {@code XMLBuilderParametersImpl}.
- *
  */
 public class TestXMLBuilderParametersImpl {
+
     /** The parameters object to be tested. */
     private XMLBuilderParametersImpl params;
 
@@ -45,7 +46,7 @@ public class TestXMLBuilderParametersImpl {
      * Tests whether properties can be set through BeanUtils.
      */
     @Test
-    public void testBeanPropertiesAccess() throws Exception {
+    void testBeanPropertiesAccess() throws Exception {
         final EntityResolver resolver = mock(EntityResolver.class);
         final DocumentBuilder builder = mock(DocumentBuilder.class);
         BeanHelper.setProperty(params, "throwExceptionOnMissing", Boolean.TRUE);
@@ -63,7 +64,7 @@ public class TestXMLBuilderParametersImpl {
      * Tests whether properties can be inherited.
      */
     @Test
-    public void testInheritFrom() {
+    void testInheritFrom() {
         final EntityResolver resolver = mock(EntityResolver.class);
         final DocumentBuilder builder = mock(DocumentBuilder.class);
         params.setDocumentBuilder(builder).setEntityResolver(resolver).setSchemaValidation(true).setValidating(true);
@@ -83,7 +84,7 @@ public class TestXMLBuilderParametersImpl {
      * Tests whether a document builder can be set.
      */
     @Test
-    public void testSetDocumentBuilder() {
+    void testSetDocumentBuilder() {
         final DocumentBuilder builder = mock(DocumentBuilder.class);
         assertSame(params, params.setDocumentBuilder(builder));
         assertSame(builder, params.getParameters().get("documentBuilder"));
@@ -93,7 +94,7 @@ public class TestXMLBuilderParametersImpl {
      * Tests whether an entity resolver can be set.
      */
     @Test
-    public void testSetEntityResolver() {
+    void testSetEntityResolver() {
         final EntityResolver resolver = mock(EntityResolver.class);
         assertSame(params, params.setEntityResolver(resolver));
         assertSame(resolver, params.getEntityResolver());
@@ -104,7 +105,7 @@ public class TestXMLBuilderParametersImpl {
      * Tests whether a public ID can be set.
      */
     @Test
-    public void testSetPublicID() {
+    void testSetPublicID() {
         final String pubID = "testPublicID";
         assertSame(params, params.setPublicID(pubID));
         assertEquals(pubID, params.getParameters().get("publicID"));
@@ -114,7 +115,7 @@ public class TestXMLBuilderParametersImpl {
      * Tests whether the schema validation flag can be set.
      */
     @Test
-    public void testSetSchemaValidation() {
+    void testSetSchemaValidation() {
         assertSame(params, params.setSchemaValidation(false));
         assertEquals(Boolean.FALSE, params.getParameters().get("schemaValidation"));
     }
@@ -123,7 +124,7 @@ public class TestXMLBuilderParametersImpl {
      * Tests whether a system ID can be set.
      */
     @Test
-    public void testSetSystemID() {
+    void testSetSystemID() {
         final String sysID = "testSystemID";
         assertSame(params, params.setSystemID(sysID));
         assertEquals(sysID, params.getParameters().get("systemID"));
@@ -133,7 +134,7 @@ public class TestXMLBuilderParametersImpl {
      * Tests whether validating property can be set.
      */
     @Test
-    public void testSetValidating() {
+    void testSetValidating() {
         assertSame(params, params.setValidating(true));
         assertEquals(Boolean.TRUE, params.getParameters().get("validating"));
     }

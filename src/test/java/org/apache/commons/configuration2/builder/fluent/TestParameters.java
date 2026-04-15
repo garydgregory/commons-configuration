@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,11 +51,11 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code Parameters}.
- *
  */
 public class TestParameters {
+
     /** A default encoding. */
-    private static final String DEF_ENCODING = "UTF-8";
+    private static final String DEF_ENCODING = StandardCharsets.UTF_8.name();
 
     /** A test list delimiter handler. */
     private static ListDelimiterHandler listHandler;
@@ -101,7 +102,7 @@ public class TestParameters {
      * Tests whether default values are set for newly created parameters objects.
      */
     @Test
-    public void testApplyDefaults() {
+    void testApplyDefaults() {
         final DefaultParametersManager manager = mock(DefaultParametersManager.class);
         final List<Object> initializedParams = new ArrayList<>(1);
 
@@ -123,7 +124,7 @@ public class TestParameters {
      * Tests whether a basic parameters object can be created.
      */
     @Test
-    public void testBasic() {
+    void testBasic() {
         final BasicBuilderParameters basic = new Parameters().basic();
         assertNotNull(basic);
     }
@@ -132,7 +133,7 @@ public class TestParameters {
      * Tests whether a combined parameters object can be created.
      */
     @Test
-    public void testCombined() {
+    void testCombined() {
         final Map<String, Object> map = new Parameters().combined().setThrowExceptionOnMissing(true).setBasePath("test").setListDelimiterHandler(listHandler)
             .getParameters();
         final CombinedBuilderParametersImpl cparams = CombinedBuilderParametersImpl.fromParameters(map);
@@ -144,7 +145,7 @@ public class TestParameters {
      * Tests whether a parameters object for a database configuration can be created.
      */
     @Test
-    public void testDatabase() {
+    void testDatabase() {
         final Map<String, Object> map = new Parameters().database().setThrowExceptionOnMissing(true).setAutoCommit(true).setTable("table")
             .setListDelimiterHandler(listHandler).setKeyColumn("keyColumn").getParameters();
         checkBasicProperties(map);
@@ -157,7 +158,7 @@ public class TestParameters {
      * Tests whether an uninitialized default parameters manager is created at construction time.
      */
     @Test
-    public void testDefaultParametersManager() {
+    void testDefaultParametersManager() {
         final Parameters parameters = new Parameters();
         assertNotNull(parameters.getDefaultParametersManager());
     }
@@ -166,7 +167,7 @@ public class TestParameters {
      * Tests whether a file-based parameters object can be created.
      */
     @Test
-    public void testFileBased() {
+    void testFileBased() {
         final Map<String, Object> map = new Parameters().fileBased().setThrowExceptionOnMissing(true).setEncoding(DEF_ENCODING)
             .setListDelimiterHandler(listHandler).setFileName("test.xml").getParameters();
         final FileBasedBuilderParametersImpl fbparams = FileBasedBuilderParametersImpl.fromParameters(map);
@@ -179,7 +180,7 @@ public class TestParameters {
      * Tests the inheritance structure of a fileBased parameters object.
      */
     @Test
-    public void testFileBasedInheritance() {
+    void testFileBasedInheritance() {
         checkInheritance(new Parameters().fileBased());
     }
 
@@ -187,7 +188,7 @@ public class TestParameters {
      * Tests whether a parameters object for a hierarchical configuration can be created.
      */
     @Test
-    public void testHierarchical() {
+    void testHierarchical() {
         final ExpressionEngine engine = mock(ExpressionEngine.class);
         final Map<String, Object> map = new Parameters().hierarchical().setThrowExceptionOnMissing(true).setExpressionEngine(engine).setFileName("test.xml")
             .setListDelimiterHandler(listHandler).getParameters();
@@ -201,7 +202,7 @@ public class TestParameters {
      * Tests the inheritance structure of a hierarchical parameters object.
      */
     @Test
-    public void testHierarchicalInheritance() {
+    void testHierarchicalInheritance() {
         checkInheritance(new Parameters().hierarchical(), FileBasedBuilderParameters.class);
     }
 
@@ -210,7 +211,7 @@ public class TestParameters {
      * means that they also implement all base interfaces that make sense.
      */
     @Test
-    public void testInheritance() {
+    void testInheritance() {
         final Object params = new Parameters().xml();
         final FileBasedBuilderParameters fbParams = assertInstanceOf(FileBasedBuilderParameters.class, params);
         fbParams.setListDelimiterHandler(listHandler).setFileName("test.xml").setThrowExceptionOnMissing(true);
@@ -225,7 +226,7 @@ public class TestParameters {
      * Tests whether a JNDI parameters object can be created.
      */
     @Test
-    public void testJndi() {
+    void testJndi() {
         final Map<String, Object> map = new Parameters().jndi().setThrowExceptionOnMissing(true).setPrefix("test").setListDelimiterHandler(listHandler)
             .getParameters();
         assertEquals("test", map.get("prefix"));
@@ -236,7 +237,7 @@ public class TestParameters {
      * Tests whether a {@code MultiFileBuilderParameters} object can be created.
      */
     @Test
-    public void testMultiFile() {
+    void testMultiFile() {
         final BuilderParameters bp = mock(BuilderParameters.class);
         final String pattern = "a pattern";
         final Map<String, Object> map = new Parameters().multiFile().setThrowExceptionOnMissing(true).setFilePattern(pattern)
@@ -251,7 +252,7 @@ public class TestParameters {
      * Tests whether a parameters object for a properties configuration can be created.
      */
     @Test
-    public void testProperties() {
+    void testProperties() {
         final PropertiesConfiguration.IOFactory factory = mock(PropertiesConfiguration.IOFactory.class);
         @SuppressWarnings("unchecked")
         final ConfigurationConsumer<ConfigurationException> includeListener = mock(ConfigurationConsumer.class);
@@ -278,7 +279,7 @@ public class TestParameters {
      * Tests the inheritance structure of a properties parameters object.
      */
     @Test
-    public void testPropertiesInheritance() {
+    void testPropertiesInheritance() {
         checkInheritance(new Parameters().properties(), FileBasedBuilderParameters.class);
     }
 
@@ -286,10 +287,10 @@ public class TestParameters {
      * Tests whether the proxy parameters object can deal with methods inherited from Object.
      */
     @Test
-    public void testProxyObjectMethods() {
+    void testProxyObjectMethods() {
         final FileBasedBuilderParameters params = new Parameters().fileBased();
         final String s = params.toString();
-        assertTrue(s.indexOf(FileBasedBuilderParametersImpl.class.getSimpleName()) >= 0);
+        assertTrue(s.contains(FileBasedBuilderParametersImpl.class.getSimpleName()));
         assertNotEquals(0, params.hashCode());
     }
 
@@ -297,7 +298,7 @@ public class TestParameters {
      * Tests the registration of a defaults handler if no start class is provided.
      */
     @Test
-    public void testRegisterDefaultsHandlerNoStartClass() {
+    void testRegisterDefaultsHandlerNoStartClass() {
         final DefaultParametersManager manager = mock(DefaultParametersManager.class);
         final DefaultParametersHandler<XMLBuilderParameters> handler = createHandlerMock();
 
@@ -312,7 +313,7 @@ public class TestParameters {
      * Tests whether a default handler with a start class can be registered.
      */
     @Test
-    public void testRegisterDefaultsHandlerWithStartClass() {
+    void testRegisterDefaultsHandlerWithStartClass() {
         final DefaultParametersManager manager = mock(DefaultParametersManager.class);
         final DefaultParametersHandler<XMLBuilderParameters> handler = createHandlerMock();
 
@@ -327,7 +328,7 @@ public class TestParameters {
      * Tests whether a parameters object for an XML configuration can be created.
      */
     @Test
-    public void testXml() {
+    void testXml() {
         final ExpressionEngine engine = mock(ExpressionEngine.class);
         final Map<String, Object> map = new Parameters().xml().setThrowExceptionOnMissing(true).setFileName("test.xml").setValidating(true)
             .setExpressionEngine(engine).setListDelimiterHandler(listHandler).setSchemaValidation(true).getParameters();
@@ -343,7 +344,7 @@ public class TestParameters {
      * Tests the inheritance structure of an XML parameters object.
      */
     @Test
-    public void testXmlInheritance() {
+    void testXmlInheritance() {
         checkInheritance(new Parameters().xml(), HierarchicalBuilderParameters.class, FileBasedBuilderParameters.class);
     }
 }

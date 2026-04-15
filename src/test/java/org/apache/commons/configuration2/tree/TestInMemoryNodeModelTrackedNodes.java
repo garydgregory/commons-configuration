@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,9 +47,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * A special test class for {@code InMemoryNodeModel} which tests the facilities for tracking nodes.
- *
  */
 public class TestInMemoryNodeModelTrackedNodes {
+
     /** Constant for the name of a new table field. */
     private static final String NEW_FIELD = "newTableField";
 
@@ -203,18 +203,6 @@ public class TestInMemoryNodeModelTrackedNodes {
     }
 
     /**
-     * Prepares the resolver mock to expect a nodeKey() request.
-     *
-     * @param resolver the {@code NodeKeyResolver}
-     * @param node the node whose name is to be resolved
-     * @param key the key to be returned for this node
-     */
-    private void prepareNodeKey(final NodeKeyResolver<ImmutableNode> resolver, final ImmutableNode node, final String key) {
-        final Map<ImmutableNode, String> cache = new HashMap<>();
-        when(resolver.nodeKey(node, cache, model.getNodeHandler())).thenReturn(key);
-    }
-
-    /**
      * Returns the fields node from the model.
      *
      * @return the fields node
@@ -242,6 +230,18 @@ public class TestInMemoryNodeModelTrackedNodes {
         model.clearTree("tables.table(0)", resolver);
     }
 
+    /**
+     * Prepares the resolver mock to expect a nodeKey() request.
+     *
+     * @param resolver the {@code NodeKeyResolver}
+     * @param node the node whose name is to be resolved
+     * @param key the key to be returned for this node
+     */
+    private void prepareNodeKey(final NodeKeyResolver<ImmutableNode> resolver, final ImmutableNode node, final String key) {
+        final Map<ImmutableNode, String> cache = new HashMap<>();
+        when(resolver.nodeKey(node, cache, model.getNodeHandler())).thenReturn(key);
+    }
+
     @BeforeEach
     public void setUp() throws Exception {
         model = new InMemoryNodeModel(root);
@@ -251,7 +251,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests an addNodes() operation on a tracked node that is detached.
      */
     @Test
-    public void testAddNodesOnDetachedNode() {
+    void testAddNodesOnDetachedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         NodeStructureHelper.prepareResolveAddKeys(resolver);
         model.trackNode(selector, resolver);
@@ -266,7 +266,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether an addNodes() operation works on a tracked node.
      */
     @Test
-    public void testAddNodesOnTrackedNode() {
+    void testAddNodesOnTrackedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         NodeStructureHelper.prepareResolveAddKeys(resolver);
         model.trackNode(selector, resolver);
@@ -279,7 +279,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests an addProperty() operation on a tracked node that is detached.
      */
     @Test
-    public void testAddPropertyOnDetachedNode() {
+    void testAddPropertyOnDetachedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         NodeStructureHelper.prepareResolveAddKeys(resolver);
         model.trackNode(selector, resolver);
@@ -294,7 +294,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether an addProperty() operation works on a tracked node.
      */
     @Test
-    public void testAddPropertyOnTrackedNode() {
+    void testAddPropertyOnTrackedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         NodeStructureHelper.prepareResolveAddKeys(resolver);
         model.trackNode(selector, resolver);
@@ -307,7 +307,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests a clearProperty() operation on a tracked node which is detached.
      */
     @Test
-    public void testClearPropertyOnDetachedNode() {
+    void testClearPropertyOnDetachedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         initDetachedNode(resolver);
         final ImmutableNode rootNode = model.getRootNode();
@@ -321,7 +321,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether clearProperty() can operate on a tracked node.
      */
     @Test
-    public void testClearPropertyOnTrackedNode() {
+    void testClearPropertyOnTrackedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         model.clearProperty("fields.field(0).name", selector, resolver);
@@ -333,7 +333,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests a clearTree() operation on a tracked node which is detached.
      */
     @Test
-    public void testClearTreeOnDetachedNode() {
+    void testClearTreeOnDetachedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         initDetachedNode(resolver);
         final ImmutableNode rootNode = model.getRootNode();
@@ -347,7 +347,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether clearTree() can operate on a tracked node.
      */
     @Test
-    public void testClearTreeOnTrackedNode() {
+    void testClearTreeOnTrackedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         model.clearTree("fields.field(1)", selector, resolver);
@@ -359,7 +359,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a tracked node can be queried even after the model was cleared.
      */
     @Test
-    public void testGetTrackedNodeAfterClear() {
+    void testGetTrackedNodeAfterClear() {
         final ImmutableNode node = NodeStructureHelper.nodeForKey(model, "tables/table(1)");
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
@@ -371,7 +371,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a tracked node can be queried after the root node was changed.
      */
     @Test
-    public void testGetTrackedNodeAfterSetRootNode() {
+    void testGetTrackedNodeAfterSetRootNode() {
         final ImmutableNode node = NodeStructureHelper.nodeForKey(model, "tables/table(1)");
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
@@ -383,7 +383,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a tracked node survives updates of the node model.
      */
     @Test
-    public void testGetTrackedNodeAfterUpdate() {
+    void testGetTrackedNodeAfterUpdate() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         model.clearProperty("tables.table(1).fields.field(1).name", resolver);
@@ -395,7 +395,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a tracked node can be queried even if it was removed from the structure.
      */
     @Test
-    public void testGetTrackedNodeAfterUpdateNoLongerExisting() {
+    void testGetTrackedNodeAfterUpdateNoLongerExisting() {
         final ImmutableNode node = NodeStructureHelper.nodeForKey(model, "tables/table(1)");
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         initDetachedNode(resolver);
@@ -406,7 +406,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a tracked node can be queried.
      */
     @Test
-    public void testGetTrackedNodeExisting() {
+    void testGetTrackedNodeExisting() {
         final ImmutableNode node = NodeStructureHelper.nodeForKey(model, "tables/table(1)");
         model.trackNode(selector, createResolver());
         assertSame(node, model.getTrackedNode(selector));
@@ -416,7 +416,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a node handler for a tracked node can be queried which is still active.
      */
     @Test
-    public void testGetTrackedNodeHandlerActive() {
+    void testGetTrackedNodeHandlerActive() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         final NodeHandler<ImmutableNode> handler = model.getTrackedNodeHandler(selector);
@@ -429,7 +429,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a node handler for a detached tracked node can be queried.
      */
     @Test
-    public void testGetTrackedNodeHandlerDetached() {
+    void testGetTrackedNodeHandlerDetached() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         initDetachedNode(resolver);
@@ -443,7 +443,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tries to obtain a tracked node which is unknown.
      */
     @Test
-    public void testGetTrackedNodeNonExisting() {
+    void testGetTrackedNodeNonExisting() {
         assertThrows(ConfigurationRuntimeException.class, () -> model.getTrackedNode(selector));
     }
 
@@ -451,7 +451,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a clear() operation causes nodes to be detached.
      */
     @Test
-    public void testIsDetachedAfterClear() {
+    void testIsDetachedAfterClear() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         model.clear(resolver);
@@ -462,7 +462,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether tracked nodes become detached when a new root node is set.
      */
     @Test
-    public void testIsDetachedAfterSetRoot() {
+    void testIsDetachedAfterSetRoot() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         model.clearProperty("tables.table(1).fields.field(1).name", resolver);
@@ -474,7 +474,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests isDetached() for a life node.
      */
     @Test
-    public void testIsDetachedFalseAfterUpdate() {
+    void testIsDetachedFalseAfterUpdate() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         model.clearProperty("tables.table(1).fields.field(1).name", resolver);
@@ -485,7 +485,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests isDetached() for a node which has just been tracked.
      */
     @Test
-    public void testIsDetachedFalseNoUpdates() {
+    void testIsDetachedFalseNoUpdates() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         assertFalse(model.isTrackedNodeDetached(selector));
@@ -495,7 +495,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests isDetached() for an actually detached node.
      */
     @Test
-    public void testIsDetachedTrue() {
+    void testIsDetachedTrue() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         initDetachedNode(resolver);
         assertTrue(model.isTrackedNodeDetached(selector));
@@ -505,7 +505,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether an active tracked node can be replaced.
      */
     @Test
-    public void testReplaceTrackedNodeForActiveTrackedNode() {
+    void testReplaceTrackedNodeForActiveTrackedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         checkReplaceTrackedNode();
@@ -515,7 +515,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a detached tracked node can be replaced.
      */
     @Test
-    public void testReplaceTrackedNodeForDetachedNode() {
+    void testReplaceTrackedNodeForDetachedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         initDetachedNode(resolver);
@@ -526,7 +526,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tries to replace a tracked node with a null node.
      */
     @Test
-    public void testReplaceTrackedNodeNull() {
+    void testReplaceTrackedNodeNull() {
         model.trackNode(selector, createResolver());
         assertThrows(IllegalArgumentException.class, () -> model.replaceTrackedNode(selector, null));
     }
@@ -535,7 +535,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether tracked nodes can be created from a key.
      */
     @Test
-    public void testSelectAndTrackNodes() {
+    void testSelectAndTrackNodes() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final String nodeKey1 = "tables/table(0)";
         final String nodeKey2 = "tables/table(1)";
@@ -561,7 +561,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether selectAndTrackNodes() works for nodes that are already tracked.
      */
     @Test
-    public void testSelectAndTrackNodesNodeAlreadyTracked() {
+    void testSelectAndTrackNodesNodeAlreadyTracked() {
         NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         resolver = createResolver();
@@ -581,7 +581,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests selectAndTrackNodes() if the key does not select any nodes.
      */
     @Test
-    public void testSelectAndTrackNodesNoSelection() {
+    void testSelectAndTrackNodesNoSelection() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
 
         when(resolver.resolveNodeKey(root, TEST_KEY, model.getNodeHandler())).thenReturn(Collections.<ImmutableNode>emptyList());
@@ -593,7 +593,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests a setProperty() operation on a tracked node that is detached.
      */
     @Test
-    public void testSetPropertyOnDetachedNode() {
+    void testSetPropertyOnDetachedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         prepareResolverForUpdateKeys(resolver);
         model.trackNode(selector, resolver);
@@ -608,7 +608,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a setProperty() operation works on a tracked node.
      */
     @Test
-    public void testSetPropertyOnTrackedNode() {
+    void testSetPropertyOnTrackedNode() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         prepareResolverForUpdateKeys(resolver);
         model.trackNode(selector, resolver);
@@ -621,7 +621,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether all children of a node can be tracked at once.
      */
     @Test
-    public void testTrackChildNodes() {
+    void testTrackChildNodes() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final ImmutableNode node = NodeStructureHelper.nodeForKey(root, "tables");
         final String[] keys = new String[node.getChildren().size()];
@@ -647,7 +647,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests trackChildNodes() for a key that returns more than a single result.
      */
     @Test
-    public void testTrackChildNodesMultipleResults() {
+    void testTrackChildNodesMultipleResults() {
         checkTrackChildNodesNoResult(
             Arrays.asList(NodeStructureHelper.nodeForKey(root, "tables/table(0)"), NodeStructureHelper.nodeForKey(root, "tables/table(1)")));
     }
@@ -656,7 +656,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests trackChildNodes() for a key pointing to a node with no children.
      */
     @Test
-    public void testTrackChildNodesNodeWithNoChildren() {
+    void testTrackChildNodesNodeWithNoChildren() {
         checkTrackChildNodesNoResult(Collections.singletonList(NodeStructureHelper.nodeForKey(root, "tables/table(0)/name")));
     }
 
@@ -664,7 +664,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests trackChildNodes() for a key that does not return any results.
      */
     @Test
-    public void testTrackChildNodesNoResults() {
+    void testTrackChildNodesNoResults() {
         checkTrackChildNodesNoResult(Collections.<ImmutableNode>emptyList());
     }
 
@@ -672,7 +672,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether an existing child of a selected node can be tracked.
      */
     @Test
-    public void testTrackChildNodeWithCreationExisting() {
+    void testTrackChildNodeWithCreationExisting() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final String childName = "name";
         final String parentKey = "tables/table(0)";
@@ -692,7 +692,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests trackChildNodeWithCreation() if the passed in key selects multiple nodes.
      */
     @Test
-    public void testTrackChildNodeWithCreationMultipleResults() {
+    void testTrackChildNodeWithCreationMultipleResults() {
         final List<ImmutableNode> nodes = Arrays.asList(NodeStructureHelper.nodeForKey(root, "tables/table(0)"),
             NodeStructureHelper.nodeForKey(root, "tables/table(1)"));
         checkTrackChildNodeWithCreationInvalidKey(nodes);
@@ -702,7 +702,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a child node to be tracked is created if necessary.
      */
     @Test
-    public void testTrackChildNodeWithCreationNonExisting() {
+    void testTrackChildNodeWithCreationNonExisting() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         final String childName = "space";
         final String parentKey = "tables/table(0)";
@@ -726,7 +726,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests trackChildNodeWithCreation() if the passed in key does not select a node.
      */
     @Test
-    public void testTrackChildNodeWithCreationNoResults() {
+    void testTrackChildNodeWithCreationNoResults() {
         checkTrackChildNodeWithCreationInvalidKey(new ArrayList<>());
     }
 
@@ -735,7 +735,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * be detached. In this case, the node should be cleared (it makes no sense to use the last defined node instance).
      */
     @Test
-    public void testTrackedNodeClearedInOperation() {
+    void testTrackedNodeClearedInOperation() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         model.clearTree(null, selector, resolver);
@@ -749,7 +749,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tries to call trackNode() with a key that selects multiple results.
      */
     @Test
-    public void testTrackNodeKeyMultipleResults() {
+    void testTrackNodeKeyMultipleResults() {
         final NodeSelector nodeSelector = new NodeSelector("tables.table.fields.field.name");
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         assertThrows(ConfigurationRuntimeException.class, () -> model.trackNode(nodeSelector, resolver));
@@ -759,7 +759,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tries to call trackNode() with a key that does not yield any results.
      */
     @Test
-    public void testTrackNodeKeyNoResults() {
+    void testTrackNodeKeyNoResults() {
         final NodeSelector nodeSelector = new NodeSelector("tables.unknown");
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         assertThrows(ConfigurationRuntimeException.class, () -> model.trackNode(nodeSelector, resolver));
@@ -769,7 +769,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether a single node can be tracked multiple times.
      */
     @Test
-    public void testTrackNodeMultipleTimes() {
+    void testTrackNodeMultipleTimes() {
         final NodeKeyResolver<ImmutableNode> resolver = createResolver();
         model.trackNode(selector, resolver);
         model.trackNode(selector, resolver);
@@ -781,7 +781,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tests whether tracking of a node can be stopped.
      */
     @Test
-    public void testUntrackNode() {
+    void testUntrackNode() {
         model.trackNode(selector, createResolver());
         model.untrackNode(selector);
         assertThrows(ConfigurationRuntimeException.class, () -> model.getTrackedNode(selector));
@@ -791,7 +791,7 @@ public class TestInMemoryNodeModelTrackedNodes {
      * Tries to stop tracking of a node which is not tracked.
      */
     @Test
-    public void testUntrackNodeNonExisting() {
+    void testUntrackNodeNonExisting() {
         assertThrows(ConfigurationRuntimeException.class, () -> model.untrackNode(selector));
     }
 }

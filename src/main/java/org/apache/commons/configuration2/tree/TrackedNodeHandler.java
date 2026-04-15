@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,8 @@ package org.apache.commons.configuration2.tree;
  *
  * @since 2.0
  */
-class TrackedNodeHandler extends AbstractImmutableNodeHandler {
+final class TrackedNodeHandler extends AbstractImmutableNodeHandler {
+
     /** The root node. */
     private final ImmutableNode rootNode;
 
@@ -54,20 +55,20 @@ class TrackedNodeHandler extends AbstractImmutableNodeHandler {
     }
 
     /**
-     * Returns the parent handler. This is the {@code NodeHandler} which is consulted for determining a node's parent node.
-     *
-     * @return the parent {@code NodeHandler}
-     */
-    public NodeHandler<ImmutableNode> getParentHandler() {
-        return parentHandler;
-    }
-
-    /**
      * {@inheritDoc} This implementation delegates to the handler with the parent mapping.
      */
     @Override
     public ImmutableNode getParent(final ImmutableNode node) {
         return getParentHandler().getParent(node);
+    }
+
+    /**
+     * Gets the parent handler. This is the {@code NodeHandler} which is consulted for determining a node's parent node.
+     *
+     * @return the parent {@code NodeHandler}
+     */
+    public NodeHandler<ImmutableNode> getParentHandler() {
+        return parentHandler;
     }
 
     /**

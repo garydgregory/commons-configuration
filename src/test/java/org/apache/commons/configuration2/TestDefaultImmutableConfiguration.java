@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,9 @@
 package org.apache.commons.configuration2;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -43,9 +45,9 @@ import org.junit.jupiter.api.Test;
 public class TestDefaultImmutableConfiguration {
 
     /** Tests default methods. This class MUST NOT override the default methods! */
-    private static class MapImmutableConfiguration implements ImmutableConfiguration {
+    private static final class MapImmutableConfiguration implements ImmutableConfiguration {
 
-        Map<String, Object> map = new HashMap<>();
+        private final Map<String, Object> map = new HashMap<>();
 
         @Override
         public boolean containsKey(final String key) {
@@ -217,8 +219,7 @@ public class TestDefaultImmutableConfiguration {
 
         @Override
         public Iterator<String> getKeys() {
-            // Super is not a default method.
-            return null;
+            return this.map.keySet().iterator();
         }
 
         @Override
@@ -345,7 +346,15 @@ public class TestDefaultImmutableConfiguration {
     }
 
     @Test
-    public void testGetDuration() {
+    void testContainsValueDefaultImplementation() {
+        config.map.put("test", "213123");
+        assertFalse(config.containsValue(""));
+        assertFalse(config.containsValue(null));
+        assertTrue(config.containsValue("213123"));
+    }
+
+    @Test
+    void testGetDuration() {
         final Duration d = Duration.ofSeconds(1);
         config.map.put("durationD", d.toString());
         final Duration oneD = Duration.ofSeconds(1);
@@ -357,13 +366,13 @@ public class TestDefaultImmutableConfiguration {
     }
 
     @Test
-    public void testGetDurationIncompatibleType() {
+    void testGetDurationIncompatibleType() {
         config.map.put("test.empty", "");
         assertThrows(ConversionException.class, () -> config.getDuration("test.empty"));
     }
 
     @Test
-    public void testGetDurationUnknown() {
+    void testGetDurationUnknown() {
         assertThrows(NoSuchElementException.class, () -> config.getDuration("numberNotInConfig"));
     }
 }

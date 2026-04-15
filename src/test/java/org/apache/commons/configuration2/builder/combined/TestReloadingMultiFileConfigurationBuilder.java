@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,15 +44,15 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code ReloadingMultiFileConfigurationBuilder}.
- *
  */
 public class TestReloadingMultiFileConfigurationBuilder extends AbstractMultiFileConfigurationBuilderTest {
+
     /**
      * A test implementation of the class under test which allows access to reloading controllers of managed configuration
      * builders.
-     *
      */
-    private static class ReloadingMultiFileConfigurationBuilderTestImpl extends ReloadingMultiFileConfigurationBuilder<XMLConfiguration> {
+    private static final class ReloadingMultiFileConfigurationBuilderTestImpl extends ReloadingMultiFileConfigurationBuilder<XMLConfiguration> {
+
         /**
          * A list with mocks for reloading controllers created by this instance.
          */
@@ -94,7 +94,7 @@ public class TestReloadingMultiFileConfigurationBuilder extends AbstractMultiFil
      * Tests whether correct managed builders are created.
      */
     @Test
-    public void testCreateManagedBuilder() throws ConfigurationException {
+    void testCreateManagedBuilder() throws ConfigurationException {
         final ReloadingMultiFileConfigurationBuilder<XMLConfiguration> builder = new ReloadingMultiFileConfigurationBuilder<>(XMLConfiguration.class);
         final FileBasedConfigurationBuilder<XMLConfiguration> managedBuilder = builder.createManagedBuilder("test.xml",
             createTestBuilderParameters(null).getParameters());
@@ -106,7 +106,7 @@ public class TestReloadingMultiFileConfigurationBuilder extends AbstractMultiFil
      * Tests whether the allowFailOnInit flag is passed to newly created managed builders.
      */
     @Test
-    public void testCreateManagedBuilderWithAllowFailFlag() throws ConfigurationException {
+    void testCreateManagedBuilderWithAllowFailFlag() throws ConfigurationException {
         final ReloadingMultiFileConfigurationBuilder<XMLConfiguration> builder = new ReloadingMultiFileConfigurationBuilder<>(XMLConfiguration.class, null,
             true);
         final FileBasedConfigurationBuilder<XMLConfiguration> managedBuilder = builder.createManagedBuilder("test.xml",
@@ -118,7 +118,7 @@ public class TestReloadingMultiFileConfigurationBuilder extends AbstractMultiFil
      * Tests whether parameters passed to the constructor are passed to the super class.
      */
     @Test
-    public void testInitWithParameters() throws ConfigurationException {
+    void testInitWithParameters() throws ConfigurationException {
         final ExpressionEngine engine = new XPathExpressionEngine();
         final BasicBuilderParameters params = createTestBuilderParameters(new XMLBuilderParametersImpl().setExpressionEngine(engine));
         final ReloadingMultiFileConfigurationBuilder<XMLConfiguration> builder = new ReloadingMultiFileConfigurationBuilder<>(XMLConfiguration.class,
@@ -132,7 +132,7 @@ public class TestReloadingMultiFileConfigurationBuilder extends AbstractMultiFil
      * Tests whether a reloading check works correctly.
      */
     @Test
-    public void testReloadingControllerCheck() throws ConfigurationException {
+    void testReloadingControllerCheck() throws ConfigurationException {
         final ReloadingMultiFileConfigurationBuilderTestImpl builder = new ReloadingMultiFileConfigurationBuilderTestImpl();
         switchToConfig(1);
         builder.getConfiguration();
@@ -158,7 +158,7 @@ public class TestReloadingMultiFileConfigurationBuilder extends AbstractMultiFil
      * Tests a reloading check which detects the need to reload.
      */
     @Test
-    public void testReloadingControllerCheckReloadingRequired() throws ConfigurationException {
+    void testReloadingControllerCheckReloadingRequired() throws ConfigurationException {
         final ReloadingMultiFileConfigurationBuilderTestImpl builder = new ReloadingMultiFileConfigurationBuilderTestImpl();
         for (int i = 1; i <= 3; i++) {
             switchToConfig(i);
@@ -183,7 +183,7 @@ public class TestReloadingMultiFileConfigurationBuilder extends AbstractMultiFil
      * Tests whether the reloading state of the reloading controller can be reset.
      */
     @Test
-    public void testReloadingControllerResetReloadingState() throws ConfigurationException {
+    void testReloadingControllerResetReloadingState() throws ConfigurationException {
         final ReloadingMultiFileConfigurationBuilderTestImpl builder = new ReloadingMultiFileConfigurationBuilderTestImpl();
         switchToConfig(1);
         builder.getConfiguration();

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,6 +43,7 @@ import org.apache.commons.vfs2.VFS;
  * @since 1.7
  */
 public class VFSFileHandlerReloadingDetector extends FileHandlerReloadingDetector {
+
     /** Stores the logger. */
     private final Log log = LogFactory.getLog(getClass());
 
@@ -51,6 +52,16 @@ public class VFSFileHandlerReloadingDetector extends FileHandlerReloadingDetecto
      * {@code FileHandler} object.
      */
     public VFSFileHandlerReloadingDetector() {
+    }
+
+    /**
+     * Creates a new instance of {@code VFSFileHandlerReloadingDetector} and initializes it with the given
+     * {@code FileHandler} object.
+     *
+     * @param handler the {@code FileHandler}
+     */
+    public VFSFileHandlerReloadingDetector(final FileHandler handler) {
+        super(handler);
     }
 
     /**
@@ -65,13 +76,28 @@ public class VFSFileHandlerReloadingDetector extends FileHandlerReloadingDetecto
     }
 
     /**
-     * Creates a new instance of {@code VFSFileHandlerReloadingDetector} and initializes it with the given
-     * {@code FileHandler} object.
+     * Gets the file that is monitored by this strategy. Note that the return value can be <strong>null </strong> under some
+     * circumstances.
      *
-     * @param handler the {@code FileHandler}
+     * @return the monitored file
      */
-    public VFSFileHandlerReloadingDetector(final FileHandler handler) {
-        super(handler);
+    protected FileObject getFileObject() {
+        if (!getFileHandler().isLocationDefined()) {
+            return null;
+        }
+
+        try {
+            final FileSystemManager fsManager = VFS.getManager();
+            final String uri = resolveFileURI();
+            if (uri == null) {
+                throw new ConfigurationRuntimeException("Unable to determine file to monitor");
+            }
+            return fsManager.resolveFile(uri);
+        } catch (final FileSystemException e) {
+            final String msg = "Unable to monitor " + getFileHandler().getURL().toString();
+            log.error(msg);
+            throw new ConfigurationRuntimeException(msg, e);
+        }
     }
 
     /**
@@ -94,34 +120,9 @@ public class VFSFileHandlerReloadingDetector extends FileHandlerReloadingDetecto
     }
 
     /**
-     * Returns the file that is monitored by this strategy. Note that the return value can be <b>null </b> under some
-     * circumstances.
-     *
-     * @return the monitored file
-     */
-    protected FileObject getFileObject() {
-        if (!getFileHandler().isLocationDefined()) {
-            return null;
-        }
-
-        try {
-            final FileSystemManager fsManager = VFS.getManager();
-            final String uri = resolveFileURI();
-            if (uri == null) {
-                throw new ConfigurationRuntimeException("Unable to determine file to monitor");
-            }
-            return fsManager.resolveFile(uri);
-        } catch (final FileSystemException fse) {
-            final String msg = "Unable to monitor " + getFileHandler().getURL().toString();
-            log.error(msg);
-            throw new ConfigurationRuntimeException(msg, fse);
-        }
-    }
-
-    /**
      * Resolves the URI of the monitored file.
      *
-     * @return the URI of the monitored file or <b>null</b> if it cannot be resolved
+     * @return the URI of the monitored file or <strong>null</strong> if it cannot be resolved
      */
     protected String resolveFileURI() {
         final FileSystem fs = getFileHandler().getFileSystem();

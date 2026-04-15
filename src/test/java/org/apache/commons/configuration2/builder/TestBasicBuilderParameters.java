@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,9 +51,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code BasicBuilderParameters}.
- *
  */
 public class TestBasicBuilderParameters {
+
     /** The instance to be tested. */
     private BasicBuilderParameters params;
 
@@ -66,7 +66,7 @@ public class TestBasicBuilderParameters {
      * Tests whether the collection with default lookups can be cloned, too.
      */
     @Test
-    public void testCloneDefaultLookups() {
+    void testCloneDefaultLookups() {
         final Lookup look = mock(Lookup.class);
         final Collection<Lookup> looks = Collections.singleton(look);
         params.setDefaultLookups(looks);
@@ -82,7 +82,7 @@ public class TestBasicBuilderParameters {
      * Tests whether the map with prefix lookups is cloned, too.
      */
     @Test
-    public void testClonePrefixLookups() {
+    void testClonePrefixLookups() {
         final Lookup look = mock(Lookup.class);
         final Map<String, Lookup> lookups = Collections.singletonMap("test", look);
         params.setPrefixLookups(lookups);
@@ -98,7 +98,7 @@ public class TestBasicBuilderParameters {
      * Tests whether a cloned instance contains the same data as the original object.
      */
     @Test
-    public void testCloneValues() {
+    void testCloneValues() {
         final ConfigurationLogger log = mock(ConfigurationLogger.class);
         final ConfigurationInterpolator ci = mock(ConfigurationInterpolator.class);
         final ListDelimiterHandler handler1 = mock(ListDelimiterHandler.class);
@@ -121,7 +121,7 @@ public class TestBasicBuilderParameters {
      * Tests the default parameter values.
      */
     @Test
-    public void testDefaults() {
+    void testDefaults() {
         final Map<String, Object> paramMap = params.getParameters();
         assertTrue(paramMap.isEmpty());
     }
@@ -130,7 +130,7 @@ public class TestBasicBuilderParameters {
      * Tests fetchBeanHelper() if no helper was set.
      */
     @Test
-    public void testFetchBeanHelperNoSet() {
+    void testFetchBeanHelperNoSet() {
         assertNull(BasicBuilderParameters.fetchBeanHelper(params.getParameters()));
     }
 
@@ -138,7 +138,7 @@ public class TestBasicBuilderParameters {
      * Tries to invoke fetchBeanHelper() on a null map.
      */
     @Test
-    public void testFetchBeanHelperNullMap() {
+    void testFetchBeanHelperNullMap() {
         assertThrows(IllegalArgumentException.class, () -> BasicBuilderParameters.fetchBeanHelper(null));
     }
 
@@ -146,7 +146,7 @@ public class TestBasicBuilderParameters {
      * Tests whether a specification object for interpolation can be obtained.
      */
     @Test
-    public void testFetchInterpolatorSpecification() {
+    void testFetchInterpolatorSpecification() {
         final ConfigurationInterpolator parent = mock(ConfigurationInterpolator.class);
         final Lookup l1 = mock(Lookup.class);
         final Lookup l2 = mock(Lookup.class);
@@ -170,7 +170,7 @@ public class TestBasicBuilderParameters {
      * Tests that an empty map does not cause any problems.
      */
     @Test
-    public void testFetchInterpolatorSpecificationEmpty() {
+    void testFetchInterpolatorSpecificationEmpty() {
         final InterpolatorSpecification spec = BasicBuilderParameters.fetchInterpolatorSpecification(params.getParameters());
         assertNull(spec.getInterpolator());
         assertTrue(spec.getDefaultLookups().isEmpty());
@@ -180,7 +180,7 @@ public class TestBasicBuilderParameters {
      * Tests fetchInterpolatorSpecification() if the collection with default lookups contains an invalid value.
      */
     @Test
-    public void testFetchInterpolatorSpecificationInvalidCollectionValue() {
+    void testFetchInterpolatorSpecificationInvalidCollectionValue() {
         final Map<String, Object> map = new HashMap<>();
         map.put("defaultLookups", Collections.singleton("not a lookup"));
         assertThrows(IllegalArgumentException.class, () -> BasicBuilderParameters.fetchInterpolatorSpecification(map));
@@ -190,7 +190,7 @@ public class TestBasicBuilderParameters {
      * Tests fetchInterpolatorSpecification() if the map contains a property of an invalid data type.
      */
     @Test
-    public void testFetchInterpolatorSpecificationInvalidDataType() {
+    void testFetchInterpolatorSpecificationInvalidDataType() {
         final Map<String, Object> map = new HashMap<>();
         map.put("interpolator", this);
         assertThrows(IllegalArgumentException.class, () -> BasicBuilderParameters.fetchInterpolatorSpecification(map));
@@ -200,7 +200,7 @@ public class TestBasicBuilderParameters {
      * Tests fetchInterpolatorSpecification() if the map with prefix lookups contains an invalid key.
      */
     @Test
-    public void testFetchInterpolatorSpecificationInvalidMapKey() {
+    void testFetchInterpolatorSpecificationInvalidMapKey() {
         final Map<String, Object> map = new HashMap<>();
         final Map<Object, Object> prefix = new HashMap<>();
         prefix.put(42, mock(Lookup.class));
@@ -212,7 +212,7 @@ public class TestBasicBuilderParameters {
      * Tests fetchInterpolatorSpecification() if the map with prefix lookups contains an invalid value.
      */
     @Test
-    public void testFetchInterpolatorSpecificationInvalidMapValue() {
+    void testFetchInterpolatorSpecificationInvalidMapValue() {
         final Map<String, Object> map = new HashMap<>();
         final Map<Object, Object> prefix = new HashMap<>();
         prefix.put("test", this);
@@ -224,7 +224,7 @@ public class TestBasicBuilderParameters {
      * Tries to obtain an {@code InterpolatorSpecification} from a null map.
      */
     @Test
-    public void testFetchInterpolatorSpecificationNull() {
+    void testFetchInterpolatorSpecificationNull() {
         assertThrows(IllegalArgumentException.class, () -> BasicBuilderParameters.fetchInterpolatorSpecification(null));
     }
 
@@ -232,7 +232,7 @@ public class TestBasicBuilderParameters {
      * Tests whether an InterpolatorSpecification can be fetched if a ConfigurationInterpolator is present.
      */
     @Test
-    public void testFetchInterpolatorSpecificationWithInterpolator() {
+    void testFetchInterpolatorSpecificationWithInterpolator() {
         final ConfigurationInterpolator ci = mock(ConfigurationInterpolator.class);
         params.setInterpolator(ci);
         final InterpolatorSpecification spec = BasicBuilderParameters.fetchInterpolatorSpecification(params.getParameters());
@@ -244,7 +244,7 @@ public class TestBasicBuilderParameters {
      * Tests whether a defensive copy is created when the parameter map is returned.
      */
     @Test
-    public void testGetParametersDefensiveCopy() {
+    void testGetParametersDefensiveCopy() {
         final Map<String, Object> map1 = params.getParameters();
         final Map<String, Object> mapCopy = new HashMap<>(map1);
         map1.put("otherProperty", "value");
@@ -257,7 +257,7 @@ public class TestBasicBuilderParameters {
      * Tests whether properties can be inherited from another parameters map.
      */
     @Test
-    public void testInheritFrom() {
+    void testInheritFrom() {
         final BeanHelper beanHelper = new BeanHelper();
         final ConfigurationDecoder decoder = mock(ConfigurationDecoder.class);
         final ConversionHandler conversionHandler = new DefaultConversionHandler();
@@ -283,7 +283,7 @@ public class TestBasicBuilderParameters {
      * Tests whether null input is handled by inheritFrom().
      */
     @Test
-    public void testInheritFromNull() {
+    void testInheritFromNull() {
         assertThrows(IllegalArgumentException.class, () -> params.inheritFrom(null));
     }
 
@@ -291,7 +291,7 @@ public class TestBasicBuilderParameters {
      * Tests that undefined properties are not copied over by inheritFrom().
      */
     @Test
-    public void testInheritFromUndefinedProperties() {
+    void testInheritFromUndefinedProperties() {
         final BasicBuilderParameters p2 = new BasicBuilderParameters().setThrowExceptionOnMissing(true);
 
         p2.inheritFrom(Collections.<String, Object>emptyMap());
@@ -303,7 +303,7 @@ public class TestBasicBuilderParameters {
      * Tests whether properties of other parameter objects can be merged.
      */
     @Test
-    public void testMerge() {
+    void testMerge() {
         final ListDelimiterHandler handler1 = mock(ListDelimiterHandler.class);
         final ListDelimiterHandler handler2 = mock(ListDelimiterHandler.class);
         final Map<String, Object> props = new HashMap<>();
@@ -331,7 +331,7 @@ public class TestBasicBuilderParameters {
      * Tries a merge with a null object.
      */
     @Test
-    public void testMergeNull() {
+    void testMergeNull() {
         assertThrows(IllegalArgumentException.class, () -> params.merge(null));
     }
 
@@ -339,7 +339,7 @@ public class TestBasicBuilderParameters {
      * Tests whether a BeanHelper can be set.
      */
     @Test
-    public void testSetBeanHelper() {
+    void testSetBeanHelper() {
         final BeanHelper helper = new BeanHelper();
         assertSame(params, params.setBeanHelper(helper));
         assertSame(helper, BasicBuilderParameters.fetchBeanHelper(params.getParameters()));
@@ -349,7 +349,7 @@ public class TestBasicBuilderParameters {
      * Tests whether a decoder can be set.
      */
     @Test
-    public void testSetConfigurationDecoder() {
+    void testSetConfigurationDecoder() {
         final ConfigurationDecoder decoder = mock(ConfigurationDecoder.class);
         assertSame(params, params.setConfigurationDecoder(decoder));
         assertSame(decoder, params.getParameters().get("configurationDecoder"));
@@ -359,7 +359,7 @@ public class TestBasicBuilderParameters {
      * Tests whether a ConversionHandler can be set.
      */
     @Test
-    public void testSetConversionHandler() {
+    void testSetConversionHandler() {
         final ConversionHandler handler = mock(ConversionHandler.class);
         assertSame(params, params.setConversionHandler(handler));
         assertSame(handler, params.getParameters().get("conversionHandler"));
@@ -369,7 +369,7 @@ public class TestBasicBuilderParameters {
      * Tests whether default lookups can be set.
      */
     @Test
-    public void testSetDefaultLookups() {
+    void testSetDefaultLookups() {
         final Lookup look = mock(Lookup.class);
         final Collection<Lookup> looks = Collections.singleton(look);
         assertSame(params, params.setDefaultLookups(looks));
@@ -385,7 +385,7 @@ public class TestBasicBuilderParameters {
      * Tests whether null values are handled by setDefaultLookups().
      */
     @Test
-    public void testSetDefaultLookupsNull() {
+    void testSetDefaultLookupsNull() {
         params.setDefaultLookups(new ArrayList<>());
         params.setDefaultLookups(null);
         assertFalse(params.getParameters().containsKey("defaultLookups"));
@@ -395,7 +395,7 @@ public class TestBasicBuilderParameters {
      * Tests whether a {@code ConfigurationInterpolator} can be set.
      */
     @Test
-    public void testSetInterpolator() {
+    void testSetInterpolator() {
         final ConfigurationInterpolator ci = mock(ConfigurationInterpolator.class);
         assertSame(params, params.setInterpolator(ci));
         assertSame(ci, params.getParameters().get("interpolator"));
@@ -405,7 +405,7 @@ public class TestBasicBuilderParameters {
      * Tests whether the list delimiter handler property can be set.
      */
     @Test
-    public void testSetListDelimiter() {
+    void testSetListDelimiter() {
         final ListDelimiterHandler handler = mock(ListDelimiterHandler.class);
         assertSame(params, params.setListDelimiterHandler(handler));
         assertSame(handler, params.getParameters().get("listDelimiterHandler"));
@@ -415,7 +415,7 @@ public class TestBasicBuilderParameters {
      * Tests whether the logger parameter can be set.
      */
     @Test
-    public void testSetLogger() {
+    void testSetLogger() {
         final ConfigurationLogger log = mock(ConfigurationLogger.class);
         assertSame(params, params.setLogger(log));
         assertSame(log, params.getParameters().get("logger"));
@@ -425,7 +425,7 @@ public class TestBasicBuilderParameters {
      * Tests whether a custom {@code ConfigurationInterpolator} overrides settings for custom lookups.
      */
     @Test
-    public void testSetLookupsAndInterpolator() {
+    void testSetLookupsAndInterpolator() {
         final Lookup look1 = mock(Lookup.class);
         final Lookup look2 = mock(Lookup.class);
         final ConfigurationInterpolator parent = mock(ConfigurationInterpolator.class);
@@ -444,7 +444,7 @@ public class TestBasicBuilderParameters {
      * Tests whether a parent {@code ConfigurationInterpolator} can be set.
      */
     @Test
-    public void testSetParentInterpolator() {
+    void testSetParentInterpolator() {
         final ConfigurationInterpolator parent = mock(ConfigurationInterpolator.class);
         assertSame(params, params.setParentInterpolator(parent));
         assertSame(parent, params.getParameters().get("parentInterpolator"));
@@ -454,7 +454,7 @@ public class TestBasicBuilderParameters {
      * Tests whether prefix lookups can be set.
      */
     @Test
-    public void testSetPrefixLookups() {
+    void testSetPrefixLookups() {
         final Lookup look = mock(Lookup.class);
         final Map<String, Lookup> lookups = Collections.singletonMap("test", look);
         assertSame(params, params.setPrefixLookups(lookups));
@@ -469,7 +469,7 @@ public class TestBasicBuilderParameters {
      * Tests whether null values are handled by setPrefixLookups().
      */
     @Test
-    public void testSetPrefixLookupsNull() {
+    void testSetPrefixLookupsNull() {
         params.setPrefixLookups(new HashMap<>());
         params.setPrefixLookups(null);
         assertFalse(params.getParameters().containsKey("prefixLookups"));
@@ -479,7 +479,7 @@ public class TestBasicBuilderParameters {
      * Tests whether a Synchronizer can be set.
      */
     @Test
-    public void testSetSynchronizer() {
+    void testSetSynchronizer() {
         final Synchronizer sync = mock(Synchronizer.class);
         assertSame(params, params.setSynchronizer(sync));
         assertSame(sync, params.getParameters().get("synchronizer"));
@@ -489,7 +489,7 @@ public class TestBasicBuilderParameters {
      * Tests whether the throw exception on missing property can be set.
      */
     @Test
-    public void testSetThrowExceptionOnMissing() {
+    void testSetThrowExceptionOnMissing() {
         assertSame(params, params.setThrowExceptionOnMissing(true));
         assertEquals(Boolean.TRUE, params.getParameters().get("throwExceptionOnMissing"));
     }

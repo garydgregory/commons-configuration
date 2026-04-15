@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,21 +16,18 @@
  */
 package org.apache.commons.configuration2;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.commons.configuration2.sync.Synchronizer;
 
 /**
  * A test implementation of Synchronizer which allows keeping track about the methods called by the configuration.
- *
  */
 public class SynchronizerTestImpl implements Synchronizer {
+
     /**
-     * An enumeration with the methods of the Synchronizer which can be called.
+     * Enumerates the methods of the Synchronizer which can be called.
      */
     public enum Methods {
         BEGIN_READ, END_READ, BEGIN_WRITE, END_WRITE
@@ -116,7 +113,7 @@ public class SynchronizerTestImpl implements Synchronizer {
      * @param expMethods the expected methods
      */
     public void verifyContains(final Methods... expMethods) {
-        assertThat(methods.toString(), containsString(constructExpectedMethods(expMethods)));
+        assertTrue(methods.toString().contains(constructExpectedMethods(expMethods)));
     }
 
     /**
@@ -125,7 +122,7 @@ public class SynchronizerTestImpl implements Synchronizer {
      * @param expMethods the expected methods
      */
     public void verifyEnd(final Methods... expMethods) {
-        assertThat(methods.toString(), endsWith(constructExpectedMethods(expMethods)));
+        assertTrue(methods.toString().endsWith(constructExpectedMethods(expMethods)));
     }
 
     /**
@@ -134,6 +131,6 @@ public class SynchronizerTestImpl implements Synchronizer {
      * @param expMethods the expected methods
      */
     public void verifyStart(final Methods... expMethods) {
-        assertThat(methods.toString(), startsWith(constructExpectedMethods(expMethods)));
+        assertTrue(methods.toString().startsWith(constructExpectedMethods(expMethods)));
     }
 }

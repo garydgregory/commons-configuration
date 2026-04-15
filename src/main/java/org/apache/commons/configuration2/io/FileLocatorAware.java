@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,12 +36,13 @@ package org.apache.commons.configuration2.io;
  * @since 2.0
  */
 public interface FileLocatorAware {
+
     /**
      * Passes the current {@code FileLocator} to this object. Note that this {@code FileLocator} object is only temporarily
      * valid for the following invocation of {@code read()} or {@code write(}. Depending on the state of the
      * {@code FileHandler} and which of its methods was called, the object may not be fully initialized. For instance, if
      * the {@code FileHandler}'s {@code load(InputStream)} method was called, no file information is available, and all
-     * methods of the {@code FileLocator} will return <b>null</b>.
+     * methods of the {@code FileLocator} will return <strong>null</strong>.
      *
      * @param locator the current {@code FileLocator}
      */

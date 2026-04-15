@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -57,8 +57,8 @@ public class Event extends EventObject {
     /**
      * Creates a new instance of {@code Event} and sets basic properties.
      *
-     * @param source the object on which the Event initially occurred (must not be <b>null</b>)
-     * @param evType the type of this event (must not be <b>null</b>)
+     * @param source the object on which the Event initially occurred (must not be <strong>null</strong>)
+     * @param evType the type of this event (must not be <strong>null</strong>)
      * @throws IllegalArgumentException if a required parameter is null
      */
     public Event(final Object source, final EventType<? extends Event> evType) {
@@ -70,7 +70,20 @@ public class Event extends EventObject {
     }
 
     /**
-     * Returns the type of this event.
+     * Helper method for appending a representation for a property to the overall string representation for this object.
+     * This method is called by {@code toString()} for generating string fragments for the properties of this class. It can
+     * also be used by derived classes which extend the string representation of this base class.
+     *
+     * @param buf the target buffer
+     * @param property the name of the property
+     * @param value the property value
+     */
+    protected void appendPropertyRepresentation(final StringBuilder buf, final String property, final Object value) {
+        buf.append(String.format(FMT_PROPERTY, property, String.valueOf(value)));
+    }
+
+    /**
+     * Gets the type of this event.
      *
      * @return the event type
      */
@@ -92,18 +105,5 @@ public class Event extends EventObject {
         appendPropertyRepresentation(buf, "eventType", getEventType());
         buf.append(" ]");
         return buf.toString();
-    }
-
-    /**
-     * Helper method for appending a representation for a property to the overall string representation for this object.
-     * This method is called by {@code toString()} for generating string fragments for the properties of this class. It can
-     * also be used by derived classes which extend the string representation of this base class.
-     *
-     * @param buf the target buffer
-     * @param property the name of the property
-     * @param value the property value
-     */
-    protected void appendPropertyRepresentation(final StringBuilder buf, final String property, final Object value) {
-        buf.append(String.format(FMT_PROPERTY, property, String.valueOf(value)));
     }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,9 +38,9 @@ import org.mockito.stubbing.OngoingStubbing;
 
 /**
  * Test class for {@code PeriodicReloadingTrigger}.
- *
  */
 public class TestPeriodicReloadingTrigger {
+
     /** Constant for a parameter to be passed to the controller. */
     private static final Object CTRL_PARAM = "Test controller parameter";
 
@@ -75,23 +75,6 @@ public class TestPeriodicReloadingTrigger {
         return new PeriodicReloadingTrigger(controller, CTRL_PARAM, PERIOD, UNIT, executor);
     }
 
-    /**
-     * Prepares the executor mock to for any invocation which schedules the trigger task.
-     * This method should be used to call one of the {@code thenReturn}, {@code thenAnswer} or {@code thenThrow} methods.
-     *
-     * @return An ongoing stubbing for the future
-     */
-    private OngoingStubbing<ScheduledFuture<?>> whenScheduled() {
-        return when(executor.scheduleAtFixedRate(any(), eq(PERIOD), eq(PERIOD), eq(UNIT)));
-    }
-
-    /**
-     * Verifies that an invocation has occurred on the executor mock which schedules the trigger task.
-     */
-    private void verifyScheduled() {
-        verify(executor).scheduleAtFixedRate(any(), eq(PERIOD), eq(PERIOD), eq(UNIT));
-    }
-
     @BeforeEach
     public void setUp() throws Exception {
         executor = mock(ScheduledExecutorService.class);
@@ -102,7 +85,7 @@ public class TestPeriodicReloadingTrigger {
      * Tests whether a default executor service is created if necessary.
      */
     @Test
-    public void testDefaultExecutor() {
+    void testDefaultExecutor() {
         final PeriodicReloadingTrigger trigger = new PeriodicReloadingTrigger(controller, CTRL_PARAM, PERIOD, UNIT);
         assertNotNull(trigger.getExecutorService());
     }
@@ -111,7 +94,7 @@ public class TestPeriodicReloadingTrigger {
      * Tries to create an instance without a controller.
      */
     @Test
-    public void testInitNoController() {
+    void testInitNoController() {
         assertThrows(IllegalArgumentException.class, () -> new PeriodicReloadingTrigger(null, CTRL_PARAM, PERIOD, UNIT));
     }
 
@@ -119,7 +102,7 @@ public class TestPeriodicReloadingTrigger {
      * Tests that a newly created trigger is not running.
      */
     @Test
-    public void testIsRunningAfterInit() {
+    void testIsRunningAfterInit() {
         assertFalse(createTrigger().isRunning());
     }
 
@@ -127,7 +110,7 @@ public class TestPeriodicReloadingTrigger {
      * Tests a shutdown operation.
      */
     @Test
-    public void testShutdown() {
+    void testShutdown() {
         final ScheduledFuture<Void> future = createFutureMock();
 
         whenScheduled().thenReturn(future);
@@ -147,7 +130,7 @@ public class TestPeriodicReloadingTrigger {
      * Tests a shutdown operation which excludes the executor service.
      */
     @Test
-    public void testShutdownNoExecutor() {
+    void testShutdownNoExecutor() {
         createTrigger().shutdown(false);
     }
 
@@ -155,7 +138,7 @@ public class TestPeriodicReloadingTrigger {
      * Tests whether the trigger can be started.
      */
     @Test
-    public void testStart() {
+    void testStart() {
         final ScheduledFuture<Void> future = createFutureMock();
         final MutableObject<Runnable> refTask = new MutableObject<>();
 
@@ -179,7 +162,7 @@ public class TestPeriodicReloadingTrigger {
      * Tests whether start() is a noop if the trigger is already running.
      */
     @Test
-    public void testStartTwice() {
+    void testStartTwice() {
         final ScheduledFuture<Void> future = createFutureMock();
 
         whenScheduled().thenReturn(future);
@@ -196,7 +179,7 @@ public class TestPeriodicReloadingTrigger {
      * Tests whether a running trigger can be stopped.
      */
     @Test
-    public void testStop() {
+    void testStop() {
         final ScheduledFuture<Void> future = createFutureMock();
 
         whenScheduled().thenReturn(future);
@@ -216,7 +199,24 @@ public class TestPeriodicReloadingTrigger {
      * Tests stop() if the trigger is not running.
      */
     @Test
-    public void testStopNotRunning() {
+    void testStopNotRunning() {
         createTrigger().stop();
+    }
+
+    /**
+     * Verifies that an invocation has occurred on the executor mock which schedules the trigger task.
+     */
+    private void verifyScheduled() {
+        verify(executor).scheduleAtFixedRate(any(), eq(PERIOD), eq(PERIOD), eq(UNIT));
+    }
+
+    /**
+     * Prepares the executor mock to for any invocation which schedules the trigger task.
+     * This method should be used to call one of the {@code thenReturn}, {@code thenAnswer} or {@code thenThrow} methods.
+     *
+     * @return An ongoing stubbing for the future
+     */
+    private OngoingStubbing<ScheduledFuture<?>> whenScheduled() {
+        return when(executor.scheduleAtFixedRate(any(), eq(PERIOD), eq(PERIOD), eq(UNIT)));
     }
 }

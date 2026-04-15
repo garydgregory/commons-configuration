@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,10 +28,11 @@ package org.apache.commons.configuration2.builder;
  * initialization.
  * </p>
  *
- * @since 2.0
  * @param <T> the type of parameters supported by this handler
+ * @since 2.0
  */
 public interface DefaultParametersHandler<T> {
+
     /**
      * Initializes the specified parameters object with default values. This method is called after the parameters object
      * was created and before it is passed to the calling code. A concrete implementation can perform arbitrary

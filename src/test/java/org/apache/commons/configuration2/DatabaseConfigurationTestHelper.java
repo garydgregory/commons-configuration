@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,7 @@
 package org.apache.commons.configuration2;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
 import java.sql.Connection;
 
 import javax.sql.DataSource;
@@ -39,9 +39,9 @@ import org.dbunit.operation.DatabaseOperation;
  * A helper class for performing tests for {@link DatabaseConfiguration}. This class maintains an in-process database
  * that stores configuration data and can be accessed from a {@link DatabaseConfiguration} instance. Constants for table
  * and column names and database connection settings are provided, too.
- *
  */
 public class DatabaseConfigurationTestHelper {
+
     /** Constant for the configuration table. */
     public static final String TABLE = "configuration";
 
@@ -61,22 +61,22 @@ public class DatabaseConfigurationTestHelper {
     public static final String CONFIG_NAME = "test";
 
     /** Constant for the JDBC driver class. */
-    public final String DATABASE_DRIVER = "org.hsqldb.jdbcDriver";
+    public static final String DATABASE_DRIVER = "org.hsqldb.jdbcDriver";
 
     /** Constant for the connection URL. */
-    public final String DATABASE_URL = "jdbc:hsqldb:mem:testdb";
+    public static final String DATABASE_URL = "jdbc:hsqldb:mem:testdb";
 
     /** Constant for the DB user name. */
-    public final String DATABASE_USERNAME = "sa";
+    public static final String DATABASE_USERNAME = "sa";
 
     /** Constant for the DB password. */
-    public final String DATABASE_PASSWORD = "";
+    public static final String DATABASE_PASSWORD = "";
 
     /** Stores the in-process database. */
     private HsqlDB hsqlDB;
 
     /** The data source. */
-    private DataSource datasource;
+    private DataSource dataSource;
 
     /**
      * The auto-commit mode for the configuration instances created by this helper.
@@ -92,7 +92,8 @@ public class DatabaseConfigurationTestHelper {
      * @return the newly created configuration instance
      * @throws ConfigurationException if an error occurs
      */
-    public <T extends DatabaseConfiguration> T createConfig(final Class<T> configCls, final DatabaseBuilderParameters params) throws ConfigurationException {
+    public <T extends DatabaseConfiguration> T createConfiguration(final Class<T> configCls, final DatabaseBuilderParameters params)
+            throws ConfigurationException {
         return new BasicConfigurationBuilder<>(configCls).configure(params).getConfiguration();
     }
 
@@ -101,15 +102,15 @@ public class DatabaseConfigurationTestHelper {
      *
      * @return the {@code DataSource}
      */
-    public DataSource getDatasource() {
-        if (datasource == null) {
+    public DataSource getDataSource() {
+        if (dataSource == null) {
             try {
-                datasource = setUpDataSource();
-            } catch (final Exception ex) {
-                throw new ConfigurationRuntimeException("Could not create data source", ex);
+                dataSource = setUpDataSource();
+            } catch (final Exception e) {
+                throw new ConfigurationRuntimeException("Could not create data source", e);
             }
         }
-        return datasource;
+        return dataSource;
     }
 
     /**
@@ -160,7 +161,7 @@ public class DatabaseConfigurationTestHelper {
      * @throws ConfigurationException if an error occurs
      */
     public <T extends DatabaseConfiguration> T setUpConfig(final Class<T> configCls) throws ConfigurationException {
-        return createConfig(configCls, setUpDefaultParameters());
+        return createConfiguration(configCls, setUpDefaultParameters());
     }
 
     /**
@@ -180,7 +181,7 @@ public class DatabaseConfigurationTestHelper {
         // prepare the database
         final Connection conn = ds.getConnection();
         final IDatabaseConnection connection = new DatabaseConnection(conn);
-        final IDataSet dataSet = new XmlDataSet(new FileInputStream(ConfigurationAssert.getTestFile("dataset.xml")));
+        final IDataSet dataSet = new XmlDataSet(Files.newInputStream(ConfigurationAssert.getTestPath("dataset.xml")));
 
         try {
             DatabaseOperation.CLEAN_INSERT.execute(connection, dataSet);
@@ -200,7 +201,7 @@ public class DatabaseConfigurationTestHelper {
      * @return the parameters object
      */
     public DatabaseBuilderParameters setUpDefaultParameters() {
-        return new Parameters().database().setDataSource(getDatasource()).setTable(TABLE).setKeyColumn(COL_KEY).setValueColumn(COL_VALUE)
+        return new Parameters().database().setDataSource(getDataSource()).setTable(TABLE).setKeyColumn(COL_KEY).setValueColumn(COL_VALUE)
             .setAutoCommit(isAutoCommit());
     }
 
@@ -219,18 +220,18 @@ public class DatabaseConfigurationTestHelper {
      *
      * @param <T> the type of the result configuration
      * @param configCls the configuration class
-     * @param configName the name of the configuration instance or <b>null</b> for the default name
+     * @param configName the name of the configuration instance or <strong>null</strong> for the default name
      * @return the newly created configuration instance
      * @throws ConfigurationException if an error occurs
      */
     public <T extends DatabaseConfiguration> T setUpMultiConfig(final Class<T> configCls, final String configName) throws ConfigurationException {
-        return createConfig(configCls, setUpMultiParameters(configName));
+        return createConfiguration(configCls, setUpMultiParameters(configName));
     }
 
     /**
      * Returns a parameters object with settings for a configuration table containing the data of multiple configurations.
      *
-     * @param configName the name of the configuration instance or <b>null</b> for the default name
+     * @param configName the name of the configuration instance or <strong>null</strong> for the default name
      * @return the parameters object
      */
     public DatabaseBuilderParameters setUpMultiParameters(final String configName) {
@@ -245,8 +246,8 @@ public class DatabaseConfigurationTestHelper {
      * @throws Exception if an error occurs
      */
     public void tearDown() throws Exception {
-        if (datasource != null) {
-            datasource.getConnection().close();
+        if (dataSource != null) {
+            dataSource.getConnection().close();
         }
         hsqlDB.close();
     }

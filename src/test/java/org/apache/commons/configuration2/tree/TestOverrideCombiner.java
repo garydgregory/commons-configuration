@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,9 +31,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for OverrideCombiner.
- *
  */
 public class TestOverrideCombiner extends AbstractCombinerTest {
+
     /**
      * Helper method for checking the combined table structure.
      *
@@ -68,7 +68,7 @@ public class TestOverrideCombiner extends AbstractCombinerTest {
      * Tests combination of attributes.
      */
     @Test
-    public void testAttributes() throws ConfigurationException {
+    void testAttributes() throws ConfigurationException {
         final BaseHierarchicalConfiguration config = createCombinedConfiguration();
         assertEquals(1, config.getInt("gui.level[@min]"));
         assertEquals(2, config.getInt("gui.level[@default]"));
@@ -81,7 +81,7 @@ public class TestOverrideCombiner extends AbstractCombinerTest {
      * table structure completely overrides the second and will be directly added to the resulting structure.
      */
     @Test
-    public void testCombinedTableList() throws ConfigurationException {
+    void testCombinedTableList() throws ConfigurationException {
         combiner.addListNode("table");
         checkTable(createCombinedConfiguration());
     }
@@ -92,7 +92,7 @@ public class TestOverrideCombiner extends AbstractCombinerTest {
      * second table.
      */
     @Test
-    public void testCombinedTableNoList() throws ConfigurationException {
+    void testCombinedTableNoList() throws ConfigurationException {
         checkTable(createCombinedConfiguration());
     }
 
@@ -100,7 +100,7 @@ public class TestOverrideCombiner extends AbstractCombinerTest {
      * Tests a combine operation of non-hierarchical properties. This test is related to CONFIGURATION-604.
      */
     @Test
-    public void testCombineProperties() {
+    void testCombineProperties() {
         final PropertiesConfiguration c1 = new PropertiesConfiguration();
         c1.addProperty("x.y.simpleCase", false);
         c1.addProperty("x.y.between", false);
@@ -130,7 +130,7 @@ public class TestOverrideCombiner extends AbstractCombinerTest {
      * Tests if a list from the first node structure overrides a list in the second structure.
      */
     @Test
-    public void testListFromFirstStructure() throws ConfigurationException {
+    void testListFromFirstStructure() throws ConfigurationException {
         final BaseHierarchicalConfiguration config = createCombinedConfiguration();
         assertEquals(0, config.getMaxIndex("net.service.url"));
         assertEquals("http://service1.org", config.getString("net.service.url"));
@@ -141,7 +141,7 @@ public class TestOverrideCombiner extends AbstractCombinerTest {
      * Tests if a list from the second structure is added if it is not defined in the first structure.
      */
     @Test
-    public void testListFromSecondStructure() throws ConfigurationException {
+    void testListFromSecondStructure() throws ConfigurationException {
         final BaseHierarchicalConfiguration config = createCombinedConfiguration();
         assertEquals(3, config.getMaxIndex("net.server.url"));
         assertEquals("http://testsvr.com", config.getString("net.server.url(2)"));
@@ -151,7 +151,7 @@ public class TestOverrideCombiner extends AbstractCombinerTest {
      * Tests whether property values are correctly overridden.
      */
     @Test
-    public void testOverrideValues() throws ConfigurationException {
+    void testOverrideValues() throws ConfigurationException {
         final BaseHierarchicalConfiguration config = createCombinedConfiguration();
         assertEquals("Admin", config.getString("base.services.security.login.user"));
         assertEquals("default", config.getString("base.services.security.login.user[@type]"));
@@ -163,7 +163,7 @@ public class TestOverrideCombiner extends AbstractCombinerTest {
      * Tests combination of simple elements.
      */
     @Test
-    public void testSimpleValues() throws ConfigurationException {
+    void testSimpleValues() throws ConfigurationException {
         final BaseHierarchicalConfiguration config = createCombinedConfiguration();
         assertEquals(0, config.getMaxIndex("gui.bgcolor"));
         assertEquals("green", config.getString("gui.bgcolor"));

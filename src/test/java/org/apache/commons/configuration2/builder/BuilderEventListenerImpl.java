@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,9 +30,9 @@ import org.apache.commons.configuration2.event.EventType;
 /**
  * A test implementation of an event listener for configuration builders. This class is used by some unit tests. It
  * collects the events received by the listener and provides some methods for querying them.
- *
  */
 public class BuilderEventListenerImpl implements EventListener<ConfigurationBuilderEvent> {
+
     /** A list with the received events. */
     private final List<ConfigurationBuilderEvent> events = new LinkedList<>();
 

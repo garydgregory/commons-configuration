@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,19 +21,22 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * * A specialized iterator implementation used by {@link AbstractConfiguration} to return an iteration over all keys
+ * A specialized iterator implementation used by {@link AbstractConfiguration} to return an iteration over all keys
  * starting with a specified prefix.
- *
  * <p>
  * This class is basically a stripped-down version of the {@code FilterIterator} class of Commons Collections
  * </p>
  */
-class PrefixedKeysIterator implements Iterator<String> {
+final class PrefixedKeysIterator implements Iterator<String> {
+
     /** Stores the wrapped iterator. */
     private final Iterator<String> iterator;
 
     /** Stores the prefix. */
     private final String prefix;
+
+    /** Stores the prefix delimiter. Default delimiter is "." */
+    private final String delimiter;
 
     /** Stores the next element in the iteration. */
     private String nextElement;
@@ -49,14 +52,28 @@ class PrefixedKeysIterator implements Iterator<String> {
      * @param keyPrefix the prefix of the allowed keys
      */
     public PrefixedKeysIterator(final Iterator<String> wrappedIterator, final String keyPrefix) {
-        iterator = wrappedIterator;
-        prefix = keyPrefix;
+        this(wrappedIterator, keyPrefix, AbstractConfiguration.DELIMITER);
     }
 
     /**
-     * Returns a flag whether there are more elements in the iteration.
+     * Creates a new instance of {@code PrefixedKeysIterator} and sets the wrapped iterator and the prefix as well as the delimiter for the preix for the
+     * accepted keys.
      *
-     * @return a flag if there is a next element
+     * @param wrappedIterator the wrapped iterator
+     * @param keyPrefix       the prefix of the allowed keys
+     * @param prefixDelimiter the prefix delimiter
+     * @since 2.10.0
+     */
+    public PrefixedKeysIterator(final Iterator<String> wrappedIterator, final String keyPrefix, final String prefixDelimiter) {
+        iterator = wrappedIterator;
+        prefix = keyPrefix;
+        delimiter = prefixDelimiter;
+    }
+
+    /**
+     * Tests whether there are more elements in the iteration.
+     *
+     * @return whether there are more elements in the iteration.
      */
     @Override
     public boolean hasNext() {
@@ -94,19 +111,34 @@ class PrefixedKeysIterator implements Iterator<String> {
     }
 
     /**
-     * Determines the next element in the iteration. The return value indicates whether such an element can be found.
+     * Sets the next element in the iteration. The return value indicates whether such an element can be found.
      *
      * @return a flag whether a next element exists
      */
     private boolean setNextElement() {
         while (iterator.hasNext()) {
             final String key = iterator.next();
-            if (key.startsWith(prefix + ".") || key.equals(prefix)) {
+            if (key.startsWith(prefix + delimiter) || key.equals(prefix)) {
                 nextElement = key;
                 nextElementSet = true;
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        // @formatter:off
+        return new StringBuilder()
+            .append("PrefixedKeysIterator [prefix=")
+            .append(prefix)
+            .append(", delimiter=")
+            .append(delimiter)
+            .append(", nextElement=")
+            .append(nextElement)
+            .append("]")
+            .toString();
+        // @formatter:on
     }
 }

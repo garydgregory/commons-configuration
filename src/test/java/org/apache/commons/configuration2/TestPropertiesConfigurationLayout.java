@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,12 +44,14 @@ import org.junit.jupiter.api.Test;
  * Test class for PropertiesConfigurationLayout.
  */
 public class TestPropertiesConfigurationLayout {
+
     /**
      * A mock properties configuration implementation that is used to check whether some expected methods are called.
      */
     static class LayoutTestConfiguration extends PropertiesConfiguration {
+
         /** Stores a builder object. */
-        public PropertiesBuilder builder;
+        private PropertiesBuilder builder;
 
         /**
          * Simulates the propertyLoaded() callback. If a builder was set, a load() call on the layout is invoked.
@@ -71,6 +73,7 @@ public class TestPropertiesConfigurationLayout {
      * A helper class used for constructing test properties files.
      */
     static class PropertiesBuilder {
+
         /** A buffer for storing the data. */
         private final StringBuilder buf = new StringBuilder();
 
@@ -80,7 +83,7 @@ public class TestPropertiesConfigurationLayout {
         /**
          * Adds a comment line.
          *
-         * @param s the comment (can be <b>null</b>, then a blank line is added)
+         * @param s the comment (can be <strong>null</strong>, then a blank line is added)
          */
         public void addComment(final String s) {
             if (s != null) {
@@ -207,7 +210,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests whether blank lines before a property are correctly detected.
      */
     @Test
-    public void testBlankLines() throws ConfigurationException {
+    void testBlankLines() throws ConfigurationException {
         builder.addProperty("prop", "value");
         builder.addComment(null);
         builder.addComment(null);
@@ -224,7 +227,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests whether blank lines before a property are correctly detected if a header comment is present
      */
     @Test
-    public void testBlankLinesWithHeaderComment() throws ConfigurationException {
+    void testBlankLinesWithHeaderComment() throws ConfigurationException {
         builder.addComment(TEST_COMMENT);
         builder.addComment(null);
         builder.addComment(null);
@@ -240,7 +243,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests whether comments are combined for multiple occurrences.
      */
     @Test
-    public void testCombineComments() throws ConfigurationException {
+    void testCombineComments() throws ConfigurationException {
         builder.addComment(TEST_COMMENT);
         builder.addProperty(TEST_KEY, TEST_VALUE);
         builder.addComment(null);
@@ -255,7 +258,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests if a property add event is correctly processed.
      */
     @Test
-    public void testEventAdd() {
+    void testEventAdd() {
         final ConfigurationEvent event = new ConfigurationEvent(this, ConfigurationEvent.ADD_PROPERTY, TEST_KEY, TEST_VALUE, false);
         layout.onEvent(event);
         assertTrue(layout.getKeys().contains(TEST_KEY));
@@ -268,7 +271,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests if a before update event is correctly ignored.
      */
     @Test
-    public void testEventAddBefore() {
+    void testEventAddBefore() {
         final ConfigurationEvent event = new ConfigurationEvent(this, ConfigurationEvent.ADD_PROPERTY, TEST_KEY, TEST_VALUE, true);
         layout.onEvent(event);
         assertFalse(layout.getKeys().contains(TEST_KEY));
@@ -278,7 +281,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests if an add event is correctly processed if the affected property is already stored in the layout object.
      */
     @Test
-    public void testEventAddExisting() throws ConfigurationException {
+    void testEventAddExisting() throws ConfigurationException {
         builder.addComment(TEST_COMMENT);
         builder.addProperty(TEST_KEY, TEST_VALUE);
         layout.load(config, builder.getReader());
@@ -292,7 +295,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests adding a property multiple time through an event. The property should then be a multi-line property.
      */
     @Test
-    public void testEventAddMultiple() {
+    void testEventAddMultiple() {
         final ConfigurationEvent event = new ConfigurationEvent(this, ConfigurationEvent.ADD_PROPERTY, TEST_KEY, TEST_VALUE, false);
         layout.onEvent(event);
         layout.onEvent(event);
@@ -303,7 +306,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests if a clear event is correctly processed.
      */
     @Test
-    public void testEventClearConfig() throws Exception {
+    void testEventClearConfig() throws Exception {
         fillLayout();
         final ConfigurationEvent event = new ConfigurationEvent(this, ConfigurationEvent.CLEAR, null, null, false);
         layout.onEvent(event);
@@ -315,7 +318,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests if a property delete event is correctly processed.
      */
     @Test
-    public void testEventDelete() {
+    void testEventDelete() {
         ConfigurationEvent event = new ConfigurationEvent(this, ConfigurationEvent.ADD_PROPERTY, TEST_KEY, TEST_VALUE, false);
         layout.onEvent(event);
         event = new ConfigurationEvent(this, ConfigurationEvent.CLEAR_PROPERTY, TEST_KEY, null, false);
@@ -327,7 +330,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests if a set property event for a non existing property is correctly handled.
      */
     @Test
-    public void testEventSetNonExisting() {
+    void testEventSetNonExisting() {
         final ConfigurationEvent event = new ConfigurationEvent(this, ConfigurationEvent.SET_PROPERTY, TEST_KEY, TEST_VALUE, false);
         layout.onEvent(event);
         assertTrue(layout.getKeys().contains(TEST_KEY));
@@ -337,7 +340,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests accessing data for a property, which is not stored.
      */
     @Test
-    public void testGetNonExistingLayouData() {
+    void testGetNonExistingLayouData() {
         assertNull(layout.getComment("unknown"));
         assertTrue(layout.isSingleLine("unknown"));
         assertEquals(0, layout.getBlankLinesBefore("unknown"));
@@ -347,7 +350,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests accessing a property with a null key. This should throw an exception.
      */
     @Test
-    public void testGetNullLayouttData() {
+    void testGetNullLayouttData() {
         assertThrows(IllegalArgumentException.class, () -> layout.setComment(null, TEST_COMMENT));
     }
 
@@ -355,7 +358,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests if a header comment is detected.
      */
     @Test
-    public void testHeaderComment() throws ConfigurationException {
+    void testHeaderComment() throws ConfigurationException {
         builder.addComment(TEST_COMMENT);
         builder.addComment(null);
         builder.addProperty(TEST_KEY, TEST_VALUE);
@@ -368,7 +371,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests fetching a canonical header comment when no comment is set.
      */
     @Test
-    public void testHeaderCommentNull() {
+    void testHeaderCommentNull() {
         assertNull(layout.getCanonicalHeaderComment(true));
         assertNull(layout.getCanonicalHeaderComment(false));
     }
@@ -377,7 +380,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests if a header comment containing blank lines is correctly detected.
      */
     @Test
-    public void testHeaderCommentWithBlanks() throws ConfigurationException {
+    void testHeaderCommentWithBlanks() throws ConfigurationException {
         builder.addComment(TEST_COMMENT);
         builder.addComment(null);
         builder.addComment(TEST_COMMENT);
@@ -393,7 +396,7 @@ public class TestPropertiesConfigurationLayout {
      * in the case that the header comment is already set
      */
     @Test
-    public void testHeaderCommentWithBlanksAndPresetHeaderComment() throws ConfigurationException {
+    void testHeaderCommentWithBlanksAndPresetHeaderComment() throws ConfigurationException {
         final String presetHeaderComment = "preset" + TEST_COMMENT + CRNORM + CRNORM + TEST_COMMENT;
         builder.addComment(TEST_COMMENT);
         builder.addComment(null);
@@ -411,7 +414,7 @@ public class TestPropertiesConfigurationLayout {
      * too.
      */
     @Test
-    public void testHeaderCommentWithBlanksAndPropComment() throws ConfigurationException {
+    void testHeaderCommentWithBlanksAndPropComment() throws ConfigurationException {
         builder.addComment(TEST_COMMENT);
         builder.addComment(null);
         builder.addComment(TEST_COMMENT);
@@ -427,7 +430,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests a newly created instance.
      */
     @Test
-    public void testInit() {
+    void testInit() {
         assertTrue(layout.getKeys().isEmpty());
         assertNull(layout.getHeaderComment());
         final Iterator<EventListener<? super ConfigurationEvent>> it = config.getEventListeners(ConfigurationEvent.ANY).iterator();
@@ -442,7 +445,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests the copy constructor.
      */
     @Test
-    public void testInitCopy() {
+    void testInitCopy() {
         fillLayout();
         final PropertiesConfigurationLayout l2 = new PropertiesConfigurationLayout(layout);
         assertEquals(l2.getKeys(), layout.getKeys());
@@ -454,7 +457,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests if the copy and the original are independent from each other.
      */
     @Test
-    public void testInitCopyModify() {
+    void testInitCopyModify() {
         fillLayout();
         final PropertiesConfigurationLayout l2 = new PropertiesConfigurationLayout(layout);
         assertEquals(layout.getComment(TEST_KEY), l2.getComment(TEST_KEY));
@@ -468,7 +471,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests the copy constructor if no other layout object is passed.
      */
     @Test
-    public void testInitNull() {
+    void testInitNull() {
         layout = new PropertiesConfigurationLayout(null);
         assertTrue(layout.getKeys().isEmpty());
     }
@@ -477,7 +480,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests the single line flag for a simple property definition.
      */
     @Test
-    public void testIsSingleLine() throws ConfigurationException {
+    void testIsSingleLine() throws ConfigurationException {
         builder.addProperty(TEST_KEY, TEST_VALUE + "," + TEST_VALUE + "2");
         layout.load(config, builder.getReader());
         assertTrue(layout.isSingleLine(TEST_KEY));
@@ -488,7 +491,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests the single line flag if there are multiple property definitions.
      */
     @Test
-    public void testIsSingleLineMulti() throws ConfigurationException {
+    void testIsSingleLineMulti() throws ConfigurationException {
         builder.addProperty(TEST_KEY, TEST_VALUE);
         builder.addProperty("anotherProp", "a value");
         builder.addProperty(TEST_KEY, TEST_VALUE + "2");
@@ -501,7 +504,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests whether a line with whitespace is handled correctly. This is related to CONFIGURATION-582.
      */
     @Test
-    public void testLineWithBlank() throws ConfigurationException {
+    void testLineWithBlank() throws ConfigurationException {
         builder.addComment(TEST_COMMENT);
         builder.addLine(" ");
         builder.addProperty(TEST_KEY, TEST_VALUE);
@@ -513,7 +516,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests whether the output of the layout object is identical to the source file (at least for simple properties files).
      */
     @Test
-    public void testReadAndWrite() throws ConfigurationException {
+    void testReadAndWrite() throws ConfigurationException {
         builder.addComment("This is my test properties file,");
         builder.addComment("which contains a header comment.");
         builder.addComment(null);
@@ -532,7 +535,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests reading a simple properties file.
      */
     @Test
-    public void testReadSimple() throws ConfigurationException {
+    void testReadSimple() throws ConfigurationException {
         builder.addComment(TEST_COMMENT);
         builder.addProperty(TEST_KEY, TEST_VALUE);
         layout.load(config, builder.getReader());
@@ -549,7 +552,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests a recursive load call.
      */
     @Test
-    public void testRecursiveLoadCall() throws ConfigurationException {
+    void testRecursiveLoadCall() throws ConfigurationException {
         final PropertiesBuilder b = new PropertiesBuilder();
         b.addComment("A nested header comment.");
         b.addComment("With multiple lines");
@@ -578,7 +581,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests if the content of the layout object is correctly written.
      */
     @Test
-    public void testSave() throws ConfigurationException {
+    void testSave() throws ConfigurationException {
         config.addProperty(TEST_KEY, TEST_VALUE);
         layout.setComment(TEST_KEY, TEST_COMMENT);
         config.addProperty(TEST_KEY, TEST_VALUE + "2");
@@ -597,7 +600,7 @@ public class TestPropertiesConfigurationLayout {
      * ignored.
      */
     @Test
-    public void testSaveCommentForUnexistingProperty() throws ConfigurationException {
+    void testSaveCommentForUnexistingProperty() throws ConfigurationException {
         fillLayout();
         layout.setComment("NonExistingKey", "NonExistingComment");
         final String output = getLayoutString();
@@ -609,7 +612,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests saving an empty layout object.
      */
     @Test
-    public void testSaveEmptyLayout() throws ConfigurationException {
+    void testSaveEmptyLayout() throws ConfigurationException {
         checkLayoutString("");
     }
 
@@ -617,7 +620,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests the force single line flag.
      */
     @Test
-    public void testSaveForceSingleLine() throws ConfigurationException {
+    void testSaveForceSingleLine() throws ConfigurationException {
         config.setListDelimiterHandler(new DefaultListDelimiterHandler(';'));
         config.addProperty(TEST_KEY, TEST_VALUE);
         config.addProperty(TEST_KEY, TEST_VALUE + "2");
@@ -632,7 +635,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests setting the global separator. This separator should override the separators for all properties.
      */
     @Test
-    public void testSetGlobalSeparator() throws ConfigurationException {
+    void testSetGlobalSeparator() throws ConfigurationException {
         final String sep = "=";
         config.addProperty(TEST_KEY, TEST_VALUE);
         config.addProperty("key2", "value2");
@@ -645,7 +648,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests setting the line separator.
      */
     @Test
-    public void testSetLineSeparator() throws ConfigurationException {
+    void testSetLineSeparator() throws ConfigurationException {
         final String lf = CR + CR;
         config.addProperty(TEST_KEY, TEST_VALUE);
         layout.setBlankLinesBefore(TEST_KEY, 2);
@@ -659,7 +662,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests whether the line separator is also taken into account within comments.
      */
     @Test
-    public void testSetLineSeparatorInComments() throws ConfigurationException {
+    void testSetLineSeparatorInComments() throws ConfigurationException {
         final String lf = "<-\n";
         config.addProperty(TEST_KEY, TEST_VALUE);
         layout.setComment(TEST_KEY, TEST_COMMENT + "\nMore comment");
@@ -672,7 +675,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests resetting a comment.
      */
     @Test
-    public void testSetNullComment() {
+    void testSetNullComment() {
         fillLayout();
         layout.setComment(TEST_KEY, null);
         assertNull(layout.getComment(TEST_KEY));
@@ -682,7 +685,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests changing the separator for a property.
      */
     @Test
-    public void testSetSeparator() throws ConfigurationException {
+    void testSetSeparator() throws ConfigurationException {
         config.addProperty(TEST_KEY, TEST_VALUE);
         layout.setSeparator(TEST_KEY, ":");
         checkLayoutString(TEST_KEY + ":" + TEST_VALUE + CR);
@@ -692,7 +695,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests the trimComment method.
      */
     @Test
-    public void testTrimComment() {
+    void testTrimComment() {
         assertEquals("This is a comment" + CR + "that spans multiple" + CR + "lines in a" + CR + " complex way.",
                 PropertiesConfigurationLayout.trimComment(
                         "   # This is a comment" + CR + "that spans multiple" + CR + "!lines in a" + CR + " complex way.",
@@ -704,7 +707,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests enforcing comment characters in a comment.
      */
     @Test
-    public void testTrimCommentFalse() {
+    void testTrimCommentFalse() {
         assertEquals("# Comment with" + CR + " ! some mixed " + CR + "#comment" + CR + "# lines",
                 PropertiesConfigurationLayout.trimComment("Comment with" + CR + " ! some mixed " + CR + "#comment" + CR + "lines", true));
     }
@@ -713,7 +716,7 @@ public class TestPropertiesConfigurationLayout {
      * Tests trimming a comment with trailing CRs.
      */
     @Test
-    public void testTrimCommentTrainlingCR() {
+    void testTrimCommentTrainlingCR() {
         assertEquals("Comment with" + CR + "trailing CR" + CR,
                 PropertiesConfigurationLayout.trimComment("Comment with" + CR + "! trailing CR" + CR, false));
     }

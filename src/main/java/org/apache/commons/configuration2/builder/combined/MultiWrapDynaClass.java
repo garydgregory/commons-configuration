@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,7 +33,8 @@ import org.apache.commons.beanutils.DynaProperty;
  *
  * @since 2.0
  */
-class MultiWrapDynaClass implements DynaClass {
+final class MultiWrapDynaClass implements DynaClass {
+
     /** An empty array for converting the properties collection to an array. */
     private static final DynaProperty[] EMPTY_PROPS = {};
 
@@ -54,12 +55,9 @@ class MultiWrapDynaClass implements DynaClass {
         initProperties(wrappedCls);
     }
 
-    /**
-     * {@inheritDoc} The name of this class is not relevant.
-     */
     @Override
-    public String getName() {
-        return null;
+    public DynaProperty[] getDynaProperties() {
+        return properties.toArray(EMPTY_PROPS);
     }
 
     @Override
@@ -67,18 +65,12 @@ class MultiWrapDynaClass implements DynaClass {
         return namedProperties.get(name);
     }
 
-    @Override
-    public DynaProperty[] getDynaProperties() {
-        return properties.toArray(EMPTY_PROPS);
-    }
-
     /**
-     * {@inheritDoc} This implementation always throws an exception because it is not possible to instantiate a bean of
-     * multiple classes.
+     * {@inheritDoc} The name of this class is not relevant.
      */
     @Override
-    public DynaBean newInstance() throws IllegalAccessException, InstantiationException {
-        throw new UnsupportedOperationException("Cannot create an instance of MultiWrapDynaBean!");
+    public String getName() {
+        return null;
     }
 
     /**
@@ -91,5 +83,14 @@ class MultiWrapDynaClass implements DynaClass {
             properties.add(p);
             namedProperties.put(p.getName(), p);
         }));
+    }
+
+    /**
+     * {@inheritDoc} This implementation always throws an exception because it is not possible to instantiate a bean of
+     * multiple classes.
+     */
+    @Override
+    public DynaBean newInstance() throws IllegalAccessException, InstantiationException {
+        throw new UnsupportedOperationException("Cannot create an instance of MultiWrapDynaBean!");
     }
 }

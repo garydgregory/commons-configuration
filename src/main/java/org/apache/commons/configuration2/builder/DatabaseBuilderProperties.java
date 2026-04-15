@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,53 +32,19 @@ import javax.sql.DataSource;
  * available properties and may be extended even in minor releases.
  * </p>
  *
- * @since 2.0
  * @param <T> the type of the result of all set methods for method chaining
+ * @since 2.0
  */
 public interface DatabaseBuilderProperties<T> {
-    /**
-     * Sets the data source for the database configuration. All database connections are obtained from this data source.
-     * This is a mandatory property.
-     *
-     * @param src the data source for the database configuration
-     * @return a reference to this object for method chaining
-     */
-    T setDataSource(DataSource src);
 
     /**
-     * Sets the name of the table containing configuration data. Database configuration will access this database table.
-     * This is a mandatory property.
+     * Enables or disable auto commit mode. If enabled, the database configuration instance performs a commit after each
+     * database update.
      *
-     * @param tname the name of the table with configuration data
+     * @param f the value of the auto commit flag
      * @return a reference to this object for method chaining
      */
-    T setTable(String tname);
-
-    /**
-     * Sets the name of the table column containing configuration keys. This is a mandatory property.
-     *
-     * @param name the column name
-     * @return a reference to this object for method chaining
-     */
-    T setKeyColumn(String name);
-
-    /**
-     * Sets the name of the table column containing the configuration property value. This is a mandatory property.
-     *
-     * @param name the column name
-     * @return a reference to this object for method chaining
-     */
-    T setValueColumn(String name);
-
-    /**
-     * Sets the name of the table column containing the configuration name. This property is needed if a single database
-     * table contains the data of multiple configuration instances. Then this column is used as discriminator to select a
-     * specific configuration instance.
-     *
-     * @param name the column name
-     * @return a reference to this method for method chaining
-     */
-    T setConfigurationNameColumn(String name);
+    T setAutoCommit(boolean f);
 
     /**
      * Sets the name of this configuration instance. This property is needed if a single database table contains the data of
@@ -91,11 +57,46 @@ public interface DatabaseBuilderProperties<T> {
     T setConfigurationName(String name);
 
     /**
-     * Enables or disable auto commit mode. If enabled, the database configuration instance performs a commit after each
-     * database update.
+     * Sets the name of the table column containing the configuration name. This property is needed if a single database
+     * table contains the data of multiple configuration instances. Then this column is used as discriminator to select a
+     * specific configuration instance.
      *
-     * @param f the value of the auto commit flag
+     * @param name the column name
+     * @return a reference to this method for method chaining
+     */
+    T setConfigurationNameColumn(String name);
+
+    /**
+     * Sets the data source for the database configuration. All database connections are obtained from this data source.
+     * This is a mandatory property.
+     *
+     * @param src the data source for the database configuration
      * @return a reference to this object for method chaining
      */
-    T setAutoCommit(boolean f);
+    T setDataSource(DataSource src);
+
+    /**
+     * Sets the name of the table column containing configuration keys. This is a mandatory property.
+     *
+     * @param name the column name
+     * @return a reference to this object for method chaining
+     */
+    T setKeyColumn(String name);
+
+    /**
+     * Sets the name of the table containing configuration data. Database configuration will access this database table.
+     * This is a mandatory property.
+     *
+     * @param name the name of the table with configuration data
+     * @return a reference to this object for method chaining
+     */
+    T setTable(String name);
+
+    /**
+     * Sets the name of the table column containing the configuration property value. This is a mandatory property.
+     *
+     * @param name the column name
+     * @return a reference to this object for method chaining
+     */
+    T setValueColumn(String name);
 }

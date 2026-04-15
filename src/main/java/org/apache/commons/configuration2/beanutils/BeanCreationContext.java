@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,13 +22,22 @@ package org.apache.commons.configuration2.beanutils;
  * </p>
  * <p>
  * An object implementing this interface is passed to a {@link BeanFactory}. The interface also contains methods for the
- * creation and initialization of nested beans (e.g. constructor arguments or complex properties of the bean to be
+ * creation and initialization of nested beans (for example constructor arguments or complex properties of the bean to be
  * created).
  * </p>
  *
  * @since 2.0
  */
 public interface BeanCreationContext {
+
+    /**
+     * Creates a bean based on the given {@code BeanDeclaration}. This method can be used to create dependent beans needed
+     * for the initialization of the bean that is actually created.
+     *
+     * @param data the {@code BeanDeclaration} describing the bean
+     * @return the bean created based on this declaration
+     */
+    Object createBean(BeanDeclaration data);
 
     /**
      * Gets the class of the bean to be created.
@@ -60,13 +69,4 @@ public interface BeanCreationContext {
      * @param data the {@code BeanDeclaration} with initialization data for this bean
      */
     void initBean(Object bean, BeanDeclaration data);
-
-    /**
-     * Creates a bean based on the given {@code BeanDeclaration}. This method can be used to create dependent beans needed
-     * for the initialization of the bean that is actually created.
-     *
-     * @param data the {@code BeanDeclaration} describing the bean
-     * @return the bean created based on this declaration
-     */
-    Object createBean(BeanDeclaration data);
 }

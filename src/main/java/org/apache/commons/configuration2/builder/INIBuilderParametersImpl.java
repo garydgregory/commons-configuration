@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,6 +33,7 @@ import java.util.Map;
  * @since 2.2
  */
 public class INIBuilderParametersImpl extends HierarchicalBuilderParametersImpl implements INIBuilderProperties<INIBuilderParametersImpl> {
+
     /** The key for the separatorUsedInINIOutput property. */
     private static final String PROP_SEPARATOR_USED_IN_INI_OUTPUT = "separatorUsedInOutput";
 
@@ -41,6 +42,13 @@ public class INIBuilderParametersImpl extends HierarchicalBuilderParametersImpl 
 
     /** The key for the commentLeadingCharsUsedInInput property. */
     private static final String PROP_COMMENT_LEADING_SEPARATOR_USED_IN_INI_INPUT = "commentLeadingCharsUsedInInput";
+
+    /**
+     * Constructs a new instance.
+     */
+    public INIBuilderParametersImpl() {
+        // empty
+    }
 
     @Override
     public void inheritFrom(final Map<String, ?> source) {
@@ -51,8 +59,8 @@ public class INIBuilderParametersImpl extends HierarchicalBuilderParametersImpl 
     }
 
     @Override
-    public INIBuilderParametersImpl setSeparatorUsedInOutput(final String separator) {
-        storeProperty(PROP_SEPARATOR_USED_IN_INI_OUTPUT, separator);
+    public INIBuilderParametersImpl setCommentLeadingCharsUsedInInput(final String separator) {
+        storeProperty(PROP_COMMENT_LEADING_SEPARATOR_USED_IN_INI_INPUT, separator);
         return this;
     }
 
@@ -63,8 +71,8 @@ public class INIBuilderParametersImpl extends HierarchicalBuilderParametersImpl 
     }
 
     @Override
-    public INIBuilderParametersImpl setCommentLeadingCharsUsedInInput(final String separator) {
-        storeProperty(PROP_COMMENT_LEADING_SEPARATOR_USED_IN_INI_INPUT, separator);
+    public INIBuilderParametersImpl setSeparatorUsedInOutput(final String separator) {
+        storeProperty(PROP_SEPARATOR_USED_IN_INI_OUTPUT, separator);
         return this;
     }
 }

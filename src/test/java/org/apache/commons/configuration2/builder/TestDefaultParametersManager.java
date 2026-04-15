@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.commons.configuration2.builder.fluent.FileBasedBuilderParameters;
@@ -37,14 +38,14 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code DefaultParametersManager}.
- *
  */
 public class TestDefaultParametersManager {
+
     /**
      * A test defaults handler implementation for testing the initialization of parameters objects with default values. This
      * class sets some hard-coded default values.
      */
-    private static class FileBasedDefaultsHandler implements DefaultParametersHandler<FileBasedBuilderParameters> {
+    private static final class FileBasedDefaultsHandler implements DefaultParametersHandler<FileBasedBuilderParameters> {
         @Override
         public void initializeDefaults(final FileBasedBuilderParameters parameters) {
             parameters.setThrowExceptionOnMissing(true).setEncoding(DEF_ENCODING).setListDelimiterHandler(listHandler);
@@ -52,7 +53,7 @@ public class TestDefaultParametersManager {
     }
 
     /** Constant for the default encoding. */
-    private static final String DEF_ENCODING = "UTF-8";
+    private static final String DEF_ENCODING = StandardCharsets.UTF_8.name();
 
     /** A test list delimiter handler. */
     private static ListDelimiterHandler listHandler;
@@ -101,7 +102,7 @@ public class TestDefaultParametersManager {
      * Tests whether default values are set for newly created parameters objects.
      */
     @Test
-    public void testApplyDefaults() {
+    void testApplyDefaults() {
         manager.registerDefaultsHandler(FileBasedBuilderParameters.class, new FileBasedDefaultsHandler());
         final FileBasedBuilderParameters params = parameters.fileBased();
         manager.initializeParameters(params);
@@ -114,7 +115,7 @@ public class TestDefaultParametersManager {
      * order.
      */
     @Test
-    public void testApplyDefaultsMultipleHandlers() {
+    void testApplyDefaultsMultipleHandlers() {
         final ExpressionEngine engine = mock(ExpressionEngine.class);
         manager.registerDefaultsHandler(XMLBuilderParameters.class, parameters -> parameters.setThrowExceptionOnMissing(false)
             .setListDelimiterHandler(mock(ListDelimiterHandler.class)).setExpressionEngine(engine));
@@ -130,7 +131,7 @@ public class TestDefaultParametersManager {
      * Tests whether default values are also applied when a sub parameters class is created.
      */
     @Test
-    public void testApplyDefaultsOnSubClass() {
+    void testApplyDefaultsOnSubClass() {
         manager.registerDefaultsHandler(FileBasedBuilderParameters.class, new FileBasedDefaultsHandler());
         final XMLBuilderParameters params = parameters.xml();
         manager.initializeParameters(params);
@@ -142,7 +143,7 @@ public class TestDefaultParametersManager {
      * Tests that default values are only applied if the start class provided at registration time matches.
      */
     @Test
-    public void testApplyDefaultsStartClass() {
+    void testApplyDefaultsStartClass() {
         manager.registerDefaultsHandler(FileBasedBuilderParameters.class, new FileBasedDefaultsHandler(), XMLBuilderParameters.class);
         final XMLBuilderParameters paramsXml = parameters.xml();
         manager.initializeParameters(paramsXml);
@@ -158,7 +159,7 @@ public class TestDefaultParametersManager {
      * Tests whether initializeParameters() ignores null input. (We can only test that no exception is thrown.)
      */
     @Test
-    public void testInitializeParametersNull() {
+    void testInitializeParametersNull() {
         manager.registerDefaultsHandler(FileBasedBuilderParameters.class, new FileBasedDefaultsHandler());
         manager.initializeParameters(null);
     }
@@ -167,7 +168,7 @@ public class TestDefaultParametersManager {
      * Tries to register a default handler without a class.
      */
     @Test
-    public void testRegisterDefaultsHandlerNoClass() {
+    void testRegisterDefaultsHandlerNoClass() {
         final FileBasedDefaultsHandler handler = new FileBasedDefaultsHandler();
         assertThrows(IllegalArgumentException.class, () -> manager.registerDefaultsHandler(null, handler));
     }
@@ -176,7 +177,7 @@ public class TestDefaultParametersManager {
      * Tries to register a null default handler.
      */
     @Test
-    public void testRegisterDefaultsHandlerNoHandler() {
+    void testRegisterDefaultsHandlerNoHandler() {
         assertThrows(IllegalArgumentException.class, () -> manager.registerDefaultsHandler(BasicBuilderProperties.class, null));
     }
 
@@ -184,7 +185,7 @@ public class TestDefaultParametersManager {
      * Tests whether all occurrences of a given defaults handler can be removed.
      */
     @Test
-    public void testUnregisterDefaultsHandlerAll() {
+    void testUnregisterDefaultsHandlerAll() {
         final FileBasedDefaultsHandler handler = new FileBasedDefaultsHandler();
         manager.registerDefaultsHandler(FileBasedBuilderParameters.class, handler, XMLBuilderParameters.class);
         manager.registerDefaultsHandler(FileBasedBuilderParameters.class, handler, PropertiesBuilderParameters.class);
@@ -202,7 +203,7 @@ public class TestDefaultParametersManager {
      * Tests whether a specific occurrence of a defaults handler can be removed.
      */
     @Test
-    public void testUnregisterDefaultsHandlerSpecific() {
+    void testUnregisterDefaultsHandlerSpecific() {
         final FileBasedDefaultsHandler handler = new FileBasedDefaultsHandler();
         manager.registerDefaultsHandler(FileBasedBuilderParameters.class, handler, XMLBuilderParameters.class);
         manager.registerDefaultsHandler(FileBasedBuilderParameters.class, handler, PropertiesBuilderParameters.class);

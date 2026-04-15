@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,10 +30,11 @@ package org.apache.commons.configuration2.event;
  * components.
  * </p>
  *
- * @since 2.0
  * @param <T> the type of events processed by the listener
+ * @since 2.0
  */
 public final class EventListenerRegistrationData<T extends Event> {
+
     /** Constant for the factor used by the calculation of the hash code. */
     private static final int HASH_FACTOR = 31;
 
@@ -46,9 +47,9 @@ public final class EventListenerRegistrationData<T extends Event> {
     /**
      * Creates a new instance of {@code EventListenerRegistrationData}.
      *
-     * @param type the event type (must not be <b>null</b>)
-     * @param lstnr the event listener (must not be <b>null</b>)
-     * @throws IllegalArgumentException if a required parameter is <b>null</b>
+     * @param type the event type (must not be <strong>null</strong>)
+     * @param lstnr the event listener (must not be <strong>null</strong>)
+     * @throws IllegalArgumentException if a required parameter is <strong>null</strong>
      */
     public EventListenerRegistrationData(final EventType<T> type, final EventListener<? super T> lstnr) {
         if (type == null) {
@@ -60,31 +61,6 @@ public final class EventListenerRegistrationData<T extends Event> {
 
         eventType = type;
         listener = lstnr;
-    }
-
-    /**
-     * Returns the event type for this listener registration.
-     *
-     * @return the event type
-     */
-    public EventType<T> getEventType() {
-        return eventType;
-    }
-
-    /**
-     * Returns the listener this registration is about.
-     *
-     * @return the event listener
-     */
-    public EventListener<? super T> getListener() {
-        return listener;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = eventType.hashCode();
-        result = HASH_FACTOR * result + listener.hashCode();
-        return result;
     }
 
     /**
@@ -105,5 +81,29 @@ public final class EventListenerRegistrationData<T extends Event> {
 
         final EventListenerRegistrationData<?> c = (EventListenerRegistrationData<?>) obj;
         return getListener() == c.getListener() && getEventType().equals(c.getEventType());
+    }
+
+    /**
+     * Gets the event type for this listener registration.
+     *
+     * @return the event type
+     */
+    public EventType<T> getEventType() {
+        return eventType;
+    }
+
+    /**
+     * Gets the listener this registration is about.
+     *
+     * @return the event listener
+     */
+    public EventListener<? super T> getListener() {
+        return listener;
+    }
+
+    @Override
+    public int hashCode() {
+        final int result = eventType.hashCode();
+        return HASH_FACTOR * result + listener.hashCode();
     }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,6 +49,73 @@ import org.apache.commons.configuration2.reloading.ReloadingControllerSupport;
  * @since 2.0
  */
 public class MultiFileConfigurationBuilderProvider extends BaseConfigurationBuilderProvider {
+
+    /**
+     * A wrapper builder implementation which also provides a {@code ReloadingController}. This class assumes that the
+     * wrapped builder implements {@code ReloadingControllerSupport}. So the reloading controller can be obtained from this
+     * object.
+     */
+    private static final class ReloadableWrapperBuilder extends WrapperBuilder implements ReloadingControllerSupport {
+
+        /** The object for obtaining the reloading controller. */
+        private final ReloadingControllerSupport ctrlSupport;
+
+        /**
+         * Creates a new instance of {@code ReloadableWrapperBuilder}.
+         *
+         * @param conf the managed configuration
+         * @param bldr the underlying builder (must implement {@code ReloadingControllerSupport})
+         */
+        public ReloadableWrapperBuilder(final Configuration conf, final ConfigurationBuilder<? extends Configuration> bldr) {
+            super(conf, bldr);
+            ctrlSupport = (ReloadingControllerSupport) bldr;
+        }
+
+        @Override
+        public ReloadingController getReloadingController() {
+            return ctrlSupport.getReloadingController();
+        }
+    }
+
+    /**
+     * A simple wrapper implementation of the {@code ConfigurationBuilder} interface which returns a fix configuration and
+     * delegates to another builder for event listener management.
+     */
+    private static class WrapperBuilder implements ConfigurationBuilder<Configuration> {
+
+        /** The configuration managed by this builder. */
+        private final Configuration configuration;
+
+        /** The builder to which this instance delegates. */
+        private final ConfigurationBuilder<? extends Configuration> builder;
+
+        /**
+         * Creates a new instance of {@code WrapperBuilder}.
+         *
+         * @param conf the managed configuration
+         * @param bldr the underlying builder
+         */
+        public WrapperBuilder(final Configuration conf, final ConfigurationBuilder<? extends Configuration> bldr) {
+            configuration = conf;
+            builder = bldr;
+        }
+
+        @Override
+        public <T extends Event> void addEventListener(final EventType<T> eventType, final EventListener<? super T> listener) {
+            builder.addEventListener(eventType, listener);
+        }
+
+        @Override
+        public Configuration getConfiguration() throws ConfigurationException {
+            return configuration;
+        }
+
+        @Override
+        public <T extends Event> boolean removeEventListener(final EventType<T> eventType, final EventListener<? super T> listener) {
+            return builder.removeEventListener(eventType, listener);
+        }
+    }
+
     /** Constant for the name of the builder class. */
     private static final String BUILDER_CLASS = "org.apache.commons.configuration2.builder.combined.MultiFileConfigurationBuilder";
 
@@ -57,43 +124,6 @@ public class MultiFileConfigurationBuilderProvider extends BaseConfigurationBuil
 
     /** Constant for the name of the parameters class. */
     private static final String PARAM_CLASS = "org.apache.commons.configuration2.builder.combined.MultiFileBuilderParametersImpl";
-
-    /**
-     * Creates a new instance of {@code MultiFileConfigurationBuilderProvider} and sets the name of the configuration class
-     * to be returned by {@code MultiFileConfigurationBuilder}.
-     *
-     * @param configCls the name of the managed configuration class
-     * @param paramCls the name of the class of the parameters object to configure the managed configuration
-     */
-    public MultiFileConfigurationBuilderProvider(final String configCls, final String paramCls) {
-        super(BUILDER_CLASS, RELOADING_BUILDER_CLASS, configCls, Arrays.asList(paramCls, PARAM_CLASS));
-    }
-
-    /**
-     * {@inheritDoc} This implementation lets the super class create a fully configured builder. Then it returns a special
-     * wrapper around it.
-     */
-    @Override
-    public ConfigurationBuilder<? extends Configuration> getConfigurationBuilder(final ConfigurationDeclaration decl) throws ConfigurationException {
-        final ConfigurationBuilder<? extends Configuration> multiBuilder = super.getConfigurationBuilder(decl);
-        final Configuration wrapConfig = createWrapperConfiguration(multiBuilder);
-        return createWrapperBuilder(multiBuilder, wrapConfig);
-    }
-
-    /**
-     * Creates a configuration which wraps the specified builder.
-     *
-     * @param builder the builder
-     * @return the wrapping configuration
-     */
-    // It is safe to disable any type checks because we manually determine
-    // the interface class to be passed to BuilderConfigurationWrapperFactory
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private Configuration createWrapperConfiguration(final ConfigurationBuilder builder) {
-        final Class<?> configClass = ConfigurationUtils.loadClassNoEx(getConfigurationClass());
-        final Class ifcClass = HierarchicalConfiguration.class.isAssignableFrom(configClass) ? HierarchicalConfiguration.class : Configuration.class;
-        return (Configuration) BuilderConfigurationWrapperFactory.createBuilderConfigurationWrapper(ifcClass, builder, EventSourceSupport.BUILDER);
-    }
 
     /**
      * Creates the {@code ConfigurationBuilder} to be returned by this provider. This is a very simple implementation which
@@ -114,66 +144,39 @@ public class MultiFileConfigurationBuilderProvider extends BaseConfigurationBuil
     }
 
     /**
-     * A simple wrapper implementation of the {@code ConfigurationBuilder} interface which returns a fix configuration and
-     * delegates to another builder for event listener management.
+     * Creates a new instance of {@code MultiFileConfigurationBuilderProvider} and sets the name of the configuration class
+     * to be returned by {@code MultiFileConfigurationBuilder}.
+     *
+     * @param configCls the name of the managed configuration class
+     * @param paramCls the name of the class of the parameters object to configure the managed configuration
      */
-    private static class WrapperBuilder implements ConfigurationBuilder<Configuration> {
-        /** The configuration managed by this builder. */
-        private final Configuration configuration;
-
-        /** The builder to which this instance delegates. */
-        private final ConfigurationBuilder<? extends Configuration> builder;
-
-        /**
-         * Creates a new instance of {@code WrapperBuilder}.
-         *
-         * @param conf the managed configuration
-         * @param bldr the underlying builder
-         */
-        public WrapperBuilder(final Configuration conf, final ConfigurationBuilder<? extends Configuration> bldr) {
-            configuration = conf;
-            builder = bldr;
-        }
-
-        @Override
-        public Configuration getConfiguration() throws ConfigurationException {
-            return configuration;
-        }
-
-        @Override
-        public <T extends Event> void addEventListener(final EventType<T> eventType, final EventListener<? super T> listener) {
-            builder.addEventListener(eventType, listener);
-        }
-
-        @Override
-        public <T extends Event> boolean removeEventListener(final EventType<T> eventType, final EventListener<? super T> listener) {
-            return builder.removeEventListener(eventType, listener);
-        }
+    public MultiFileConfigurationBuilderProvider(final String configCls, final String paramCls) {
+        super(BUILDER_CLASS, RELOADING_BUILDER_CLASS, configCls, Arrays.asList(paramCls, PARAM_CLASS));
     }
 
     /**
-     * A wrapper builder implementation which also provides a {@code ReloadingController}. This class assumes that the
-     * wrapped builder implements {@code ReloadingControllerSupport}. So the reloading controller can be obtained from this
-     * object.
+     * Creates a configuration which wraps the specified builder.
+     *
+     * @param builder the builder
+     * @return the wrapping configuration
      */
-    private static class ReloadableWrapperBuilder extends WrapperBuilder implements ReloadingControllerSupport {
-        /** The object for obtaining the reloading controller. */
-        private final ReloadingControllerSupport ctrlSupport;
+    // It is safe to disable any type checks because we manually determine
+    // the interface class to be passed to BuilderConfigurationWrapperFactory
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private Configuration createWrapperConfiguration(final ConfigurationBuilder builder) {
+        final Class<?> configClass = ConfigurationUtils.loadClassNoEx(getConfigurationClass());
+        final Class ifcClass = HierarchicalConfiguration.class.isAssignableFrom(configClass) ? HierarchicalConfiguration.class : Configuration.class;
+        return (Configuration) BuilderConfigurationWrapperFactory.createBuilderConfigurationWrapper(ifcClass, builder, EventSourceSupport.BUILDER);
+    }
 
-        /**
-         * Creates a new instance of {@code ReloadableWrapperBuilder}.
-         *
-         * @param conf the managed configuration
-         * @param bldr the underlying builder (must implement {@code ReloadingControllerSupport})
-         */
-        public ReloadableWrapperBuilder(final Configuration conf, final ConfigurationBuilder<? extends Configuration> bldr) {
-            super(conf, bldr);
-            ctrlSupport = (ReloadingControllerSupport) bldr;
-        }
-
-        @Override
-        public ReloadingController getReloadingController() {
-            return ctrlSupport.getReloadingController();
-        }
+    /**
+     * {@inheritDoc} This implementation lets the super class create a fully configured builder. Then it returns a special
+     * wrapper around it.
+     */
+    @Override
+    public ConfigurationBuilder<? extends Configuration> getConfigurationBuilder(final ConfigurationDeclaration decl) throws ConfigurationException {
+        final ConfigurationBuilder<? extends Configuration> multiBuilder = super.getConfigurationBuilder(decl);
+        final Configuration wrapConfig = createWrapperConfiguration(multiBuilder);
+        return createWrapperBuilder(multiBuilder, wrapConfig);
     }
 }

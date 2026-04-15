@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ package org.apache.commons.configuration2.interpol;
  * A simple dummy {@code Lookup} implementation.
  * </p>
  * <p>
- * This implementation always returns <b>null</b> for a passed in variable indicating that it cannot resolve that
+ * This implementation always returns <strong>null</strong> for a passed in variable indicating that it cannot resolve that
  * variable. This is useful for instance as an application of the <em>null object</em> pattern.
  * </p>
  * <p>
@@ -32,11 +32,12 @@ package org.apache.commons.configuration2.interpol;
  * @since 2.0
  */
 public enum DummyLookup implements Lookup {
+
     /** The single instance of this class. */
     INSTANCE;
 
     /**
-     * {@inheritDoc} This implementation always returns <b>null</b>.
+     * {@inheritDoc} This implementation always returns <strong>null</strong>.
      */
     @Override
     public Object lookup(final String variable) {

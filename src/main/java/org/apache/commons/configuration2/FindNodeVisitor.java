@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,8 @@ import org.apache.commons.configuration2.tree.NodeHandler;
  *
  * @param <T> the type of the nodes to be visited
  */
-class FindNodeVisitor<T> extends ConfigurationNodeVisitorAdapter<T> {
+final class FindNodeVisitor<T> extends ConfigurationNodeVisitorAdapter<T> {
+
     /** The node to be searched for. */
     private final T searchNode;
 
@@ -42,35 +43,35 @@ class FindNodeVisitor<T> extends ConfigurationNodeVisitorAdapter<T> {
         searchNode = node;
     }
 
-    @Override
-    public void visitBeforeChildren(final T node, final NodeHandler<T> handler) {
-        if (node.equals(searchNode)) {
-            found = true;
-        }
-    }
-
-    /**
-     * {@inheritDoc} This implementation returns <b>true</b> as soon as the node was found.
-     */
-    @Override
-    public boolean terminate() {
-        return found;
-    }
-
     /**
      * Returns a flag whether the search node was found in the last search operation.
      *
-     * @return <b>true</b> if the search node was found; <b>false</b> otherwise
+     * @return <strong>true</strong> if the search node was found; <strong>false</strong> otherwise
      */
     public boolean isFound() {
         return found;
     }
 
     /**
-     * Resets this visitor. This method sets the {@code found} property to <b>false</b> again, so that this instance can be
+     * Resets this visitor. This method sets the {@code found} property to <strong>false</strong> again, so that this instance can be
      * used to inspect another nodes hierarchy.
      */
     public void reset() {
         found = false;
+    }
+
+    /**
+     * {@inheritDoc} This implementation returns <strong>true</strong> as soon as the node was found.
+     */
+    @Override
+    public boolean terminate() {
+        return found;
+    }
+
+    @Override
+    public void visitBeforeChildren(final T node, final NodeHandler<T> handler) {
+        if (node.equals(searchNode)) {
+            found = true;
+        }
     }
 }

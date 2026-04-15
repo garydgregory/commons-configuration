@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,9 +28,9 @@ import java.util.Collections;
  * </p>
  * <p>
  * A collection with the wrapped {@code FileLocationStrategy} objects is passed at construction time. During a
- * [{@code locate()} operation the wrapped strategies are called one after the other until one returns a non <b>null</b>
+ * [{@code locate()} operation the wrapped strategies are called one after the other until one returns a non <strong>null</strong>
  * URL. This URL is returned. If none of the wrapped strategies is able to resolve the passed in {@link FileLocator},
- * result is <b>null</b>. This is similar to the <em>chain of responsibility</em> design pattern.
+ * result is <strong>null</strong>. This is similar to the <em>chain of responsibility</em> design pattern.
  * </p>
  * <p>
  * This class, together with the provided concrete {@code FileLocationStrategy} implementations, offers a convenient way
@@ -43,15 +43,16 @@ import java.util.Collections;
  * @since 2.0
  */
 public class CombinedLocationStrategy implements FileLocationStrategy {
+
     /** A collection with all sub strategies managed by this object. */
     private final Collection<FileLocationStrategy> subStrategies;
 
     /**
      * Creates a new instance of {@code CombinedLocationStrategy} and initializes it with the provided sub strategies. The
-     * passed in collection must not be <b>null</b> or contain <b>null</b> elements.
+     * passed in collection must not be <strong>null</strong> or contain <strong>null</strong> elements.
      *
      * @param subs the collection with sub strategies
-     * @throws IllegalArgumentException if the collection is <b>null</b> or has <b>null</b> elements
+     * @throws IllegalArgumentException if the collection is <strong>null</strong> or has <strong>null</strong> elements
      */
     public CombinedLocationStrategy(final Collection<? extends FileLocationStrategy> subs) {
         if (subs == null) {
@@ -64,7 +65,7 @@ public class CombinedLocationStrategy implements FileLocationStrategy {
     }
 
     /**
-     * Returns a (unmodifiable) collection with the sub strategies managed by this object.
+     * Gets a (unmodifiable) collection with the sub strategies managed by this object.
      *
      * @return the sub {@code FileLocationStrategy} objects
      */

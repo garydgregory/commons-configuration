@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ package org.apache.commons.configuration2.event;
  * An event class that is used for reporting errors that occurred while processing configuration properties.
  * </p>
  * <p>
- * Some configuration implementations (e.g. {@link org.apache.commons.configuration2.DatabaseConfiguration} or
+ * Some configuration implementations (for example {@link org.apache.commons.configuration2.DatabaseConfiguration} or
  * {@link org.apache.commons.configuration2.JNDIConfiguration} use an underlying storage that can throw an exception on
  * each property access. In earlier versions of this library such exceptions were logged and then silently ignored. This
  * makes it impossible for a client to find out that something went wrong.
@@ -35,13 +35,14 @@ package org.apache.commons.configuration2.event;
  * This class defines similar properties to the {@link ConfigurationEvent} class. This makes it possible to find out
  * which operation was performed on a configuration causing this error event. In addition, a {@code Throwable} object is
  * available representing the occurred error. Note that depending on the event type and the occurred exception not all
- * of the other properties (e.g. name of the affected property or its value) may be available.
+ * of the other properties (for example name of the affected property or its value) may be available.
  * </p>
  *
  * @since 1.4
  * @see ConfigurationEvent
  */
 public class ConfigurationErrorEvent extends Event {
+
     /**
      * Constant for the common event type for all error events. Specific types for error events use this type as super type.
      *
@@ -102,7 +103,16 @@ public class ConfigurationErrorEvent extends Event {
     }
 
     /**
-     * Returns the {@code EventType} of the operation which caused this error.
+     * Gets the cause of this error event. This is the {@code Throwable} object that caused this event to be fired.
+     *
+     * @return the cause of this error event
+     */
+    public Throwable getCause() {
+        return cause;
+    }
+
+    /**
+     * Gets the {@code EventType} of the operation which caused this error.
      *
      * @return the event type of the operation causing this error
      */
@@ -111,29 +121,20 @@ public class ConfigurationErrorEvent extends Event {
     }
 
     /**
-     * Returns the name of the property that was accessed when this error occurred.
+     * Gets the name of the property that was accessed when this error occurred.
      *
-     * @return the property name related to this error (may be <b>null</b>)
+     * @return the property name related to this error (may be <strong>null</strong>)
      */
     public String getPropertyName() {
         return propertyName;
     }
 
     /**
-     * Returns the value of the property that was accessed when this error occurred.
+     * Gets the value of the property that was accessed when this error occurred.
      *
-     * @return the property value related this error (may be <b>null</b>)
+     * @return the property value related this error (may be <strong>null</strong>)
      */
     public Object getPropertyValue() {
         return propertyValue;
-    }
-
-    /**
-     * Returns the cause of this error event. This is the {@code Throwable} object that caused this event to be fired.
-     *
-     * @return the cause of this error event
-     */
-    public Throwable getCause() {
-        return cause;
     }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,11 +38,19 @@ package org.apache.commons.configuration2.interpol;
  */
 @Deprecated
 public class EnvironmentLookup implements Lookup {
+
+    /**
+     * Constructs a new instance.
+     */
+    public EnvironmentLookup() {
+        // empty
+    }
+
     /**
      * Performs a lookup for the specified variable. This implementation directly delegates to a {@code System.getenv()}.
      *
      * @param key the key to lookup
-     * @return the value of this key or <b>null</b> if it cannot be resolved
+     * @return the value of this key or <strong>null</strong> if it cannot be resolved
      */
     @Override
     public String lookup(final String key) {

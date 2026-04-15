@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,10 +31,11 @@ import org.apache.commons.configuration2.builder.BuilderParameters;
  * available properties and may be extended even in minor releases.
  * </p>
  *
- * @since 2.0
  * @param <T> the return type of all methods for allowing method chaining
+ * @since 2.0
  */
 public interface MultiFileBuilderProperties<T> {
+
     /**
      * Sets the pattern string. Based on this pattern the configuration file to be loaded is determined.
      *

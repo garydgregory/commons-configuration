@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,45 +42,6 @@ import org.apache.commons.configuration2.tree.ImmutableNode;
  * @since 2.2
  */
 public class AbstractYAMLBasedConfiguration extends BaseHierarchicalConfiguration {
-    /**
-     * Creates a new instance of {@code AbstractYAMLBasedConfiguration}.
-     */
-    protected AbstractYAMLBasedConfiguration() {
-        initLogger(new ConfigurationLogger(getClass()));
-    }
-
-    /**
-     * Creates a new instance of {@code AbstractYAMLBasedConfiguration} as a copy of the specified configuration.
-     *
-     * @param c the configuration to be copied
-     */
-    protected AbstractYAMLBasedConfiguration(final HierarchicalConfiguration<ImmutableNode> c) {
-        super(c);
-        initLogger(new ConfigurationLogger(getClass()));
-    }
-
-    /**
-     * Loads this configuration from the content of the specified map. The data in the map is transformed into a hierarchy
-     * of {@link ImmutableNode} objects.
-     *
-     * @param map the map to be processed
-     */
-    protected void load(final Map<String, Object> map) {
-        final List<ImmutableNode> roots = constructHierarchy("", map);
-        getNodeModel().setRootNode(roots.get(0));
-    }
-
-    /**
-     * Constructs a YAML map, i.e. String -&gt; Object from a given configuration node.
-     *
-     * @param node The configuration node to create a map from.
-     * @return A Map that contains the configuration node information.
-     */
-    protected Map<String, Object> constructMap(final ImmutableNode node) {
-        final Map<String, Object> map = new HashMap<>(node.getChildren().size());
-        node.forEach(cNode -> addEntry(map, cNode.getNodeName(), cNode.getChildren().isEmpty() ? cNode.getValue() : constructMap(cNode)));
-        return map;
-    }
 
     /**
      * Adds a key value pair to a map, taking list structures into account. If a key is added which is already present in
@@ -126,6 +87,17 @@ public class AbstractYAMLBasedConfiguration extends BaseHierarchicalConfiguratio
     }
 
     /**
+     * Parses a collection structure. The elements of the collection are processed recursively.
+     *
+     * @param col the collection to be processed
+     * @param key the key under which this collection is to be stored
+     * @return a node representing this collection
+     */
+    private static List<ImmutableNode> parseCollection(final Collection<Object> col, final String key) {
+        return col.stream().flatMap(elem -> constructHierarchy(key, elem).stream()).collect(Collectors.toList());
+    }
+
+    /**
      * Parses a map structure. The single keys of the map are processed recursively.
      *
      * @param map the map to be processed
@@ -139,17 +111,6 @@ public class AbstractYAMLBasedConfiguration extends BaseHierarchicalConfiguratio
     }
 
     /**
-     * Parses a collection structure. The elements of the collection are processed recursively.
-     *
-     * @param col the collection to be processed
-     * @param key the key under which this collection is to be stored
-     * @return a node representing this collection
-     */
-    private static List<ImmutableNode> parseCollection(final Collection<Object> col, final String key) {
-        return col.stream().flatMap(elem -> constructHierarchy(key, elem).stream()).collect(Collectors.toList());
-    }
-
-    /**
      * Internal helper method to wrap an exception in a {@code ConfigurationException}.
      *
      * @param e the exception to be wrapped
@@ -160,5 +121,45 @@ public class AbstractYAMLBasedConfiguration extends BaseHierarchicalConfiguratio
             throw new ConfigurationException("Error parsing", e);
         }
         throw new ConfigurationException("Unable to load the configuration", e);
+    }
+
+    /**
+     * Creates a new instance of {@code AbstractYAMLBasedConfiguration}.
+     */
+    protected AbstractYAMLBasedConfiguration() {
+        initLogger(new ConfigurationLogger(getClass()));
+    }
+
+    /**
+     * Creates a new instance of {@code AbstractYAMLBasedConfiguration} as a copy of the specified configuration.
+     *
+     * @param c the configuration to be copied
+     */
+    protected AbstractYAMLBasedConfiguration(final HierarchicalConfiguration<ImmutableNode> c) {
+        super(c);
+        initLogger(new ConfigurationLogger(getClass()));
+    }
+
+    /**
+     * Constructs a YAML map, i.e. String -&gt; Object from a given configuration node.
+     *
+     * @param node The configuration node to create a map from.
+     * @return A Map that contains the configuration node information.
+     */
+    protected Map<String, Object> constructMap(final ImmutableNode node) {
+        final Map<String, Object> map = new HashMap<>(node.getChildren().size());
+        node.forEach(cNode -> addEntry(map, cNode.getNodeName(), cNode.getChildren().isEmpty() ? cNode.getValue() : constructMap(cNode)));
+        return map;
+    }
+
+    /**
+     * Loads this configuration from the content of the specified map. The data in the map is transformed into a hierarchy
+     * of {@link ImmutableNode} objects.
+     *
+     * @param map the map to be processed
+     */
+    protected void load(final Map<String, Object> map) {
+        final List<ImmutableNode> roots = constructHierarchy("", map);
+        getNodeModel().setRootNode(roots.get(0));
     }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,7 +36,7 @@ import org.apache.commons.configuration2.io.FileLocatorUtils;
  * <p>
  * Because file I/O may be expensive it is possible to configure a refresh delay as a time in milliseconds. This is the
  * minimum interval between two checks. If the {@code isReloadingRequired()} method is called in shorter intervals, it
- * does not perform a check, but directly returns <b>false</b>.
+ * does not perform a check, but directly returns <strong>false</strong>.
  * </p>
  * <p>
  * To initialize an instance either {@code isReloadingRequired()} or {@code reloadingPerformed()} can be called. The
@@ -47,11 +47,30 @@ import org.apache.commons.configuration2.io.FileLocatorUtils;
  * @since 2.0
  */
 public class FileHandlerReloadingDetector implements ReloadingDetector {
+
     /** Constant for the jar URL protocol. */
     private static final String JAR_PROTOCOL = "jar";
 
     /** Constant for the default refresh delay. */
     private static final int DEFAULT_REFRESH_DELAY_MILLIS = 5000;
+
+    /**
+     * Helper method for transforming a URL into a file object. This method handles file: and jar: URLs.
+     *
+     * @param url the URL to be converted
+     * @return the resulting file or <strong>null </strong>
+     */
+    private static File fileFromURL(final URL url) {
+        if (JAR_PROTOCOL.equals(url.getProtocol())) {
+            final String path = url.getPath();
+            try {
+                return FileLocatorUtils.fileFromURL(new URL(path.substring(0, path.indexOf('!'))));
+            } catch (final MalformedURLException mex) {
+                return null;
+            }
+        }
+        return FileLocatorUtils.fileFromURL(url);
+    }
 
     /** The associated file handler. */
     private final FileHandler fileHandler;
@@ -66,29 +85,6 @@ public class FileHandlerReloadingDetector implements ReloadingDetector {
     private long lastCheckedMillis;
 
     /**
-     * Creates a new instance of {@code FileHandlerReloadingDetector} and initializes it with the {@code FileHandler} to
-     * monitor and the refresh delay. The handler is directly used, no copy is created. So it is possible to change the
-     * location monitored by manipulating the {@code FileHandler} object.
-     *
-     * @param handler the {@code FileHandler} associated with this detector (can be <b>null</b>)
-     * @param refreshDelayMillis the refresh delay; a value of 0 means that a check is performed in all cases
-     */
-    public FileHandlerReloadingDetector(final FileHandler handler, final long refreshDelayMillis) {
-        fileHandler = handler != null ? handler : new FileHandler();
-        this.refreshDelayMillis = refreshDelayMillis;
-    }
-
-    /**
-     * Creates a new instance of {@code FileHandlerReloadingDetector} and initializes it with the {@code FileHandler} to
-     * monitor and a default refresh delay.
-     *
-     * @param handler the {@code FileHandler} associated with this detector (can be <b>null</b>)
-     */
-    public FileHandlerReloadingDetector(final FileHandler handler) {
-        this(handler, DEFAULT_REFRESH_DELAY_MILLIS);
-    }
-
-    /**
      * Creates a new instance of {@code FileHandlerReloadingDetector} with an uninitialized {@code FileHandler} object. The
      * file to be monitored has to be set later by manipulating the handler object returned by {@code getFileHandler()}.
      */
@@ -97,7 +93,56 @@ public class FileHandlerReloadingDetector implements ReloadingDetector {
     }
 
     /**
-     * Returns the {@code FileHandler} associated with this object. The underlying handler is directly returned, so changing
+     * Creates a new instance of {@code FileHandlerReloadingDetector} and initializes it with the {@code FileHandler} to
+     * monitor and a default refresh delay.
+     *
+     * @param handler the {@code FileHandler} associated with this detector (can be <strong>null</strong>)
+     */
+    public FileHandlerReloadingDetector(final FileHandler handler) {
+        this(handler, DEFAULT_REFRESH_DELAY_MILLIS);
+    }
+
+    /**
+     * Creates a new instance of {@code FileHandlerReloadingDetector} and initializes it with the {@code FileHandler} to
+     * monitor and the refresh delay. The handler is directly used, no copy is created. So it is possible to change the
+     * location monitored by manipulating the {@code FileHandler} object.
+     *
+     * @param handler the {@code FileHandler} associated with this detector (can be <strong>null</strong>)
+     * @param refreshDelayMillis the refresh delay; a value of 0 means that a check is performed in all cases
+     */
+    public FileHandlerReloadingDetector(final FileHandler handler, final long refreshDelayMillis) {
+        fileHandler = handler != null ? handler : new FileHandler();
+        this.refreshDelayMillis = refreshDelayMillis;
+    }
+
+    /**
+     * Gets the monitored {@code File} or <strong>null</strong> if it does not exist.
+     *
+     * @return the monitored {@code File} or <strong>null</strong>
+     */
+    private File getExistingFile() {
+        File file = getFile();
+        if (file != null && !file.exists()) {
+            file = null;
+        }
+
+        return file;
+    }
+
+    /**
+     * Gets the {@code File} object which is monitored by this object. This method is called every time the file's last
+     * modification time is needed. If it returns <strong>null</strong>, no check is performed. This base implementation obtains the
+     * {@code File} from the associated {@code FileHandler}. It can also deal with URLs to jar files.
+     *
+     * @return the {@code File} to be monitored (can be <strong>null</strong>)
+     */
+    protected File getFile() {
+        final URL url = getFileHandler().getURL();
+        return url != null ? fileFromURL(url) : getFileHandler().getFile();
+    }
+
+    /**
+     * Gets the {@code FileHandler} associated with this object. The underlying handler is directly returned, so changing
      * its location also changes the file monitored by this detector.
      *
      * @return the associated {@code FileHandler}
@@ -107,7 +152,18 @@ public class FileHandlerReloadingDetector implements ReloadingDetector {
     }
 
     /**
-     * Returns the refresh delay. This is a time in milliseconds. The {@code isReloadingRequired()} method first checks
+     * Gets the date of the last modification of the monitored file. A return value of 0 indicates, that the monitored
+     * file does not exist.
+     *
+     * @return the last modification date in milliseconds.
+     */
+    protected long getLastModificationDate() {
+        final File file = getExistingFile();
+        return file != null ? file.lastModified() : 0;
+    }
+
+    /**
+     * Gets the refresh delay. This is a time in milliseconds. The {@code isReloadingRequired()} method first checks
      * whether the time since the previous check is more than this value in the past. Otherwise, no check is performed. This
      * is a means to limit file I/O caused by this class.
      *
@@ -142,15 +198,6 @@ public class FileHandlerReloadingDetector implements ReloadingDetector {
     }
 
     /**
-     * {@inheritDoc} This implementation updates the internally stored last modification date with the current modification
-     * date of the monitored file. So the next change is detected when this file is changed again.
-     */
-    @Override
-    public void reloadingPerformed() {
-        updateLastModified(getLastModificationDate());
-    }
-
-    /**
      * Tells this implementation that the internally stored state should be refreshed. This method is intended to be called
      * after the creation of an instance.
      */
@@ -159,14 +206,12 @@ public class FileHandlerReloadingDetector implements ReloadingDetector {
     }
 
     /**
-     * Returns the date of the last modification of the monitored file. A return value of 0 indicates, that the monitored
-     * file does not exist.
-     *
-     * @return the last modification date in milliseconds.
+     * {@inheritDoc} This implementation updates the internally stored last modification date with the current modification
+     * date of the monitored file. So the next change is detected when this file is changed again.
      */
-    protected long getLastModificationDate() {
-        final File file = getExistingFile();
-        return file != null ? file.lastModified() : 0;
+    @Override
+    public void reloadingPerformed() {
+        updateLastModified(getLastModificationDate());
     }
 
     /**
@@ -177,49 +222,5 @@ public class FileHandlerReloadingDetector implements ReloadingDetector {
      */
     protected void updateLastModified(final long timeMillis) {
         lastModifiedMillis = timeMillis;
-    }
-
-    /**
-     * Returns the {@code File} object which is monitored by this object. This method is called every time the file's last
-     * modification time is needed. If it returns <b>null</b>, no check is performed. This base implementation obtains the
-     * {@code File} from the associated {@code FileHandler}. It can also deal with URLs to jar files.
-     *
-     * @return the {@code File} to be monitored (can be <b>null</b>)
-     */
-    protected File getFile() {
-        final URL url = getFileHandler().getURL();
-        return url != null ? fileFromURL(url) : getFileHandler().getFile();
-    }
-
-    /**
-     * Returns the monitored {@code File} or <b>null</b> if it does not exist.
-     *
-     * @return the monitored {@code File} or <b>null</b>
-     */
-    private File getExistingFile() {
-        File file = getFile();
-        if (file != null && !file.exists()) {
-            file = null;
-        }
-
-        return file;
-    }
-
-    /**
-     * Helper method for transforming a URL into a file object. This method handles file: and jar: URLs.
-     *
-     * @param url the URL to be converted
-     * @return the resulting file or <b>null </b>
-     */
-    private static File fileFromURL(final URL url) {
-        if (JAR_PROTOCOL.equals(url.getProtocol())) {
-            final String path = url.getPath();
-            try {
-                return FileLocatorUtils.fileFromURL(new URL(path.substring(0, path.indexOf('!'))));
-            } catch (final MalformedURLException mex) {
-                return null;
-            }
-        }
-        return FileLocatorUtils.fileFromURL(url);
     }
 }

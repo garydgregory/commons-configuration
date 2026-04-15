@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,6 +35,19 @@ import org.apache.commons.lang3.StringUtils;
  * @since 2.0
  */
 public class BasePathLocationStrategy implements FileLocationStrategy {
+
+    /**
+     * A singleton instance of this strategy.
+     */
+    static final BasePathLocationStrategy INSTANCE = new BasePathLocationStrategy();
+
+    /**
+     * Constructs a new instance.
+     */
+    public BasePathLocationStrategy() {
+        // empty
+    }
+
     /**
      * {@inheritDoc} This implementation uses utility methods from {@code FileLocatorUtils} to generate a {@code File} from
      * the locator's base path and file name. If this {@code File} exists, its URL is returned.

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,11 +31,10 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test that the configuration factory returns keys in the same sequence as the properties configurator
- *
  */
 public class TestPropertiesSequence {
     @Test
-    public void testConfigurationValuesInSameOrderFromFile() throws Exception {
+    void testConfigurationValuesInSameOrderFromFile() throws Exception {
         final String simpleConfigurationFile = ConfigurationAssert.getTestFile("testSequence.properties").getAbsolutePath();
         final String compositeConfigurationFile = ConfigurationAssert.getTestFile("testSequenceDigester.xml").getAbsolutePath();
 
@@ -59,7 +58,7 @@ public class TestPropertiesSequence {
     }
 
     @Test
-    public void testConfigurationValuesInSameOrderWithManualAdd() throws Exception {
+    void testConfigurationValuesInSameOrderWithManualAdd() throws Exception {
         final String simpleConfigurationFile = ConfigurationAssert.getTestFile("testSequence.properties").getAbsolutePath();
         final String compositeConfigurationFile = ConfigurationAssert.getTestFile("testSequenceDigester.xml").getAbsolutePath();
 
@@ -89,7 +88,7 @@ public class TestPropertiesSequence {
     }
 
     @Test
-    public void testMappingInSameOrder() throws Exception {
+    void testMappingInSameOrder() throws Exception {
         final String simpleConfigurationFile = ConfigurationAssert.getTestFile("testSequence.properties").getAbsolutePath();
         final String compositeConfigurationFile = ConfigurationAssert.getTestFile("testSequenceDigester.xml").getAbsolutePath();
 

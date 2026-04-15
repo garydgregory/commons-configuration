@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,9 +28,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code XPathContextFactory}.
- *
  */
 public class TestXPathContextFactory {
+
     /** The factory to be tested. */
     private XPathContextFactory factory;
 
@@ -43,7 +43,7 @@ public class TestXPathContextFactory {
      * Tests whether a correct context is created.
      */
     @Test
-    public void testCreateContext() {
+    void testCreateContext() {
         final ImmutableNode node = new ImmutableNode.Builder().name("testRoot").create();
         final NodeHandler<ImmutableNode> handler = new InMemoryNodeModel(node).getNodeHandler();
         final JXPathContext context = factory.createContext(node, handler);

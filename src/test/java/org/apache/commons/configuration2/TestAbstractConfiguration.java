@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,6 @@
 
 package org.apache.commons.configuration2;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,8 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.configuration2.ex.ConversionException;
 import org.apache.commons.configuration2.io.ConfigurationLogger;
@@ -40,11 +39,11 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Abstract TestCase for implementations of {@link AbstractConfiguration}.
- *
  */
 public abstract class TestAbstractConfiguration {
+
     /**
-     * Return an abstract configuration with the following data:<br>
+     * Gets an abstract configuration with the following data:
      *
      * <pre>
      * key1 = value1
@@ -56,9 +55,24 @@ public abstract class TestAbstractConfiguration {
     protected abstract AbstractConfiguration getConfiguration();
 
     /**
-     * Return an empty configuration.
+     * Gets an empty configuration.
      */
     protected abstract AbstractConfiguration getEmptyConfiguration();
+
+    @Test
+    public void givenNullIteratorTestContains() {
+        final AbstractConfiguration config = getConfiguration();
+
+        assertThrows(NullPointerException.class, () -> config.contains(null, "value1"));
+    }
+
+    @Test
+    public void givenNullValueTestContains() {
+        final AbstractConfiguration config = getConfiguration();
+        final Iterator<String> keys = config.getKeys();
+        assertFalse(config.contains(keys, null));
+        assertFalse(config.contains(keys, ""));
+    }
 
     @Test
     public void testAddPropertyDirect() {
@@ -87,44 +101,56 @@ public abstract class TestAbstractConfiguration {
     }
 
     @Test
-    public void testContainsKey() {
+    void testContains() {
+        final AbstractConfiguration config = getConfiguration();
+        assertTrue(config.contains(config.getKeys(), "value1"));
+        assertFalse(config.contains(config.getKeys(), "value99999"));
+    }
+
+    @Test
+    void testContainsKey() {
         final Configuration config = getConfiguration();
         assertTrue(config.containsKey("key1"));
         assertFalse(config.containsKey("key3"));
+    }
+
+    @Test
+    public void testContainsValue() {
+        final Configuration config = getConfiguration();
+        assertFalse(config.containsValue(null));
+        assertFalse(config.containsValue(""));
+        assertTrue(config.containsValue("value1"));
+        assertFalse(config.containsValue("value99999"));
     }
 
     /**
      * Tests the exception message triggered by the conversion to BigInteger. This test is related to CONFIGURATION-357.
      */
     @Test
-    public void testGetBigIntegerConversion() {
+    void testGetBigIntegerConversion() {
         final Configuration config = getConfiguration();
         final ConversionException cex = assertThrows(ConversionException.class, () -> config.getBigInteger("key1"));
-        assertThat(cex.getMessage(), containsString("'key1'"));
-        assertThat(cex.getMessage(), containsString(BigInteger.class.getName()));
-        assertThat(cex.getMessage(), containsString(config.getString("key1")));
+        assertTrue(cex.getMessage().contains("'key1'"));
+        assertTrue(cex.getMessage().contains(BigInteger.class.getName()));
+        assertTrue(cex.getMessage().contains(config.getString("key1")));
     }
 
     @Test
-    public void testGetKeys() {
+    void testGetKeys() {
         final Configuration config = getConfiguration();
         final Iterator<String> keys = config.getKeys();
-
-        final String[] expectedKeys = {"key1", "key2", "list", "listesc"};
-
+        final Set<String> expectedKeys = new HashSet<>(Arrays.asList("key1", "key2", "list", "listesc"));
         assertNotNull(keys);
         assertTrue(keys.hasNext());
-
-        final List<String> actualKeys = new ArrayList<>();
+        final Set<String> actualKeys = new HashSet<>();
         while (keys.hasNext()) {
             actualKeys.add(keys.next());
         }
-
-        assertThat("keys", actualKeys, containsInAnyOrder(expectedKeys));
+        assertEquals(actualKeys, expectedKeys, "keys");
     }
 
     @Test
-    public void testGetProperty() {
+    void testGetProperty() {
         final Configuration config = getConfiguration();
         assertEquals("value1", config.getProperty("key1"));
         assertEquals("value2", config.getProperty("key2"));
@@ -132,14 +158,14 @@ public abstract class TestAbstractConfiguration {
     }
 
     @Test
-    public void testIsEmpty() {
+    void testIsEmpty() {
         final Configuration config = getConfiguration();
         assertFalse(config.isEmpty());
         assertTrue(getEmptyConfiguration().isEmpty());
     }
 
     @Test
-    public void testList() {
+    void testList() {
         final Configuration config = getConfiguration();
 
         final List<?> list = config.getList("list");
@@ -151,7 +177,7 @@ public abstract class TestAbstractConfiguration {
      * Tests whether the escape character for list delimiters is recocknized and removed.
      */
     @Test
-    public void testListEscaped() {
+    void testListEscaped() {
         assertEquals("value1,value2", getConfiguration().getString("listesc"));
     }
 
@@ -159,7 +185,7 @@ public abstract class TestAbstractConfiguration {
      * Tests accessing the configuration's logger.
      */
     @Test
-    public void testSetLogger() {
+    void testSetLogger() {
         final AbstractConfiguration config = getEmptyConfiguration();
         assertNotNull(config.getLogger());
         final ConfigurationLogger log = new ConfigurationLogger(config.getClass());
@@ -168,12 +194,12 @@ public abstract class TestAbstractConfiguration {
     }
 
     @Test
-    public void testSize() {
+    void testSize() {
         assertEquals(4, getConfiguration().size());
     }
 
     @Test
-    public void testSizeEmpty() {
+    void testSizeEmpty() {
         assertEquals(0, getEmptyConfiguration().size());
     }
 }

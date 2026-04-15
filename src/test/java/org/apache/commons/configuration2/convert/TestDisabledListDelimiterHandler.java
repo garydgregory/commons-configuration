@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,9 +35,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code DisabledListDelimiterHandler}. Note that some functionality of the base class is tested, too.
- *
  */
 public class TestDisabledListDelimiterHandler {
+
     /** An array with some test values. */
     private static final Object[] VALUES = {20130630213801L, "A test value", 5};
 
@@ -69,7 +69,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests escapeList(). This operation is not supported.
      */
     @Test
-    public void testEscapeList() {
+    void testEscapeList() {
         final List<Object> values = Arrays.asList(VALUES);
         assertThrows(UnsupportedOperationException.class, () -> handler.escapeList(values, ListDelimiterHandler.NOOP_TRANSFORMER));
     }
@@ -78,7 +78,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether a non-string value is correctly escaped. The object should not be modified.
      */
     @Test
-    public void testEscapeNonStringValue() {
+    void testEscapeNonStringValue() {
         final Object value = 42;
         assertEquals(value, handler.escape(value, ListDelimiterHandler.NOOP_TRANSFORMER));
     }
@@ -87,7 +87,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether the transformer is correctly called when escaping a non string value.
      */
     @Test
-    public void testEscapeNonStringValueTransformer() {
+    void testEscapeNonStringValueTransformer() {
         final ValueTransformer trans = mock(ValueTransformer.class);
         final Object value = 42;
 
@@ -103,7 +103,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether a string value is correctly escaped. The string should not be modified.
      */
     @Test
-    public void testEscapeStringValue() {
+    void testEscapeStringValue() {
         assertEquals(STR_VALUE, handler.escape(STR_VALUE, ListDelimiterHandler.NOOP_TRANSFORMER));
     }
 
@@ -111,7 +111,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether the transformer is correctly invoked when escaping a string.
      */
     @Test
-    public void testEscapeStringValueTransformer() {
+    void testEscapeStringValueTransformer() {
         final ValueTransformer trans = mock(ValueTransformer.class);
         final String testStr = "Some other string";
 
@@ -127,7 +127,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether a limit is applied when extracting values from an array.
      */
     @Test
-    public void testFlattenArrayWithLimit() {
+    void testFlattenArrayWithLimit() {
         final Collection<?> res = handler.flatten(VALUES, 1);
         assertEquals(1, res.size());
         assertEquals(VALUES[0], res.iterator().next());
@@ -137,7 +137,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether elements can be extracted from a collection that contains an array if a limit is specified.
      */
     @Test
-    public void testFlattenCollectionWithArrayWithLimit() {
+    void testFlattenCollectionWithArrayWithLimit() {
         final Collection<Object> src = new ArrayList<>(2);
         src.add(STR_VALUE);
         src.add(VALUES);
@@ -152,7 +152,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether a limit is applied when extracting elements from a collection.
      */
     @Test
-    public void testFlattenCollectionWithLimit() {
+    void testFlattenCollectionWithLimit() {
         final Collection<Object> src = Arrays.asList(VALUES);
         final Collection<?> res = handler.flatten(src, 1);
         assertEquals(1, res.size());
@@ -163,7 +163,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether the values of an array can be extracted.
      */
     @Test
-    public void testParseArray() {
+    void testParseArray() {
         checkIterator(handler.parse(VALUES));
     }
 
@@ -171,7 +171,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether the values of an Iterable object can be extracted.
      */
     @Test
-    public void testParseIterable() {
+    void testParseIterable() {
         checkIterator(handler.parse(Arrays.asList(VALUES)));
     }
 
@@ -179,7 +179,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether the values of an Iterator object can be extracted.
      */
     @Test
-    public void testParseIterator() {
+    void testParseIterator() {
         checkIterator(handler.parse(Arrays.asList(VALUES).iterator()));
     }
 
@@ -187,7 +187,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether a null value can be parsed.
      */
     @Test
-    public void testParseNull() {
+    void testParseNull() {
         assertFalse(handler.parse(null).iterator().hasNext());
     }
 
@@ -195,7 +195,7 @@ public class TestDisabledListDelimiterHandler {
      * Tests whether a simple string value can be parsed.
      */
     @Test
-    public void testParseSimpleValue() {
+    void testParseSimpleValue() {
         final Iterator<?> it = handler.parse(STR_VALUE).iterator();
         assertEquals(STR_VALUE, it.next());
         assertFalse(it.hasNext());

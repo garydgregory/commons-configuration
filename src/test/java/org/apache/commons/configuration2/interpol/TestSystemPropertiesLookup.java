@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,9 +26,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code SystemPropertiesLookup}.
- *
  */
 public class TestSystemPropertiesLookup {
+
     /** The lookup object to be tested. */
     private Lookup lookup;
 
@@ -41,7 +41,7 @@ public class TestSystemPropertiesLookup {
      * Tests whether system properties can be looked up.
      */
     @Test
-    public void testLookupProperties() {
+    void testLookupProperties() {
         for (final Map.Entry<Object, Object> e : System.getProperties().entrySet()) {
             assertEquals(e.getValue(), lookup.lookup(String.valueOf(e.getKey())), "Wrong property value for " + e.getKey());
         }
@@ -51,7 +51,7 @@ public class TestSystemPropertiesLookup {
      * Tests whether an unknown property is handled correctly.
      */
     @Test
-    public void testLookupUnknownProperty() {
+    void testLookupUnknownProperty() {
         assertNull(lookup.lookup("a non existing system property!"));
     }
 }

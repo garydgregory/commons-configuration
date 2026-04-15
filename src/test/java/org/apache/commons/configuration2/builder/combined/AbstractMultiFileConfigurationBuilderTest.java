@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,17 +25,17 @@ import org.junit.jupiter.api.AfterEach;
 /**
  * A base class for test classes for {@code MultiFileConfigurationBuilder} and derived classes. This class provides some
  * common functionality related to file name pattern which can be used by concrete tests.
- *
  */
-public class AbstractMultiFileConfigurationBuilderTest {
+class AbstractMultiFileConfigurationBuilderTest {
+
     /** The system property which selects a sub configuration. */
     private static final String PROP = "Id";
 
     /** The part of the pattern containing the variable. */
-    protected static String PATTERN_VAR = "${sys:Id}";
+    protected static final String PATTERN_VAR = "${sys:Id}";
 
     /** The pattern for file names. */
-    protected static String PATTERN = "target/test-classes/testMultiConfiguration_" + PATTERN_VAR + ".xml";
+    protected static final String PATTERN = "target/test-classes/testMultiConfiguration_" + PATTERN_VAR + ".xml";
 
     /**
      * Creates a {@code ConfigurationInterpolator} to be used by tests. This object contains a lookup for system properties.

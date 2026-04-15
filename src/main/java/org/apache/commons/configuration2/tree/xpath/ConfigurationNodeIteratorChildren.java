@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,15 +26,15 @@ import org.apache.commons.jxpath.ri.compiler.NodeNameTest;
 import org.apache.commons.jxpath.ri.compiler.NodeTest;
 import org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
 import org.apache.commons.jxpath.ri.model.NodePointer;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * A specialized iterator implementation for the child nodes of a configuration node.
  *
- * @since 1.3
  * @param <T> the type of the nodes this iterator deals with
+ * @since 1.3
  */
-class ConfigurationNodeIteratorChildren<T> extends ConfigurationNodeIteratorBase<T> {
+final class ConfigurationNodeIteratorChildren<T> extends AbstractConfigurationNodeIterator<T> {
 
     /** The list with the sub nodes to iterate over. */
     private final List<T> subNodes;
@@ -72,16 +72,6 @@ class ConfigurationNodeIteratorChildren<T> extends ConfigurationNodeIteratorBase
     }
 
     /**
-     * Returns the number of elements in this iteration. This is the number of elements in the children list.
-     *
-     * @return the number of elements
-     */
-    @Override
-    protected int size() {
-        return subNodes.size();
-    }
-
-    /**
      * Creates the list with sub nodes. This method gets called during initialization phase. It finds out, based on the
      * given test, which nodes must be iterated over.
      *
@@ -95,8 +85,8 @@ class ConfigurationNodeIteratorChildren<T> extends ConfigurationNodeIteratorBase
         }
         if (test instanceof NodeNameTest) {
             final NodeNameTest nameTest = (NodeNameTest) test;
-            final QName name = nameTest.getNodeName();
-            return nameTest.isWildcard() ? createSubNodeListForWildcardName(node, name) : createSubNodeListForName(node, name);
+            final QName qName = nameTest.getNodeName();
+            return nameTest.isWildcard() ? createSubNodeListForWildcardName(node, qName) : createSubNodeListForName(node, qName);
         }
         if (test instanceof NodeTypeTest) {
             final NodeTypeTest typeTest = (NodeTypeTest) test;
@@ -112,14 +102,14 @@ class ConfigurationNodeIteratorChildren<T> extends ConfigurationNodeIteratorBase
      * Obtains the list of selected nodes for a {@code NodeNameTest} with either a simple or a qualified name.
      *
      * @param node the current node
-     * @param name the name to be selected
+     * @param qName the name to be selected
      * @return the list with selected sub nodes
      */
-    private List<T> createSubNodeListForName(final T node, final QName name) {
-        final String compareName = qualifiedName(name);
+    private List<T> createSubNodeListForName(final T node, final QName qName) {
+        final String compareName = qualifiedName(qName);
         final List<T> result = new ArrayList<>();
         getNodeHandler().getChildren(node).forEach(child -> {
-            if (StringUtils.equals(compareName, getNodeHandler().nodeName(child))) {
+            if (Strings.CS.equals(compareName, getNodeHandler().nodeName(child))) {
                 result.add(child);
             }
         });
@@ -130,18 +120,18 @@ class ConfigurationNodeIteratorChildren<T> extends ConfigurationNodeIteratorBase
      * Obtains the list of selected sub nodes for a {@code NodeNameTest} with a wildcard name.
      *
      * @param node the current node
-     * @param name the name to be selected
+     * @param qName the name to be selected
      * @return the list with selected sub nodes
      */
-    private List<T> createSubNodeListForWildcardName(final T node, final QName name) {
+    private List<T> createSubNodeListForWildcardName(final T node, final QName qName) {
         final List<T> children = getNodeHandler().getChildren(node);
-        if (name.getPrefix() == null) {
+        if (qName.getPrefix() == null) {
             return children;
         }
         final List<T> prefixChildren = new ArrayList<>(children.size());
-        final String prefix = prefixName(name.getPrefix(), null);
+        final String prefix = prefixName(qName.getPrefix(), null);
         children.forEach(child -> {
-            if (StringUtils.startsWith(getNodeHandler().nodeName(child), prefix)) {
+            if (Strings.CS.startsWith(getNodeHandler().nodeName(child), prefix)) {
                 prefixChildren.add(child);
             }
         });
@@ -166,6 +156,16 @@ class ConfigurationNodeIteratorChildren<T> extends ConfigurationNodeIteratorBase
         }
 
         return -1;
+    }
+
+    /**
+     * Returns the number of elements in this iteration. This is the number of elements in the children list.
+     *
+     * @return the number of elements
+     */
+    @Override
+    protected int size() {
+        return subNodes.size();
     }
 
 }

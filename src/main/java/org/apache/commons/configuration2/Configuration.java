@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,7 +39,7 @@ import org.apache.commons.configuration2.sync.SynchronizerSupport;
  * will be returned if the queried property cannot be found in the configuration. The behavior of the methods that do
  * not take a default value in case of a missing property is not defined by this interface and depends on a concrete
  * implementation. E.g. the {@link AbstractConfiguration} class, which is the base class of most configuration
- * implementations provided by this package, per default returns <b>null</b> if a property is not found, but provides
+ * implementations provided by this package, per default returns <strong>null</strong> if a property is not found, but provides
  * the {@link AbstractConfiguration#setThrowExceptionOnMissing(boolean) setThrowExceptionOnMissing()} method, with which
  * it can be configured to throw a {@code NoSuchElementException} exception in that case. (Note that getter methods for
  * primitive types in {@code AbstractConfiguration} always throw an exception for missing properties because there is no
@@ -50,40 +50,8 @@ import org.apache.commons.configuration2.sync.SynchronizerSupport;
  * the values of properties can be changed. With {@code clearProperty()} a property can be removed. Other methods allow
  * to iterate over the contained properties or to create a subset configuration.
  * </p>
- *
  */
 public interface Configuration extends ImmutableConfiguration, SynchronizerSupport {
-    /**
-     * Return a decorator Configuration containing every key from the current Configuration that starts with the specified
-     * prefix. The prefix is removed from the keys in the subset. For example, if the configuration contains the following
-     * properties:
-     *
-     * <pre>
-     *    prefix.number = 1
-     *    prefix.string = Apache
-     *    prefixed.foo = bar
-     *    prefix = Jakarta
-     * </pre>
-     *
-     * the Configuration returned by {@code subset("prefix")} will contain the properties:
-     *
-     * <pre>
-     *    number = 1
-     *    string = Apache
-     *    = Jakarta
-     * </pre>
-     *
-     * (The key for the value "Jakarta" is an empty string)
-     * <p>
-     * Since the subset is a decorator and not a modified copy of the initial Configuration, any change made to the subset
-     * is available to the Configuration, and reciprocally.
-     *
-     * @param prefix The prefix used to select the properties.
-     * @return a subset configuration
-     *
-     * @see SubsetConfiguration
-     */
-    Configuration subset(String prefix);
 
     /**
      * Add a property to the configuration. If it already exists then the value stated here will be added to the
@@ -111,13 +79,9 @@ public interface Configuration extends ImmutableConfiguration, SynchronizerSuppo
     void addProperty(String key, Object value);
 
     /**
-     * Set a property, this will replace any previously set values. Set values is implicitly a call to clearProperty(key),
-     * addProperty(key, value).
-     *
-     * @param key The key of the property to change
-     * @param value The new value
+     * Remove all properties from the configuration.
      */
-    void setProperty(String key, Object value);
+    void clear();
 
     /**
      * Remove a property from the configuration.
@@ -127,26 +91,12 @@ public interface Configuration extends ImmutableConfiguration, SynchronizerSuppo
     void clearProperty(String key);
 
     /**
-     * Remove all properties from the configuration.
-     */
-    void clear();
-
-    /**
-     * Returns the {@code ConfigurationInterpolator} object used by this {@code Configuration}. This object is responsible
+     * Gets the {@code ConfigurationInterpolator} object used by this {@code Configuration}. This object is responsible
      * for variable substitution.
      *
-     * @return the {@code ConfigurationInterpolator} (can be <b>null</b>)
+     * @return the {@code ConfigurationInterpolator} (can be <strong>null</strong>)
      */
     ConfigurationInterpolator getInterpolator();
-
-    /**
-     * Sets the {@code ConfigurationInterpolator} object to be used by this {@code Configuration}. This object is invoked
-     * for each access of a string property in order to substitute variables which may be contained. The argument can be
-     * <b>null</b> to disable interpolation at all.
-     *
-     * @param ci the new {@code ConfigurationInterpolator}
-     */
-    void setInterpolator(ConfigurationInterpolator ci);
 
     /**
      * Creates and installs a new {@code ConfigurationInterpolator} for this {@code Configuration} based on the passed in
@@ -156,9 +106,58 @@ public interface Configuration extends ImmutableConfiguration, SynchronizerSuppo
      * to the {@link #setInterpolator(ConfigurationInterpolator)} method which sets the passed in object as is without
      * adding this special lookup.
      *
-     * @param prefixLookups the map with {@code Lookup} objects associated with specific prefixes (can be <b>null</b>)
-     * @param defLookups a collection with default {@code Lookup} objects (can be <b>null</b>)
+     * @param prefixLookups the map with {@code Lookup} objects associated with specific prefixes (can be <strong>null</strong>)
+     * @param defLookups a collection with default {@code Lookup} objects (can be <strong>null</strong>)
      * @see ConfigurationInterpolator
      */
     void installInterpolator(Map<String, ? extends Lookup> prefixLookups, Collection<? extends Lookup> defLookups);
+
+    /**
+     * Sets the {@code ConfigurationInterpolator} object to be used by this {@code Configuration}. This object is invoked
+     * for each access of a string property in order to substitute variables which may be contained. The argument can be
+     * <strong>null</strong> to disable interpolation at all.
+     *
+     * @param ci the new {@code ConfigurationInterpolator}
+     */
+    void setInterpolator(ConfigurationInterpolator ci);
+
+    /**
+     * Sets a property, this will replace any previously set values. Set values is implicitly a call to clearProperty(key),
+     * addProperty(key, value).
+     *
+     * @param key The key of the property to change
+     * @param value The new value
+     */
+    void setProperty(String key, Object value);
+
+    /**
+     * Return a decorator Configuration containing every key from the current Configuration that starts with the specified
+     * prefix. The prefix is removed from the keys in the subset. For example, if the configuration contains the following
+     * properties:
+     *
+     * <pre>
+     *    prefix.number = 1
+     *    prefix.string = Apache
+     *    prefixed.foo = bar
+     *    prefix = Jakarta
+     * </pre>
+     *
+     * the Configuration returned by {@code subset("prefix")} will contain the properties:
+     *
+     * <pre>
+     *    number = 1
+     *    string = Apache
+     *    = Jakarta
+     * </pre>
+     *
+     * (The key for the value "Jakarta" is an empty string)
+     * <p>
+     * Since the subset is a decorator and not a modified copy of the initial Configuration, any change made to the subset
+     * is available to the Configuration, and reciprocally.
+     *
+     * @param prefix The prefix used to select the properties.
+     * @return a subset configuration
+     * @see SubsetConfiguration
+     */
+    Configuration subset(String prefix);
 }

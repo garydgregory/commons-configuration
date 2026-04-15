@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,9 +32,9 @@ import org.junit.jupiter.api.Test;
 /**
  * A base class for testing combiner implementations. This base class provides some functionality for loading the test
  * configurations, which are to be combined. Concrete sub classes only need to create the correct combiner object.
- *
  */
 public abstract class AbstractCombinerTest {
+
     /** Constant for the first test configuration. */
     private static final File CONF1 = ConfigurationAssert.getTestFile("testcombine1.xml");
 
@@ -80,7 +80,7 @@ public abstract class AbstractCombinerTest {
      * Tests a newly created combiner.
      */
     @Test
-    public void testInit() {
+    void testInit() {
         assertTrue(combiner.getListNodes().isEmpty());
         assertFalse(combiner.isListNode(NodeStructureHelper.createNode("test", null)));
     }

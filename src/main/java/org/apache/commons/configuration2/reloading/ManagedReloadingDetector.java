@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,9 +22,9 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A strategy to reload configuration based on management requests. Designed for JMX management.
- *
  */
 public class ManagedReloadingDetector implements ReloadingDetector, ManagedReloadingDetectorMBean {
+
     /** The logger. */
     private final Log log = LogFactory.getLog(ManagedReloadingDetector.class);
 
@@ -32,11 +32,10 @@ public class ManagedReloadingDetector implements ReloadingDetector, ManagedReloa
     private volatile boolean reloadingRequired;
 
     /**
-     * {@inheritDoc} This implementation resets the internal flag indicating that a reload should be performed.
+     * Constructs a new instance.
      */
-    @Override
-    public void reloadingPerformed() {
-        reloadingRequired = false;
+    public ManagedReloadingDetector() {
+        // empty
     }
 
     /**
@@ -60,5 +59,13 @@ public class ManagedReloadingDetector implements ReloadingDetector, ManagedReloa
     public void refresh() {
         log.info("Reloading configuration.");
         reloadingRequired = true;
+    }
+
+    /**
+     * {@inheritDoc} This implementation resets the internal flag indicating that a reload should be performed.
+     */
+    @Override
+    public void reloadingPerformed() {
+        reloadingRequired = false;
     }
 }

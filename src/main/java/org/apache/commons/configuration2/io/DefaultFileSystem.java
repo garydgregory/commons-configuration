@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,94 +36,83 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  */
 public class DefaultFileSystem extends FileSystem {
 
-    @Override
-    public InputStream getInputStream(final URL url) throws ConfigurationException {
-        return getInputStream(url, null);
-    }
+    /**
+     * Wraps the output stream so errors can be detected in the HTTP response.
+     *
+     * @since 1.7
+     */
+    private static final class HttpOutputStream extends VerifiableOutputStream {
 
-    @Override
-    public InputStream getInputStream(final URL url, final URLConnectionOptions urlConnectionOptions) throws ConfigurationException {
-        // throw an exception if the target URL is a directory
-        final File file = FileLocatorUtils.fileFromURL(url);
-        if (file != null && file.isDirectory()) {
-            throw new ConfigurationException("Cannot load a configuration from a directory");
+        /** The wrapped OutputStream */
+        private final OutputStream stream;
+
+        /** The HttpURLConnection */
+        private final HttpURLConnection connection;
+
+        public HttpOutputStream(final OutputStream stream, final HttpURLConnection connection) {
+            this.stream = stream;
+            this.connection = connection;
         }
 
-        try {
-            return urlConnectionOptions == null ? url.openStream() : urlConnectionOptions.openConnection(url).getInputStream();
-        } catch (final Exception e) {
-            throw new ConfigurationException("Unable to load the configuration from the URL " + url, e);
-        }
-    }
-
-    @Override
-    public OutputStream getOutputStream(final URL url) throws ConfigurationException {
-        // file URLs have to be converted to Files since FileURLConnection is
-        // read only (http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4191800)
-        final File file = FileLocatorUtils.fileFromURL(url);
-        if (file != null) {
-            return getOutputStream(file);
-        }
-        // for non file URLs save through an URLConnection
-        OutputStream out;
-        try {
-            final URLConnection connection = url.openConnection();
-            connection.setDoOutput(true);
-
-            // use the PUT method for http URLs
-            if (connection instanceof HttpURLConnection) {
-                final HttpURLConnection conn = (HttpURLConnection) connection;
-                conn.setRequestMethod("PUT");
-            }
-
-            out = connection.getOutputStream();
-
-            // check the response code for http URLs and throw an exception if an error occured
-            if (connection instanceof HttpURLConnection) {
-                out = new HttpOutputStream(out, (HttpURLConnection) connection);
-            }
-            return out;
-        } catch (final IOException e) {
-            throw new ConfigurationException("Could not save to URL " + url, e);
-        }
-    }
-
-    @Override
-    public OutputStream getOutputStream(final File file) throws ConfigurationException {
-        try {
-            // create the file if necessary
-            createPath(file);
-            return new FileOutputStream(file);
-        } catch (final FileNotFoundException e) {
-            throw new ConfigurationException("Unable to save to file " + file, e);
-        }
-    }
-
-    @Override
-    public String getPath(final File file, final URL url, final String basePath, final String fileName) {
-        String path = null;
-        // if resource was loaded from jar file may be null
-        if (file != null) {
-            path = file.getAbsolutePath();
+        @Override
+        public void close() throws IOException {
+            stream.close();
         }
 
-        // try to see if file was loaded from a jar
-        if (path == null) {
-            if (url != null) {
-                path = url.getPath();
-            } else {
-                try {
-                    path = getURL(basePath, fileName).getPath();
-                } catch (final Exception e) {
-                    // simply ignore it and return null
-                    if (getLogger().isDebugEnabled()) {
-                        getLogger().debug(String.format("Could not determine URL for " + "basePath = %s, fileName = %s: %s", basePath, fileName, e));
-                    }
-                }
+        @Override
+        public void flush() throws IOException {
+            stream.flush();
+        }
+
+        @Override
+        public String toString() {
+            return stream.toString();
+        }
+
+        @Override
+        public void verify() throws IOException {
+            if (connection.getResponseCode() >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                throw new IOException("HTTP Error " + connection.getResponseCode() + " " + connection.getResponseMessage());
             }
         }
 
-        return path;
+        @Override
+        public void write(final byte[] bytes) throws IOException {
+            stream.write(bytes);
+        }
+
+        @Override
+        public void write(final byte[] bytes, final int i, final int i1) throws IOException {
+            stream.write(bytes, i, i1);
+        }
+
+        @Override
+        public void write(final int i) throws IOException {
+            stream.write(i);
+        }
+    }
+
+    /**
+     * Constructs a new instance.
+     */
+    public DefaultFileSystem() {
+        // empty
+    }
+
+    /**
+     * Create the path to the specified file.
+     *
+     * @param file the target file
+     * @throws ConfigurationException if the path cannot be created
+     */
+    private void createPath(final File file) throws ConfigurationException {
+        // create the path to the file if the file doesn't exist
+        if (file != null && !file.exists()) {
+            final File parent = file.getParentFile();
+            if (parent != null && !parent.exists() && !parent.mkdirs()) {
+                throw new ConfigurationException("Cannot create path: %s", parent);
+            }
+        }
     }
 
     @Override
@@ -146,6 +135,96 @@ public class DefaultFileSystem extends FileSystem {
         } catch (final Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public InputStream getInputStream(final URL url) throws ConfigurationException {
+        return getInputStream(url, null);
+    }
+
+    @Override
+    public InputStream getInputStream(final URL url, final URLConnectionOptions urlConnectionOptions) throws ConfigurationException {
+        // throw an exception if the target URL is a directory
+        final File file = FileLocatorUtils.fileFromURL(url);
+        if (file != null && file.isDirectory()) {
+            throw new ConfigurationException("Cannot load a configuration from a directory");
+        }
+
+        try {
+            return urlConnectionOptions == null ? url.openStream() : urlConnectionOptions.openConnection(url).getInputStream();
+        } catch (final Exception e) {
+            throw new ConfigurationException(e, "Unable to load the configuration from the URL %s", url);
+        }
+    }
+
+    @Override
+    public OutputStream getOutputStream(final File file) throws ConfigurationException {
+        try {
+            // create the file if necessary
+            createPath(file);
+            return new FileOutputStream(file);
+        } catch (final FileNotFoundException e) {
+            throw new ConfigurationException(e, "Unable to save to file %s", file);
+        }
+    }
+
+    @Override
+    public OutputStream getOutputStream(final URL url) throws ConfigurationException {
+        // file URLs have to be converted to Files since FileURLConnection is
+        // read only (https://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4191800)
+        final File file = FileLocatorUtils.fileFromURL(url);
+        if (file != null) {
+            return getOutputStream(file);
+        }
+        // for non file URLs save through an URLConnection
+        OutputStream out;
+        try {
+            final URLConnection connection = url.openConnection();
+            connection.setDoOutput(true);
+
+            // use the PUT method for http URLs
+            if (connection instanceof HttpURLConnection) {
+                final HttpURLConnection conn = (HttpURLConnection) connection;
+                conn.setRequestMethod("PUT");
+            }
+
+            out = connection.getOutputStream();
+
+            // check the response code for http URLs and throw an exception if an error occurred
+            if (connection instanceof HttpURLConnection) {
+                out = new HttpOutputStream(out, (HttpURLConnection) connection);
+            }
+            return out;
+        } catch (final IOException e) {
+            throw new ConfigurationException(e, "Could not save to URL %s", url);
+        }
+    }
+
+    @Override
+    public String getPath(final File file, final URL url, final String basePath, final String fileName) {
+        String path = null;
+        // if resource was loaded from jar file may be null
+        if (file != null) {
+            path = file.getAbsolutePath();
+        }
+
+        // try to see if file was loaded from a jar
+        if (path == null) {
+            if (url != null) {
+                path = url.getPath();
+            } else {
+                try {
+                    path = getURL(basePath, fileName).getPath();
+                } catch (final Exception e) {
+                    // simply ignore it and return null
+                    if (getLogger().isDebugEnabled()) {
+                        getLogger().debug(String.format("Could not determine URL for basePath = %s, fileName = %s: %s", basePath, fileName, e));
+                    }
+                }
+            }
+        }
+
+        return path;
     }
 
     @Override
@@ -189,77 +268,6 @@ public class DefaultFileSystem extends FileSystem {
                 getLogger().debug("Could not locate file " + fileName + " at " + basePath + ": " + e.getMessage());
             }
             return null;
-        }
-    }
-
-    /**
-     * Create the path to the specified file.
-     *
-     * @param file the target file
-     * @throws ConfigurationException if the path cannot be created
-     */
-    private void createPath(final File file) throws ConfigurationException {
-        // create the path to the file if the file doesn't exist
-        if (file != null && !file.exists()) {
-            final File parent = file.getParentFile();
-            if (parent != null && !parent.exists() && !parent.mkdirs()) {
-                throw new ConfigurationException("Cannot create path: " + parent);
-            }
-        }
-    }
-
-    /**
-     * Wraps the output stream so errors can be detected in the HTTP response.
-     *
-     * @since 1.7
-     */
-    private static class HttpOutputStream extends VerifiableOutputStream {
-        /** The wrapped OutputStream */
-        private final OutputStream stream;
-
-        /** The HttpURLConnection */
-        private final HttpURLConnection connection;
-
-        public HttpOutputStream(final OutputStream stream, final HttpURLConnection connection) {
-            this.stream = stream;
-            this.connection = connection;
-        }
-
-        @Override
-        public void write(final byte[] bytes) throws IOException {
-            stream.write(bytes);
-        }
-
-        @Override
-        public void write(final byte[] bytes, final int i, final int i1) throws IOException {
-            stream.write(bytes, i, i1);
-        }
-
-        @Override
-        public void flush() throws IOException {
-            stream.flush();
-        }
-
-        @Override
-        public void close() throws IOException {
-            stream.close();
-        }
-
-        @Override
-        public void write(final int i) throws IOException {
-            stream.write(i);
-        }
-
-        @Override
-        public String toString() {
-            return stream.toString();
-        }
-
-        @Override
-        public void verify() throws IOException {
-            if (connection.getResponseCode() >= HttpURLConnection.HTTP_BAD_REQUEST) {
-                throw new IOException("HTTP Error " + connection.getResponseCode() + " " + connection.getResponseMessage());
-            }
         }
     }
 }

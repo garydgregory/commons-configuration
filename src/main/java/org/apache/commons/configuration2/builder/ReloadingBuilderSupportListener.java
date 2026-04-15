@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,22 +40,6 @@ import org.apache.commons.configuration2.reloading.ReloadingEvent;
  * @since 2.0
  */
 final class ReloadingBuilderSupportListener implements EventListener<Event> {
-    /** Stores the associated configuration builder. */
-    private final BasicConfigurationBuilder<?> builder;
-
-    /** Stores the associated reloading controller. */
-    private final ReloadingController reloadingController;
-
-    /**
-     * Creates a new instance of {@code ReloadingBuilderSupportListener} and initializes it with the associated objects.
-     *
-     * @param configBuilder the configuration builder
-     * @param controller the {@code ReloadingController}
-     */
-    private ReloadingBuilderSupportListener(final BasicConfigurationBuilder<?> configBuilder, final ReloadingController controller) {
-        builder = configBuilder;
-        reloadingController = controller;
-    }
 
     /**
      * Creates a new instance of {@code ReloadingBuilderSupportListener} which connects the specified
@@ -71,6 +55,23 @@ final class ReloadingBuilderSupportListener implements EventListener<Event> {
         controller.addEventListener(ReloadingEvent.ANY, listener);
         configBuilder.installEventListener(ConfigurationBuilderResultCreatedEvent.RESULT_CREATED, listener);
         return listener;
+    }
+
+    /** Stores the associated configuration builder. */
+    private final BasicConfigurationBuilder<?> builder;
+
+    /** Stores the associated reloading controller. */
+    private final ReloadingController reloadingController;
+
+    /**
+     * Creates a new instance of {@code ReloadingBuilderSupportListener} and initializes it with the associated objects.
+     *
+     * @param configBuilder the configuration builder
+     * @param controller the {@code ReloadingController}
+     */
+    private ReloadingBuilderSupportListener(final BasicConfigurationBuilder<?> configBuilder, final ReloadingController controller) {
+        builder = configBuilder;
+        reloadingController = controller;
     }
 
     /**

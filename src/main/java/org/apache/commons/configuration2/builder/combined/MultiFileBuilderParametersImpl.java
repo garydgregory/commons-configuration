@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,22 +47,17 @@ import org.apache.commons.configuration2.builder.BuilderParameters;
  * @since 2.0
  */
 public class MultiFileBuilderParametersImpl extends BasicBuilderParameters implements MultiFileBuilderProperties<MultiFileBuilderParametersImpl> {
+
     /** Constant for the key in the parameters map used by this class. */
     private static final String PARAM_KEY = RESERVED_PARAMETER_PREFIX + MultiFileBuilderParametersImpl.class.getName();
 
-    /** The parameters object for managed builders. */
-    private BuilderParameters managedBuilderParameters;
-
-    /** The file pattern. */
-    private String filePattern;
-
     /**
      * Obtains an instance of this class from the given map with parameters. If this map does not contain an instance,
-     * result is <b>null</b>. This is equivalent to {@code fromParameters(params, false)}.
+     * result is <strong>null</strong>. This is equivalent to {@code fromParameters(params, false)}.
      *
-     * @param params the map with parameters (must not be <b>null</b>)
-     * @return an instance of this class fetched from the map or <b>null</b>
-     * @throws NullPointerException if the map with parameters is <b>null</b>
+     * @param params the map with parameters (must not be <strong>null</strong>)
+     * @return an instance of this class fetched from the map or <strong>null</strong>
+     * @throws NullPointerException if the map with parameters is <strong>null</strong>
      */
     public static MultiFileBuilderParametersImpl fromParameters(final Map<String, Object> params) {
         return fromParameters(params, false);
@@ -72,12 +67,12 @@ public class MultiFileBuilderParametersImpl extends BasicBuilderParameters imple
      * Obtains an instance of this class from the given map with parameters and creates a new object if such an instance
      * cannot be found. This method can be used to obtain an instance from a map which has been created using the
      * {@code getParameters()} method. If the map does not contain an instance under the expected key and the
-     * {@code createIfMissing} parameter is <b>true</b>, a new instance is created. Otherwise, result is <b>null</b>.
+     * {@code createIfMissing} parameter is <strong>true</strong>, a new instance is created. Otherwise, result is <strong>null</strong>.
      *
-     * @param params the map with parameters (must not be <b>null</b>)
+     * @param params the map with parameters (must not be <strong>null</strong>)
      * @param createIfMissing a flag whether a new instance should be created if necessary
-     * @return an instance of this class fetched from the map or <b>null</b>
-     * @throws NullPointerException if the map with parameters is <b>null</b>
+     * @return an instance of this class fetched from the map or <strong>null</strong>
+     * @throws NullPointerException if the map with parameters is <strong>null</strong>
      */
     public static MultiFileBuilderParametersImpl fromParameters(final Map<String, Object> params, final boolean createIfMissing) {
         MultiFileBuilderParametersImpl instance = (MultiFileBuilderParametersImpl) params.get(PARAM_KEY);
@@ -87,8 +82,31 @@ public class MultiFileBuilderParametersImpl extends BasicBuilderParameters imple
         return instance;
     }
 
+    /** The parameters object for managed builders. */
+    private BuilderParameters managedBuilderParameters;
+
+    /** The file pattern. */
+    private String filePattern;
+
     /**
-     * Returns the pattern for determining file names for managed configurations.
+     * Constructs a new instance.
+     */
+    public MultiFileBuilderParametersImpl() {
+        // empty
+    }
+
+    /**
+     * {@inheritDoc} This implementation also tries to clone the parameters object for managed builders if possible.
+     */
+    @Override
+    public MultiFileBuilderParametersImpl clone() {
+        final MultiFileBuilderParametersImpl copy = (MultiFileBuilderParametersImpl) super.clone();
+        copy.setManagedBuilderParameters((BuilderParameters) ConfigurationUtils.cloneIfPossible(getManagedBuilderParameters()));
+        return copy;
+    }
+
+    /**
+     * Gets the pattern for determining file names for managed configurations.
      *
      * @return the file pattern
      */
@@ -96,25 +114,13 @@ public class MultiFileBuilderParametersImpl extends BasicBuilderParameters imple
         return filePattern;
     }
 
-    @Override
-    public MultiFileBuilderParametersImpl setFilePattern(final String p) {
-        filePattern = p;
-        return this;
-    }
-
     /**
-     * Returns the parameters object for managed configuration builders.
+     * Gets the parameters object for managed configuration builders.
      *
      * @return the parameters for sub configurations
      */
     public BuilderParameters getManagedBuilderParameters() {
         return managedBuilderParameters;
-    }
-
-    @Override
-    public MultiFileBuilderParametersImpl setManagedBuilderParameters(final BuilderParameters p) {
-        managedBuilderParameters = p;
-        return this;
     }
 
     /**
@@ -128,13 +134,15 @@ public class MultiFileBuilderParametersImpl extends BasicBuilderParameters imple
         return params;
     }
 
-    /**
-     * {@inheritDoc} This implementation also tries to clone the parameters object for managed builders if possible.
-     */
     @Override
-    public MultiFileBuilderParametersImpl clone() {
-        final MultiFileBuilderParametersImpl copy = (MultiFileBuilderParametersImpl) super.clone();
-        copy.setManagedBuilderParameters((BuilderParameters) ConfigurationUtils.cloneIfPossible(getManagedBuilderParameters()));
-        return copy;
+    public MultiFileBuilderParametersImpl setFilePattern(final String p) {
+        filePattern = p;
+        return this;
+    }
+
+    @Override
+    public MultiFileBuilderParametersImpl setManagedBuilderParameters(final BuilderParameters p) {
+        managedBuilderParameters = p;
+        return this;
     }
 }

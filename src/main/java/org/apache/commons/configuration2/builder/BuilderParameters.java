@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,6 +33,7 @@ import java.util.Map;
  * @since 2.0
  */
 public interface BuilderParameters {
+
     /**
      * Constant for a prefix for reserved initialization parameter keys. If a parameter was set whose key starts with this
      * prefix, it is filtered out before the initialization of a newly created result object. This mechanism allows
@@ -42,9 +43,9 @@ public interface BuilderParameters {
     String RESERVED_PARAMETER_PREFIX = "config-";
 
     /**
-     * Returns a map with all parameters defined by this objects. The keys of the map correspond to concrete properties
+     * Gets a map with all parameters defined by this objects. The keys of the map correspond to concrete properties
      * supported by the {@code Configuration} implementation class the builder produces. The values are the corresponding
-     * property values. The return value must not be <b>null</b>.
+     * property values. The return value must not be <strong>null</strong>.
      *
      * @return a map with builder parameters
      */

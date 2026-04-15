@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,7 @@ package org.apache.commons.configuration2.convert;
  * </p>
  * <p>
  * Some {@code Configuration} implementations require a special encoding of their property values before they get
- * written on disk. In some constellations, e.g. when a property with multiple values is to be forced on a single line,
+ * written on disk. In some constellations, for example when a property with multiple values is to be forced on a single line,
  * this encoding has to be done together with the escaping of list delimiter characters - which is in the responsibility
  * of {@link ListDelimiterHandler}.
  * </p>
@@ -37,6 +37,7 @@ package org.apache.commons.configuration2.convert;
  * @since 2.0
  */
 public interface ValueTransformer {
+
     /**
      * Performs an arbitrary encoding of the passed in value object. This method is called by a {@link ListDelimiterHandler}
      * implementation before or after list delimiters have been escaped.

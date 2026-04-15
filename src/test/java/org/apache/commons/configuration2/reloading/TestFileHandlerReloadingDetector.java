@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,13 +32,14 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code FileHandlerReloadingDetector}.
- *
  */
 public class TestFileHandlerReloadingDetector {
+
     /**
      * A test implementation which allows mocking the monitored file.
      */
-    private static class FileHandlerReloadingDetectorTestImpl extends FileHandlerReloadingDetector {
+    private static final class FileHandlerReloadingDetectorTestImpl extends FileHandlerReloadingDetector {
+
         /** The mock file. */
         private final File mockFile;
 
@@ -79,7 +80,7 @@ public class TestFileHandlerReloadingDetector {
      * Tests the default refresh delay.
      */
     @Test
-    public void testDefaultRefreshDelay() {
+    void testDefaultRefreshDelay() {
         final FileHandlerReloadingDetector detector = new FileHandlerReloadingDetector();
         assertEquals(5000, detector.getRefreshDelay());
     }
@@ -88,7 +89,7 @@ public class TestFileHandlerReloadingDetector {
      * Tests whether a jar URL is handled correctly.
      */
     @Test
-    public void testGetFileJarURL() throws Exception {
+    void testGetFileJarURL() throws Exception {
         final FileHandlerReloadingDetector detector = new FileHandlerReloadingDetector();
         final URL url = new URL("jar:" + new File("conf/resources.jar").getAbsoluteFile().toURI().toURL() + "!/test-jar.xml");
         detector.getFileHandler().setURL(url);
@@ -98,11 +99,12 @@ public class TestFileHandlerReloadingDetector {
     }
 
     /** The detector to be tested. */
+
     /**
      * Tests whether an instance can be created with a file handler.
      */
     @Test
-    public void testInitWithFileHandler() {
+    void testInitWithFileHandler() {
         final FileHandler handler = new FileHandler();
         final FileHandlerReloadingDetector detector = new FileHandlerReloadingDetector(handler);
         assertSame(handler, detector.getFileHandler());
@@ -112,7 +114,7 @@ public class TestFileHandlerReloadingDetector {
      * Tests whether a non-existing file is handled correctly.
      */
     @Test
-    public void testIsReloadingRequiredFileDoesNotExist() {
+    void testIsReloadingRequiredFileDoesNotExist() {
         final FileHandlerReloadingDetector detector = new FileHandlerReloadingDetector();
         detector.getFileHandler().setFile(new File("NonExistingFile.txt"));
         detector.reloadingPerformed();
@@ -123,7 +125,7 @@ public class TestFileHandlerReloadingDetector {
      * Tests isReloadingRequired() if no location has been set.
      */
     @Test
-    public void testIsReloadingRequiredNoLocation() {
+    void testIsReloadingRequiredNoLocation() {
         final FileHandlerReloadingDetector detector = new FileHandlerReloadingDetector();
         assertFalse(detector.isReloadingRequired());
     }
@@ -132,7 +134,7 @@ public class TestFileHandlerReloadingDetector {
      * Tests whether a changed file is detected.
      */
     @Test
-    public void testIsReloadingRequiredTrue() throws Exception {
+    void testIsReloadingRequiredTrue() throws Exception {
         final File f = mock(File.class);
 
         when(f.exists()).thenReturn(Boolean.TRUE);
@@ -147,7 +149,7 @@ public class TestFileHandlerReloadingDetector {
      * Tests that a newly created instance does not have a location.
      */
     @Test
-    public void testLocationAfterInit() {
+    void testLocationAfterInit() {
         final FileHandlerReloadingDetector detector = new FileHandlerReloadingDetector();
         assertFalse(detector.getFileHandler().isLocationDefined());
     }
@@ -156,7 +158,7 @@ public class TestFileHandlerReloadingDetector {
      * Tests whether the refresh delay is taken into account.
      */
     @Test
-    public void testRefreshDelay() throws Exception {
+    void testRefreshDelay() throws Exception {
         final File f = mock(File.class);
 
         when(f.exists()).thenReturn(Boolean.TRUE);
@@ -172,7 +174,7 @@ public class TestFileHandlerReloadingDetector {
      * Tests whether a changed file is detected after initialization and invoking refresh.
      */
     @Test
-    public void testRefreshIsReloadingRequiredTrue() throws Exception {
+    void testRefreshIsReloadingRequiredTrue() throws Exception {
         final File f = mock(File.class);
 
         when(f.exists()).thenReturn(Boolean.TRUE);
@@ -187,7 +189,7 @@ public class TestFileHandlerReloadingDetector {
      * Tests a refresh cycle with a detected reload operation and a notification that reloading was performed.
      */
     @Test
-    public void testRefreshReloadingAndReset() throws Exception {
+    void testRefreshReloadingAndReset() throws Exception {
         final File f = mock(File.class);
 
         when(f.exists()).thenReturn(Boolean.TRUE);
@@ -209,7 +211,7 @@ public class TestFileHandlerReloadingDetector {
      * Tests a cycle with a detected reload operation and a notification that reloading was performed.
      */
     @Test
-    public void testReloadingAndReset() throws Exception {
+    void testReloadingAndReset() throws Exception {
         final File f = mock(File.class);
 
         when(f.exists()).thenReturn(Boolean.TRUE);

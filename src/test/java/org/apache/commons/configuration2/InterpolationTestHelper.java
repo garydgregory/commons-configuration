@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,12 +27,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration2.interpol.ConfigurationInterpolator;
+import org.apache.commons.lang3.SystemProperties;
 
 /**
  * A helper class that defines a bunch of tests related to variable interpolation. It can be used for running these
  * tests on different configuration implementations.
  */
-public class InterpolationTestHelper {
+public final class InterpolationTestHelper {
+
     /**
      * Tests accessing and manipulating the interpolator object.
      *
@@ -65,7 +67,7 @@ public class InterpolationTestHelper {
         final Configuration c = config.interpolatedConfiguration();
         assertEquals("/home/applicationRoot/db/hypersonic", c.getProperty("db"));
         assertEquals(KeyEvent.VK_CANCEL, c.getInt("intkey.code"));
-        assertEquals(System.getProperty("java.version"), c.getProperty("inttest.sysprop"));
+        assertEquals(SystemProperties.getJavaVersion(), c.getProperty("inttest.sysprop"));
         assertEquals("3,1415", c.getProperty("inttest.value"));
         final List<?> lst = (List<?>) c.getProperty("inttest.list");
         assertEquals(Arrays.asList("/home/applicationRoot/db/hypersonic", "3,1415"), lst);
@@ -221,5 +223,9 @@ public class InterpolationTestHelper {
         final String expectedValue = "/base-level/first-level/second-level/third-level";
 
         assertEquals(expectedValue, config.getString("test.third-level"));
+    }
+
+    private InterpolationTestHelper() {
+        // empty
     }
 }

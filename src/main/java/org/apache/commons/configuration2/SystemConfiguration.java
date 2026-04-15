@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@
 package org.apache.commons.configuration2;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
@@ -30,16 +31,23 @@ import org.apache.commons.logging.LogFactory;
  * @since 1.1
  */
 public class SystemConfiguration extends MapConfiguration {
+
     /** The logger. */
     private static final Log LOG = LogFactory.getLog(SystemConfiguration.class);
 
     /**
-     * Create a Configuration based on the system properties.
+     * Sets System properties from a configuration object.
      *
-     * @see System#getProperties
+     * @param systemConfig The configuration containing the properties to be set.
+     * @since 1.6
      */
-    public SystemConfiguration() {
-        super(System.getProperties());
+    public static void setSystemProperties(final Configuration systemConfig) {
+        systemConfig.forEach((k, v) -> {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Setting system property " + k + " to " + v);
+            }
+            System.setProperty(k, Objects.toString(v, null));
+        });
     }
 
     /**
@@ -65,7 +73,6 @@ public class SystemConfiguration extends MapConfiguration {
      */
     public static void setSystemProperties(final String basePath, final String fileName) throws ConfigurationException {
         final FileBasedConfiguration config = fileName.endsWith(".xml") ? new XMLPropertiesConfiguration() : new PropertiesConfiguration();
-
         final FileHandler handler = new FileHandler(config);
         handler.setBasePath(basePath);
         handler.setFileName(fileName);
@@ -74,21 +81,12 @@ public class SystemConfiguration extends MapConfiguration {
     }
 
     /**
-     * Set System properties from a configuration object.
+     * Create a Configuration based on the system properties.
      *
-     * @param systemConfig The configuration containing the properties to be set.
-     * @since 1.6
+     * @see System#getProperties
      */
-    public static void setSystemProperties(final Configuration systemConfig) {
-        final Iterator<String> iter = systemConfig.getKeys();
-        while (iter.hasNext()) {
-            final String key = iter.next();
-            final String value = (String) systemConfig.getProperty(key);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Setting system property " + key + " to " + value);
-            }
-            System.setProperty(key, value);
-        }
+    public SystemConfiguration() {
+        super(System.getProperties());
     }
 
     /**

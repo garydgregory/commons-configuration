@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@
 
 package org.apache.commons.configuration2.web;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Enumeration;
@@ -32,10 +33,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test case for the {@link ServletFilterConfiguration} class.
- *
  */
 public class TestServletFilterConfiguration extends TestAbstractConfiguration {
-    private static class MockFilterConfig implements FilterConfig {
+    private static final class MockFilterConfig implements FilterConfig {
         private final Properties parameters = new Properties();
 
         @Override
@@ -71,7 +71,7 @@ public class TestServletFilterConfiguration extends TestAbstractConfiguration {
         config.setInitParameter("list", "value1, value2");
         config.setInitParameter("listesc", "value1\\,value2");
 
-        final ServletFilterConfiguration resultConfig = new ServletFilterConfiguration(config);
+        final AbstractConfiguration resultConfig = new ServletFilterConfiguration(config);
         resultConfig.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         return resultConfig;
     }
@@ -91,5 +91,12 @@ public class TestServletFilterConfiguration extends TestAbstractConfiguration {
     @Test
     public void testClearProperty() {
         assertThrows(UnsupportedOperationException.class, super::testClearProperty);
+    }
+
+    @Override
+    @Test
+    public void testContainsValue() {
+        assertFalse(getConfiguration().containsValue(null));
+        assertFalse(getConfiguration().containsValue(""));
     }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,12 +36,13 @@ import java.util.List;
  * @since 2.0
  */
 public interface ReferenceNodeHandler extends NodeHandler<ImmutableNode> {
+
     /**
-     * Returns the reference object associated with the specified node. If no reference data is associated with this node,
-     * result is <b>null</b>.
+     * Gets the reference object associated with the specified node. If no reference data is associated with this node,
+     * result is <strong>null</strong>.
      *
      * @param node the node in question
-     * @return the reference object for this node or <b>null</b>
+     * @return the reference object for this node or <strong>null</strong>
      */
     Object getReference(ImmutableNode node);
 

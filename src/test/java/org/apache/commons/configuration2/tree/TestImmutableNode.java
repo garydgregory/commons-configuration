@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,9 +33,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code ImmutableNode}
- *
  */
 public class TestImmutableNode {
+
     /** Constant for a test node name. */
     private static final String NAME = "testNode";
 
@@ -71,16 +71,6 @@ public class TestImmutableNode {
     }
 
     /**
-     * Checks whether a node has the expected children.
-     *
-     * @param node the node to be checked
-     * @param expChildren the collection with the expected children
-     */
-    private static void checkChildNodes(final ImmutableNode node, final List<ImmutableNode> expChildren) {
-        assertEquals(expChildren, node.getChildren());
-    }
-
-    /**
      * Checks whether a node has exactly the specified children.
      *
      * @param parent the parent node to be checked
@@ -88,6 +78,16 @@ public class TestImmutableNode {
      */
     private static void checkChildNodes(final ImmutableNode parent, final ImmutableNode... children) {
         checkChildNodes(parent, Arrays.asList(children));
+    }
+
+    /**
+     * Checks whether a node has the expected children.
+     *
+     * @param node the node to be checked
+     * @param expChildren the collection with the expected children
+     */
+    private static void checkChildNodes(final ImmutableNode node, final List<ImmutableNode> expChildren) {
+        assertEquals(expChildren, node.getChildren());
     }
 
     /**
@@ -162,7 +162,7 @@ public class TestImmutableNode {
      * Tests whether addAttributes() handles null input.
      */
     @Test
-    public void testAddAttributesNull() {
+    void testAddAttributesNull() {
         final ImmutableNode.Builder builder = setUpBuilder();
         builder.addAttributes(null);
         final ImmutableNode node = builder.create();
@@ -173,7 +173,7 @@ public class TestImmutableNode {
      * Tests whether a child node can be added.
      */
     @Test
-    public void testAddChild() {
+    void testAddChild() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final ImmutableNode child2 = new ImmutableNode.Builder().name("child2").create();
         final ImmutableNode node2 = node.addChild(child2);
@@ -185,7 +185,7 @@ public class TestImmutableNode {
      * Tests whether a new null child node is rejected.
      */
     @Test
-    public void testAddChildNull() {
+    void testAddChildNull() {
         final ImmutableNode node = createDefaultNode(VALUE);
         assertThrows(IllegalArgumentException.class, () -> node.addChild(null));
     }
@@ -194,7 +194,7 @@ public class TestImmutableNode {
      * Tests whether addChildren() can deal with null input.
      */
     @Test
-    public void testAddChildrenNull() {
+    void testAddChildrenNull() {
         final ImmutableNode.Builder builder = setUpBuilder();
         builder.addChildren(null);
         final ImmutableNode node = builder.create();
@@ -205,7 +205,7 @@ public class TestImmutableNode {
      * Tests whether null entries in a collection with new child nodes are ignored.
      */
     @Test
-    public void testAddChildrenNullElement() {
+    void testAddChildrenNullElement() {
         final ImmutableNode.Builder builder = setUpBuilder();
         final List<ImmutableNode> children = Arrays.asList(createChild(), null, createChild());
         builder.addChildren(children);
@@ -217,7 +217,7 @@ public class TestImmutableNode {
      * Tests that a node's attributes cannot be directly manipulated.
      */
     @Test
-    public void testAttributesImmutable() {
+    void testAttributesImmutable() {
         final ImmutableNode node = setUpBuilder().create();
         final Map<String, Object> attributes = node.getAttributes();
         assertThrows(UnsupportedOperationException.class, () -> attributes.put("test", VALUE));
@@ -227,7 +227,7 @@ public class TestImmutableNode {
      * Tests that a node's children cannot be manipulated.
      */
     @Test
-    public void testChildrenImmutable() {
+    void testChildrenImmutable() {
         final ImmutableNode node = setUpBuilder().create();
         final List<ImmutableNode> children = node.getChildren();
         assertThrows(UnsupportedOperationException.class, () -> children.add(null));
@@ -237,7 +237,7 @@ public class TestImmutableNode {
      * Tests getting named children.
      */
     @Test
-    public void testGetChildrenByMissingName() {
+    void testGetChildrenByMissingName() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final ImmutableNode child2 = new ImmutableNode.Builder().name("child2").create();
         final ImmutableNode node2 = node.addChild(child2);
@@ -249,7 +249,7 @@ public class TestImmutableNode {
      * Tests getting named children.
      */
     @Test
-    public void testGetChildrenByName() {
+    void testGetChildrenByName() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final ImmutableNode child2 = new ImmutableNode.Builder().name("child2").create();
         final ImmutableNode node2 = node.addChild(child2);
@@ -262,7 +262,7 @@ public class TestImmutableNode {
      * Tests getting named children.
      */
     @Test
-    public void testGetChildrenByNullName() {
+    void testGetChildrenByNullName() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final ImmutableNode child2 = new ImmutableNode.Builder().name("child2").create();
         final ImmutableNode node2 = node.addChild(child2);
@@ -274,7 +274,7 @@ public class TestImmutableNode {
      * Tests whether multiple child nodes can be added to a builder.
      */
     @Test
-    public void testNodeWithAddMultipleChildren() {
+    void testNodeWithAddMultipleChildren() {
         final int childCount = 4;
         final List<ImmutableNode> childNodes = new ArrayList<>(childCount);
         for (int i = 0; i < childCount; i++) {
@@ -291,7 +291,7 @@ public class TestImmutableNode {
      * Tests whether a node with attributes can be created.
      */
     @Test
-    public void testNodeWithAttributes() {
+    void testNodeWithAttributes() {
         final ImmutableNode.Builder builder = setUpBuilder();
         final int attrCount = 4;
         final Map<String, Object> attrs = new HashMap<>();
@@ -308,7 +308,7 @@ public class TestImmutableNode {
      * Tests that the map of attributes cannot be changed by a later manipulation of the builder.
      */
     @Test
-    public void testNodeWithAttributesManipulateLater() {
+    void testNodeWithAttributesManipulateLater() {
         final ImmutableNode.Builder builder = setUpBuilder();
         builder.addAttribute(ATTR, ATTR_VALUE);
         final ImmutableNode node = builder.create();
@@ -321,7 +321,7 @@ public class TestImmutableNode {
      * Tests whether child nodes can be added.
      */
     @Test
-    public void testNodeWithChildren() {
+    void testNodeWithChildren() {
         final int childCount = 8;
         final List<ImmutableNode> childNodes = new ArrayList<>(childCount);
         final ImmutableNode.Builder builder = new ImmutableNode.Builder(childCount);
@@ -339,7 +339,7 @@ public class TestImmutableNode {
      * Tests that the list of children cannot be changed by a later manipulation of the builder.
      */
     @Test
-    public void testNodeWithChildrenManipulateLater() {
+    void testNodeWithChildrenManipulateLater() {
         final ImmutableNode.Builder builder = setUpBuilder();
         final ImmutableNode child = new ImmutableNode.Builder().name("Child").create();
         final ImmutableNode node = builder.addChild(child).create();
@@ -351,7 +351,7 @@ public class TestImmutableNode {
      * Tests whether multiple attributes can be added in a single operation.
      */
     @Test
-    public void testNodeWithMultipleAttributes() {
+    void testNodeWithMultipleAttributes() {
         final ImmutableNode.Builder builder = setUpBuilder();
         final int attrCount = 4;
         final Map<String, Object> attrs = new HashMap<>();
@@ -367,7 +367,7 @@ public class TestImmutableNode {
      * Tests whether the builder ignores a null child node.
      */
     @Test
-    public void testNodeWithNullChild() {
+    void testNodeWithNullChild() {
         final ImmutableNode.Builder builder = setUpBuilder();
         builder.addChild(null);
         final ImmutableNode node = builder.create();
@@ -378,7 +378,7 @@ public class TestImmutableNode {
      * Tests whether an existing attribute can be removed.
      */
     @Test
-    public void testRemoveAttributeExisting() {
+    void testRemoveAttributeExisting() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final String attrName = node.getAttributes().keySet().iterator().next();
         final ImmutableNode node2 = node.removeAttribute(attrName);
@@ -391,7 +391,7 @@ public class TestImmutableNode {
      * Tests removeAttribute() if the attribute does not exist.
      */
     @Test
-    public void testRemoveAttributeNotExisting() {
+    void testRemoveAttributeNotExisting() {
         final ImmutableNode node = createDefaultNode(VALUE);
         assertSame(node, node.removeAttribute(ATTR));
     }
@@ -400,7 +400,7 @@ public class TestImmutableNode {
      * Tests whether a child node can be removed.
      */
     @Test
-    public void testRemoveChildExisting() {
+    void testRemoveChildExisting() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final ImmutableNode child = node.getChildren().get(0);
         final ImmutableNode node2 = node.removeChild(child);
@@ -412,7 +412,7 @@ public class TestImmutableNode {
      * Tests whether the correct child node is removed if there are multiple.
      */
     @Test
-    public void testRemoveChildMultiple() {
+    void testRemoveChildMultiple() {
         final ImmutableNode childRemove = createChild();
         final ImmutableNode node = createDefaultNode(VALUE).addChild(createChild()).addChild(childRemove).addChild(createChild());
         final ImmutableNode node2 = node.removeChild(childRemove);
@@ -423,7 +423,7 @@ public class TestImmutableNode {
      * Tests whether the behavior of removeChildNode() if the node in question is not found.
      */
     @Test
-    public void testRemoveChildNodeNotExisting() {
+    void testRemoveChildNodeNotExisting() {
         final ImmutableNode node = createDefaultNode(VALUE);
         assertSame(node, node.removeChild(null));
     }
@@ -432,7 +432,7 @@ public class TestImmutableNode {
      * Tests whether a child node can be replaced by another one.
      */
     @Test
-    public void testReplaceChildExisting() {
+    void testReplaceChildExisting() {
         final ImmutableNode childRemove = createChild();
         final ImmutableNode childReplace = createChild();
         final ImmutableNode node = createDefaultNode(VALUE).addChild(childRemove);
@@ -445,7 +445,7 @@ public class TestImmutableNode {
      * Tests replaceChild() if the child node cannot be found.
      */
     @Test
-    public void testReplaceChildNotExisting() {
+    void testReplaceChildNotExisting() {
         final ImmutableNode node = createDefaultNode(VALUE);
         assertSame(node, node.replaceChild(createChild(), createChild()));
     }
@@ -454,7 +454,7 @@ public class TestImmutableNode {
      * Tries to replace a child node by null.
      */
     @Test
-    public void testReplaceChildNull() {
+    void testReplaceChildNull() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final ImmutableNode child = createChild();
         assertThrows(IllegalArgumentException.class, () -> node.replaceChild(child, null));
@@ -464,7 +464,7 @@ public class TestImmutableNode {
      * Tests whether all children can be replaced at once.
      */
     @Test
-    public void testReplaceChildren() {
+    void testReplaceChildren() {
         final int childCount = 8;
         final List<ImmutableNode> newChildren = new ArrayList<>(childCount);
         for (int i = 0; i < childCount; i++) {
@@ -480,7 +480,7 @@ public class TestImmutableNode {
      * Tests whether a node's children can be replaced by a null collection.
      */
     @Test
-    public void testReplaceChildrenNullCollection() {
+    void testReplaceChildrenNullCollection() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final ImmutableNode node2 = node.replaceChildren(null);
         checkUpdatedNode(node, node2);
@@ -491,7 +491,7 @@ public class TestImmutableNode {
      * Tests whether attribute values can be set.
      */
     @Test
-    public void testSetAttribute() {
+    void testSetAttribute() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final ImmutableNode node2 = node.setAttribute("attr", ATTR_VALUE);
         checkUpdatedNode(node, node2);
@@ -505,7 +505,7 @@ public class TestImmutableNode {
      * Tests whether an attribute can be overridden.
      */
     @Test
-    public void testSetAttributeOverride() {
+    void testSetAttributeOverride() {
         final ImmutableNode.Builder builder = setUpBuilder();
         final String attr2 = ATTR + "_other";
         final Map<String, Object> attrs = new HashMap<>();
@@ -521,7 +521,7 @@ public class TestImmutableNode {
      * Tests whether multiple attributes can be set.
      */
     @Test
-    public void testSetAttributes() {
+    void testSetAttributes() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put("newAttribute1", "value1");
@@ -536,7 +536,7 @@ public class TestImmutableNode {
      * Tests setAttributes() if an empty map is passed in.
      */
     @Test
-    public void testSetAttributesEmpty() {
+    void testSetAttributesEmpty() {
         checkSetAttributesNoOp(new HashMap<>());
     }
 
@@ -544,7 +544,7 @@ public class TestImmutableNode {
      * Tests setAttributes() for null input.
      */
     @Test
-    public void testSetAttributesNull() {
+    void testSetAttributesNull() {
         checkSetAttributesNoOp(null);
     }
 
@@ -552,7 +552,7 @@ public class TestImmutableNode {
      * Tests whether the name of a node can be changed for a new instance.
      */
     @Test
-    public void testSetName() {
+    void testSetName() {
         final ImmutableNode node = createDefaultNode("anotherName", VALUE);
         final ImmutableNode node2 = node.setName(NAME);
         checkUpdatedNode(node, node2);
@@ -564,7 +564,7 @@ public class TestImmutableNode {
      * Tests whether a new node with a changed value can be created.
      */
     @Test
-    public void testSetValue() {
+    void testSetValue() {
         final ImmutableNode node = createDefaultNode("test");
         final ImmutableNode node2 = node.setValue(VALUE);
         checkUpdatedNode(node, node2);
@@ -576,7 +576,7 @@ public class TestImmutableNode {
      * Tests whether a node with basic properties can be created.
      */
     @Test
-    public void testSimpleProperties() {
+    void testSimpleProperties() {
         final ImmutableNode node = setUpBuilder().create();
         assertEquals(NAME, node.getNodeName());
         assertTrue(node.getChildren().isEmpty());
@@ -587,7 +587,7 @@ public class TestImmutableNode {
      * Tests streaming children.
      */
     @Test
-    public void testStream() {
+    void testStream() {
         final ImmutableNode node = createDefaultNode(VALUE);
         final ImmutableNode child2 = new ImmutableNode.Builder().name("child2").create();
         final ImmutableNode node2 = node.addChild(child2);

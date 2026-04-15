@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,9 +16,9 @@
  */
 package org.apache.commons.configuration2.builder;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
 
 import org.xml.sax.EntityResolver;
 
@@ -38,6 +38,7 @@ import org.xml.sax.EntityResolver;
  * @since 2.0
  */
 public class XMLBuilderParametersImpl extends HierarchicalBuilderParametersImpl implements XMLBuilderProperties<XMLBuilderParametersImpl> {
+
     /** The key for the entity resolver property. */
     private static final String PROP_ENTITY_RESOLVER = "entityResolver";
 
@@ -55,6 +56,16 @@ public class XMLBuilderParametersImpl extends HierarchicalBuilderParametersImpl 
 
     /** The key for the schema validation flag. */
     private static final String PROP_SCHEMA_VALIDATION = "schemaValidation";
+
+    /**
+     * Gets the {@code EntityResolver} stored in this parameters object. Result is <strong>null</strong> if no such object has been
+     * set.
+     *
+     * @return the {@code EntityResolver} or <strong>null</strong>
+     */
+    public EntityResolver getEntityResolver() {
+        return (EntityResolver) fetchProperty(PROP_ENTITY_RESOLVER);
+    }
 
     @Override
     public void inheritFrom(final Map<String, ?> source) {
@@ -74,19 +85,15 @@ public class XMLBuilderParametersImpl extends HierarchicalBuilderParametersImpl 
         return this;
     }
 
-    /**
-     * Returns the {@code EntityResolver} stored in this parameters object. Result is <b>null</b> if no such object has been
-     * set.
-     *
-     * @return the {@code EntityResolver} or <b>null</b>
-     */
-    public EntityResolver getEntityResolver() {
-        return (EntityResolver) fetchProperty(PROP_ENTITY_RESOLVER);
-    }
-
     @Override
     public XMLBuilderParametersImpl setPublicID(final String pubID) {
         storeProperty(PROP_PUBLIC_ID, pubID);
+        return this;
+    }
+
+    @Override
+    public XMLBuilderParametersImpl setSchemaValidation(final boolean f) {
+        storeProperty(PROP_SCHEMA_VALIDATION, Boolean.valueOf(f));
         return this;
     }
 
@@ -99,12 +106,6 @@ public class XMLBuilderParametersImpl extends HierarchicalBuilderParametersImpl 
     @Override
     public XMLBuilderParametersImpl setValidating(final boolean f) {
         storeProperty(PROP_VALIDATING, Boolean.valueOf(f));
-        return this;
-    }
-
-    @Override
-    public XMLBuilderParametersImpl setSchemaValidation(final boolean f) {
-        storeProperty(PROP_SCHEMA_VALIDATION, Boolean.valueOf(f));
         return this;
     }
 }

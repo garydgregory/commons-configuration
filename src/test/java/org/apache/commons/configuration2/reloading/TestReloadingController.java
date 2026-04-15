@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,9 +36,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code ReloadingController}.
- *
  */
 public class TestReloadingController {
+
     /**
      * Creates a mock event listener.
      *
@@ -61,6 +61,11 @@ public class TestReloadingController {
         return new ReloadingController(detector);
     }
 
+    @BeforeEach
+    public void setUp() throws Exception {
+        detector = mock(ReloadingDetector.class);
+    }
+
     /**
      * Prepares the given event listener mock to expect an event notification. The event received is stored in the given
      * mutable object.
@@ -76,24 +81,10 @@ public class TestReloadingController {
     }
 
     /**
-     * Verifies that an invocation has occurred on the given event listener for an event notification.
-     *
-     * @param l the listener mock
-     */
-    private void verifyEvent(final EventListener<ReloadingEvent> l) {
-        verify(l).onEvent(any());
-    }
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        detector = mock(ReloadingDetector.class);
-    }
-
-    /**
      * Tests a reloading check with a negative result.
      */
     @Test
-    public void testCheckForReloadingFalse() {
+    void testCheckForReloadingFalse() {
         final EventListener<ReloadingEvent> l = createListenerMock();
 
         when(detector.isReloadingRequired()).thenReturn(Boolean.FALSE);
@@ -111,7 +102,7 @@ public class TestReloadingController {
      * Tests that no further checks are performed when already in reloading state.
      */
     @Test
-    public void testCheckForReloadingInReloadingState() {
+    void testCheckForReloadingInReloadingState() {
         final EventListener<ReloadingEvent> l = createListenerMock();
 
         when(detector.isReloadingRequired()).thenReturn(Boolean.TRUE);
@@ -131,7 +122,7 @@ public class TestReloadingController {
      * Tests a reloading check with a positive result.
      */
     @Test
-    public void testCheckForReloadingTrue() {
+    void testCheckForReloadingTrue() {
         final EventListener<ReloadingEvent> l = createListenerMock();
         final EventListener<ReloadingEvent> lRemoved = createListenerMock();
         final MutableObject<ReloadingEvent> evRef = new MutableObject<>();
@@ -159,7 +150,7 @@ public class TestReloadingController {
      * Tries to create an instance without a detector.
      */
     @Test
-    public void testInitNoDetector() {
+    void testInitNoDetector() {
         assertThrows(IllegalArgumentException.class, () -> new ReloadingController(null));
     }
 
@@ -167,7 +158,7 @@ public class TestReloadingController {
      * Tests the event type of the reloading event.
      */
     @Test
-    public void testReloadingEventType() {
+    void testReloadingEventType() {
         assertEquals(Event.ANY, ReloadingEvent.ANY.getSuperType());
     }
 
@@ -175,7 +166,7 @@ public class TestReloadingController {
      * Tests that a newly created instance is not in reloading state.
      */
     @Test
-    public void testReloadingStateAfterInit() {
+    void testReloadingStateAfterInit() {
         assertFalse(createController().isInReloadingState());
     }
 
@@ -183,7 +174,7 @@ public class TestReloadingController {
      * Tests that resetReloadingState() has no effect if the controller is not in reloading state.
      */
     @Test
-    public void testResetReloadingNotInReloadingState() {
+    void testResetReloadingNotInReloadingState() {
         createController().resetReloadingState();
     }
 
@@ -191,7 +182,7 @@ public class TestReloadingController {
      * Tests that the reloading state can be reset.
      */
     @Test
-    public void testResetReloadingState() {
+    void testResetReloadingState() {
         when(detector.isReloadingRequired()).thenReturn(Boolean.TRUE);
 
         final ReloadingController ctrl = createController();
@@ -202,5 +193,14 @@ public class TestReloadingController {
         verify(detector).isReloadingRequired();
         verify(detector).reloadingPerformed();
         verifyNoMoreInteractions(detector);
+    }
+
+    /**
+     * Verifies that an invocation has occurred on the given event listener for an event notification.
+     *
+     * @param l the listener mock
+     */
+    private void verifyEvent(final EventListener<ReloadingEvent> l) {
+        verify(l).onEvent(any());
     }
 }

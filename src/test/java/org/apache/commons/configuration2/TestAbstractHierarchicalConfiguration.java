@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,13 +55,13 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code AbstractHierarchicalConfiguration}.
- *
  */
 public class TestAbstractHierarchicalConfiguration {
+
     /**
      * A concrete test implementation of {@code AbstractHierarchicalConfiguration}.
      */
-    private static class AbstractHierarchicalConfigurationTestImpl extends AbstractHierarchicalConfiguration<ImmutableNode> {
+    private static final class AbstractHierarchicalConfigurationTestImpl extends AbstractHierarchicalConfiguration<ImmutableNode> {
         public AbstractHierarchicalConfigurationTestImpl(final InMemoryNodeModel model) {
             super(model);
         }
@@ -252,7 +252,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testAddNodes() {
+    void testAddNodes() {
         final Collection<ImmutableNode> nodes = new ArrayList<>();
         nodes.add(NodeStructureHelper.createFieldNode("birthDate"));
         nodes.add(NodeStructureHelper.createFieldNode("lastLogin"));
@@ -268,7 +268,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests copying nodes from one configuration to another one.
      */
     @Test
-    public void testAddNodesCopy() {
+    void testAddNodesCopy() {
         final AbstractHierarchicalConfigurationTestImpl configDest = new AbstractHierarchicalConfigurationTestImpl(new InMemoryNodeModel());
         configDest.addProperty("test", "TEST");
         final Collection<ImmutableNode> nodes = getRootNode().getChildren();
@@ -289,7 +289,7 @@ public class TestAbstractHierarchicalConfiguration {
      * branch) is created.
      */
     @Test
-    public void testAddNodesForNonExistingKey() {
+    void testAddNodesForNonExistingKey() {
         final Collection<ImmutableNode> nodes = new ArrayList<>();
         final ImmutableNode newNode = new ImmutableNode.Builder().name("usr").value("scott").addAttribute("pwd", "tiger").create();
         nodes.add(newNode);
@@ -303,14 +303,14 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests the addNodes() method when the new nodes should be added to an attribute node. This is not allowed.
      */
     @Test
-    public void testAddNodesWithAttributeKey() {
+    void testAddNodesWithAttributeKey() {
         final Collection<ImmutableNode> nodes = new ArrayList<>();
         nodes.add(NodeStructureHelper.createNode("testNode", "yes"));
         assertThrows(IllegalArgumentException.class, () -> config.addNodes("database.connection[@settings]", nodes));
     }
 
     @Test
-    public void testAddProperty() {
+    void testAddProperty() {
         config.addProperty("tables.table(0).fields.field(-1).name", "phone");
         Object prop = config.getProperty("tables.table(0).fields.field.name");
         Collection<?> collection = assertInstanceOf(Collection.class, prop);
@@ -345,7 +345,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testAddPropertyInvalidKey() {
+    void testAddPropertyInvalidKey() {
         assertThrows(IllegalArgumentException.class, () -> config.addProperty(".", "InvalidKey"));
     }
 
@@ -353,7 +353,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether list handling works correctly when adding properties.
      */
     @Test
-    public void testAddPropertyWithListHandling() {
+    void testAddPropertyWithListHandling() {
         config.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         final String key = "list.delimiter.value";
         config.addProperty(key + ".escaped", "3\\,1415");
@@ -363,7 +363,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testClear() {
+    void testClear() {
         config.setProperty(null, "value");
         config.addProperty("[@attr]", "defined");
         config.clear();
@@ -371,7 +371,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testClearProperty() {
+    void testClearProperty() {
         config.clearProperty("tables.table(0).fields.field(0).name");
         assertEquals("uname", config.getProperty("tables.table(0).fields.field(0).name"));
         config.clearProperty("tables.table(0).name");
@@ -389,7 +389,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testClearTree() {
+    void testClearTree() {
         Object prop = config.getProperty("tables.table(0).fields.field.name");
         assertNotNull(prop);
         config.clearTree("tables.table(0).fields.field(3)");
@@ -411,7 +411,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests removing more complex node structures.
      */
     @Test
-    public void testClearTreeComplex() {
+    void testClearTreeComplex() {
         final int count = 5;
         // create the structure
         for (int idx = 0; idx < count; idx++) {
@@ -452,7 +452,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests the clearTree() method on a hierarchical structure of nodes. This is a test case for CONFIGURATION-293.
      */
     @Test
-    public void testClearTreeHierarchy() {
+    void testClearTreeHierarchy() {
         config.addProperty("a.b.c", "c");
         config.addProperty("a.b.c.d", "d");
         config.addProperty("a.b.c.d.e", "e");
@@ -462,7 +462,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testClone() {
+    void testClone() {
         final Configuration copy = (Configuration) config.clone();
         assertInstanceOf(AbstractHierarchicalConfiguration.class, copy);
         checkContent(copy);
@@ -472,7 +472,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether interpolation works as expected after cloning.
      */
     @Test
-    public void testCloneInterpolation() {
+    void testCloneInterpolation() {
         final String keyAnswer = "answer";
         final String keyValue = "value";
         config.addProperty(keyAnswer, "The answer is ${" + keyValue + "}.");
@@ -488,7 +488,7 @@ public class TestAbstractHierarchicalConfiguration {
      * registered at the clone.
      */
     @Test
-    public void testCloneWithEventListeners() {
+    void testCloneWithEventListeners() {
         final EventListener<ConfigurationEvent> l = new EventListenerTestImpl(null);
         config.addEventListener(ConfigurationEvent.ANY, l);
         final AbstractHierarchicalConfiguration<?> copy = (AbstractHierarchicalConfiguration<?>) config.clone();
@@ -496,7 +496,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testContainsKey() {
+    void testContainsKey() {
         assertTrue(config.containsKey("tables.table(0).name"));
         assertTrue(config.containsKey("tables.table(1).name"));
         assertFalse(config.containsKey("tables.table(2).name"));
@@ -510,7 +510,13 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testGetKeys() {
+    void testContainsValue() {
+        assertFalse(config.containsValue(null));
+        assertFalse(config.containsValue(""));
+    }
+
+    @Test
+    void testGetKeys() {
         final List<String> keys = new ArrayList<>();
         for (final Iterator<String> it = config.getKeys(); it.hasNext();) {
             keys.add(it.next());
@@ -523,7 +529,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether attribute keys are contained in the iteration of keys.
      */
     @Test
-    public void testGetKeysAttribute() {
+    void testGetKeysAttribute() {
         config.addProperty("tables.table(0)[@type]", "system");
         final Set<String> keys = new HashSet<>();
         for (final Iterator<String> it = config.getKeys(); it.hasNext();) {
@@ -536,7 +542,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether a prefix that points to an attribute is correctly handled.
      */
     @Test
-    public void testGetKeysAttributePrefix() {
+    void testGetKeysAttributePrefix() {
         config.addProperty("tables.table(0)[@type]", "system");
         final Iterator<String> itKeys = config.getKeys("tables.table[@type]");
         assertEquals("tables.table[@type]", itKeys.next());
@@ -547,7 +553,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether keys are returned in a defined order.
      */
     @Test
-    public void testGetKeysOrder() {
+    void testGetKeysOrder() {
         config.addProperty("order.key1", "value1");
         config.addProperty("order.key2", "value2");
         config.addProperty("order.key3", "value3");
@@ -559,7 +565,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testGetKeysString() {
+    void testGetKeysString() {
         // add some more properties to make it more interesting
         config.addProperty("tables.table(0).fields.field(1).type", "VARCHAR");
         config.addProperty("tables.table(0)[@type]", "system");
@@ -581,7 +587,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests getKeys() with a prefix when the prefix matches exactly a key.
      */
     @Test
-    public void testGetKeysWithKeyAsPrefix() {
+    void testGetKeysWithKeyAsPrefix() {
         config.addProperty("order.key1", "value1");
         config.addProperty("order.key2", "value2");
         final Iterator<String> it = config.getKeys("order.key1");
@@ -595,7 +601,7 @@ public class TestAbstractHierarchicalConfiguration {
      * prefix.
      */
     @Test
-    public void testGetKeysWithKeyAsPrefixMultiple() {
+    void testGetKeysWithKeyAsPrefixMultiple() {
         config.addProperty("order.key1", "value1");
         config.addProperty("order.key1.test", "value2");
         config.addProperty("order.key1.test.complex", "value2");
@@ -607,7 +613,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testGetMaxIndex() {
+    void testGetMaxIndex() {
         assertEquals(NodeStructureHelper.fieldsLength(0) - 1, config.getMaxIndex("tables.table(0).fields.field"));
         assertEquals(NodeStructureHelper.fieldsLength(1) - 1, config.getMaxIndex("tables.table(1).fields.field"));
         assertEquals(1, config.getMaxIndex("tables.table"));
@@ -628,7 +634,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether the configuration's node model can be correctly accessed.
      */
     @Test
-    public void testGetNodeModel() {
+    void testGetNodeModel() {
         final SynchronizerTestImpl sync = new SynchronizerTestImpl();
         config.setSynchronizer(sync);
         final NodeModel<ImmutableNode> model = config.getNodeModel();
@@ -641,7 +647,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testGetProperty() {
+    void testGetProperty() {
         checkGetProperty(config);
     }
 
@@ -649,7 +655,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether keys that contains brackets can be used.
      */
     @Test
-    public void testGetPropertyKeyWithBrackets() {
+    void testGetPropertyKeyWithBrackets() {
         final String key = "test.directory.platform(x86)";
         config.addProperty(key, "C:\\Temp");
         assertEquals("C:\\Temp", config.getString(key));
@@ -659,7 +665,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests the copy constructor when a null reference is passed.
      */
     @Test
-    public void testInitCopyNull() {
+    void testInitCopyNull() {
         final BaseHierarchicalConfiguration copy = new BaseHierarchicalConfiguration((BaseHierarchicalConfiguration) null);
         assertTrue(copy.isEmpty());
     }
@@ -668,7 +674,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests obtaining a configuration with all variables substituted.
      */
     @Test
-    public void testInterpolatedConfiguration() {
+    void testInterpolatedConfiguration() {
         config.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         final AbstractHierarchicalConfiguration<?> c = (AbstractHierarchicalConfiguration<?>) InterpolationTestHelper.testInterpolatedConfiguration(config);
 
@@ -680,7 +686,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests interpolation facilities.
      */
     @Test
-    public void testInterpolation() {
+    void testInterpolation() {
         config.addProperty("base.dir", "/home/foo");
         config.addProperty("test.absolute.dir.dir1", "${base.dir}/path1");
         config.addProperty("test.absolute.dir.dir2", "${base.dir}/path2");
@@ -696,7 +702,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Basic interpolation tests.
      */
     @Test
-    public void testInterpolationBasic() {
+    void testInterpolationBasic() {
         InterpolationTestHelper.testInterpolation(config);
     }
 
@@ -704,7 +710,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests interpolation with constant values.
      */
     @Test
-    public void testInterpolationConstants() {
+    void testInterpolationConstants() {
         InterpolationTestHelper.testInterpolationConstants(config);
     }
 
@@ -712,7 +718,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests escaping variables.
      */
     @Test
-    public void testInterpolationEscaped() {
+    void testInterpolationEscaped() {
         InterpolationTestHelper.testInterpolationEscaped(config);
     }
 
@@ -720,7 +726,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests interpolation with localhost values.
      */
     @Test
-    public void testInterpolationLocalhost() {
+    void testInterpolationLocalhost() {
         InterpolationTestHelper.testInterpolationLocalhost(config);
     }
 
@@ -728,7 +734,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests an invalid interpolation that causes an endless loop.
      */
     @Test
-    public void testInterpolationLoop() {
+    void testInterpolationLoop() {
         InterpolationTestHelper.testInterpolationLoop(config);
     }
 
@@ -736,7 +742,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests multiple levels of interpolation.
      */
     @Test
-    public void testInterpolationMultipleLevels() {
+    void testInterpolationMultipleLevels() {
         InterpolationTestHelper.testMultipleInterpolation(config);
     }
 
@@ -744,7 +750,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests interpolation with a subset.
      */
     @Test
-    public void testInterpolationSubset() {
+    void testInterpolationSubset() {
         InterpolationTestHelper.testInterpolationSubset(config);
     }
 
@@ -752,7 +758,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether interpolation with a subset configuration works over multiple layers.
      */
     @Test
-    public void testInterpolationSubsetMultipleLayers() {
+    void testInterpolationSubsetMultipleLayers() {
         config.clear();
         config.addProperty("var", "value");
         config.addProperty("prop2.prop[@attr]", "${var}");
@@ -765,7 +771,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests interpolation with system properties.
      */
     @Test
-    public void testInterpolationSystemProperties() {
+    void testInterpolationSystemProperties() {
         InterpolationTestHelper.testInterpolationSystemProperties(config);
     }
 
@@ -773,7 +779,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests interpolation of a variable, which cannot be resolved.
      */
     @Test
-    public void testInterpolationUnknownProperty() {
+    void testInterpolationUnknownProperty() {
         InterpolationTestHelper.testInterpolationUnknownProperty(config);
     }
 
@@ -781,12 +787,12 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests manipulating the interpolator.
      */
     @Test
-    public void testInterpolator() {
+    void testInterpolator() {
         InterpolationTestHelper.testGetInterpolator(config);
     }
 
     @Test
-    public void testIsEmptyFalse() {
+    void testIsEmptyFalse() {
         assertFalse(config.isEmpty());
     }
 
@@ -794,7 +800,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests isEmpty() if the structure contains some nodes without values.
      */
     @Test
-    public void testIsEmptyNodesWithNoValues() {
+    void testIsEmptyNodesWithNoValues() {
         final ImmutableNode.Builder rootBuilder = new ImmutableNode.Builder(1);
         final ImmutableNode.Builder nodeBuilder = new ImmutableNode.Builder(1);
         nodeBuilder.addChild(NodeStructureHelper.createNode("child", null));
@@ -807,7 +813,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests isEmpty() if only the root node exists.
      */
     @Test
-    public void testIsEmptyRootOnly() {
+    void testIsEmptyRootOnly() {
         config = new AbstractHierarchicalConfigurationTestImpl(new InMemoryNodeModel());
         assertTrue(config.isEmpty());
     }
@@ -816,7 +822,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests nodeKey() if the key is directly found in the cache.
      */
     @Test
-    public void testNodeKeyCacheHit() {
+    void testNodeKeyCacheHit() {
         final Map<ImmutableNode, String> cache = new HashMap<>();
         final String key = "someResultKey";
         cache.put(getRootNode(), key);
@@ -827,7 +833,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether the cache map is filled while generating node keys.
      */
     @Test
-    public void testNodeKeyCachePopulated() {
+    void testNodeKeyCachePopulated() {
         final Map<ImmutableNode, String> cache = new HashMap<>();
         final ImmutableNode nodeTabName = NodeStructureHelper.nodeForKey(getRootNode(), "tables/table(0)/name");
         final NodeHandler<ImmutableNode> handler = config.getModel().getNodeHandler();
@@ -843,7 +849,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether the cache is used by nodeKey().
      */
     @Test
-    public void testNodeKeyCacheUsage() {
+    void testNodeKeyCacheUsage() {
         final Map<ImmutableNode, String> cache = new HashMap<>();
         final ImmutableNode nodeTabName = NodeStructureHelper.nodeForKey(getRootNode(), "tables/table(0)/name");
         final NodeHandler<ImmutableNode> handler = config.getModel().getNodeHandler();
@@ -855,7 +861,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether a correct node key is generated if no data is contained in the cache.
      */
     @Test
-    public void testNodeKeyEmptyCache() {
+    void testNodeKeyEmptyCache() {
         final Map<ImmutableNode, String> cache = new HashMap<>();
         final ImmutableNode nodeTabName = NodeStructureHelper.nodeForKey(getRootNode(), "tables/table(0)/name");
         final ImmutableNode nodeFldName = NodeStructureHelper.nodeForKey(getRootNode(), "tables/table(0)/fields/field(1)/name");
@@ -867,7 +873,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether a node key for the root node can be generated.
      */
     @Test
-    public void testNodeKeyRootNode() {
+    void testNodeKeyRootNode() {
         final Map<ImmutableNode, String> cache = new HashMap<>();
         assertEquals("", config.nodeKey(getRootNode(), cache, config.getModel().getNodeHandler()));
     }
@@ -876,7 +882,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether node keys can be resolved.
      */
     @Test
-    public void testResolveNodeKey() {
+    void testResolveNodeKey() {
         final List<ImmutableNode> nodes = config.resolveNodeKey(getRootNode(), "tables.table.name", config.getModel().getNodeHandler());
         assertEquals(NodeStructureHelper.tablesLength(), nodes.size());
         for (int i = 0; i < NodeStructureHelper.tablesLength(); i++) {
@@ -888,7 +894,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether attribute keys are filtered out when resolving node keys.
      */
     @Test
-    public void testResolveNodeKeyAttribute() {
+    void testResolveNodeKeyAttribute() {
         final String attrKey = "tables.table(0)[@type]";
         config.addProperty(attrKey, "system");
         assertTrue(config.resolveNodeKey(getRootNode(), attrKey, config.getModel().getNodeHandler()).isEmpty());
@@ -898,7 +904,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests setting a custom expression engine, which uses a slightly different syntax.
      */
     @Test
-    public void testSetExpressionEngine() {
+    void testSetExpressionEngine() {
         config.setExpressionEngine(null);
         assertNotNull(config.getExpressionEngine());
         assertSame(DefaultExpressionEngine.INSTANCE, config.getExpressionEngine());
@@ -908,7 +914,7 @@ public class TestAbstractHierarchicalConfiguration {
     }
 
     @Test
-    public void testSetProperty() {
+    void testSetProperty() {
         config.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         config.setProperty("tables.table(0).name", "resources");
         assertEquals("resources", config.getString("tables.table(0).name"));
@@ -939,7 +945,7 @@ public class TestAbstractHierarchicalConfiguration {
      * Tests whether the correct size is calculated.
      */
     @Test
-    public void testSize() {
+    void testSize() {
         assertEquals(2, config.size());
     }
 }

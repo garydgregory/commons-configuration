@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,36 +41,29 @@ import java.util.Objects;
  * @since 1.7
  */
 public class MergeCombiner extends NodeCombiner {
+
     /**
-     * Combines the given nodes to a new union node.
+     * Checks whether the attributes of the passed in node are compatible.
      *
-     * @param node1 the first source node
-     * @param node2 the second source node
-     * @return the union node
+     * @param attrs1 the attributes of the first node
+     * @param node the 2nd node
+     * @return a flag whether these nodes can be combined regarding their attributes
      */
-
-    @Override
-    public ImmutableNode combine(final ImmutableNode node1, final ImmutableNode node2) {
-        final ImmutableNode.Builder result = new ImmutableNode.Builder();
-        result.name(node1.getNodeName());
-        result.value(node1.getValue());
-        addAttributes(result, node1, node2);
-
-        // Check if nodes can be combined
-        final List<ImmutableNode> children2 = new LinkedList<>(node2.getChildren());
-        node1.forEach(child1 -> {
-            final ImmutableNode child2 = canCombine(node2, child1, children2);
-            if (child2 != null) {
-                result.addChild(combine(child1, child2));
-                children2.remove(child2);
-            } else {
-                result.addChild(child1);
+    private static boolean matchAttributes(final Map<String, Object> attrs1, final ImmutableNode node) {
+        final Map<String, Object> attrs2 = node.getAttributes();
+        for (final Map.Entry<String, Object> e : attrs1.entrySet()) {
+            if (attrs2.containsKey(e.getKey()) && !Objects.equals(e.getValue(), attrs2.get(e.getKey()))) {
+                return false;
             }
-        });
+        }
+        return true;
+    }
 
-        // Add remaining children of node 2
-        children2.forEach(result::addChild);
-        return result.create();
+    /**
+     * Constructs a new instance.
+     */
+    public MergeCombiner() {
+        // empty
     }
 
     /**
@@ -83,11 +76,7 @@ public class MergeCombiner extends NodeCombiner {
      */
     protected void addAttributes(final ImmutableNode.Builder result, final ImmutableNode node1, final ImmutableNode node2) {
         final Map<String, Object> attributes = new HashMap<>(node1.getAttributes());
-        node2.getAttributes().forEach((k, v) -> {
-            if (!attributes.containsKey(k)) {
-                attributes.put(k, v);
-            }
-        });
+        node2.getAttributes().forEach(attributes::putIfAbsent);
         result.addAttributes(attributes);
     }
 
@@ -122,19 +111,34 @@ public class MergeCombiner extends NodeCombiner {
     }
 
     /**
-     * Checks whether the attributes of the passed in node are compatible.
+     * Combines the given nodes to a new union node.
      *
-     * @param attrs1 the attributes of the first node
-     * @param node the 2nd node
-     * @return a flag whether these nodes can be combined regarding their attributes
+     * @param node1 the first source node
+     * @param node2 the second source node
+     * @return the union node
      */
-    private static boolean matchAttributes(final Map<String, Object> attrs1, final ImmutableNode node) {
-        final Map<String, Object> attrs2 = node.getAttributes();
-        for (final Map.Entry<String, Object> e : attrs1.entrySet()) {
-            if (attrs2.containsKey(e.getKey()) && !Objects.equals(e.getValue(), attrs2.get(e.getKey()))) {
-                return false;
+
+    @Override
+    public ImmutableNode combine(final ImmutableNode node1, final ImmutableNode node2) {
+        final ImmutableNode.Builder result = new ImmutableNode.Builder();
+        result.name(node1.getNodeName());
+        result.value(node1.getValue());
+        addAttributes(result, node1, node2);
+
+        // Check if nodes can be combined
+        final List<ImmutableNode> children2 = new LinkedList<>(node2.getChildren());
+        node1.forEach(child1 -> {
+            final ImmutableNode child2 = canCombine(node2, child1, children2);
+            if (child2 != null) {
+                result.addChild(combine(child1, child2));
+                children2.remove(child2);
+            } else {
+                result.addChild(child1);
             }
-        }
-        return true;
+        });
+
+        // Add remaining children of node 2
+        children2.forEach(result::addChild);
+        return result.create();
     }
 }

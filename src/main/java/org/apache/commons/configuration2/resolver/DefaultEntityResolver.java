@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,8 +33,26 @@ import org.xml.sax.SAXException;
  * @since 1.7
  */
 public class DefaultEntityResolver implements EntityResolver, EntityRegistry {
+
     /** Stores a map with the registered public IDs. */
     private final Map<String, URL> registeredEntities = new HashMap<>();
+
+    /**
+     * Constructs a new instance.
+     */
+    public DefaultEntityResolver() {
+        // empty
+    }
+
+    /**
+     * Gets a map with the entity IDs that have been registered using the {@code registerEntityId()} method.
+     *
+     * @return a map with the registered entity IDs
+     */
+    @Override
+    public Map<String, URL> getRegisteredEntities() {
+        return registeredEntities;
+    }
 
     /**
      * <p>
@@ -96,15 +114,5 @@ public class DefaultEntityResolver implements EntityResolver, EntityRegistry {
         }
         // default processing behavior
         return null;
-    }
-
-    /**
-     * Returns a map with the entity IDs that have been registered using the {@code registerEntityId()} method.
-     *
-     * @return a map with the registered entity IDs
-     */
-    @Override
-    public Map<String, URL> getRegisteredEntities() {
-        return registeredEntities;
     }
 }

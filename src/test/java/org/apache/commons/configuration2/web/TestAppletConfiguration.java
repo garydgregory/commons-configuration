@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@
 
 package org.apache.commons.configuration2.web;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.applet.Applet;
@@ -32,11 +33,11 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test case for the {@link AppletConfiguration} class.
- *
  */
 public class TestAppletConfiguration extends TestAbstractConfiguration {
+
     /** A flag whether tests with an applet can be run. */
-    boolean supportsApplet;
+    private boolean supportsApplet;
 
     @Override
     protected AbstractConfiguration getConfiguration() {
@@ -49,6 +50,7 @@ public class TestAppletConfiguration extends TestAbstractConfiguration {
 
         if (supportsApplet) {
             final Applet applet = new Applet() {
+
                 /**
                  * Serial version UID.
                  */
@@ -112,5 +114,12 @@ public class TestAppletConfiguration extends TestAbstractConfiguration {
         if (supportsApplet) {
             assertThrows(UnsupportedOperationException.class, super::testClearProperty);
         }
+    }
+
+    @Override
+    @Test
+    public void testContainsValue() {
+        assertFalse(getConfiguration().containsValue(null));
+        assertFalse(getConfiguration().containsValue(""));
     }
 }

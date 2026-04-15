@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,12 +19,13 @@ package org.apache.commons.configuration2.io;
 import java.util.Map;
 
 /**
- * Some FileSystems allow options to be passed on File operations. Users of commons configuration can implement this
+ * Some FileSystems allow options to be passed on File operations. Users of Commons Configuration can implement this
  * interface and register it with the FileSystem.
  *
  * @since 1.7
  */
 public interface FileOptionsProvider {
+
     /**
      * Key used to identify the user to be associated with the current file operations. The value associated with this key
      * is a String identifying the current user.
@@ -32,7 +33,7 @@ public interface FileOptionsProvider {
     String CURRENT_USER = "currentUser";
 
     /**
-     * Key used to indicate whether Webdav versioning support should be enabled. The value associated with this key is a
+     * Key used to indicate whether WebDAV versioning support should be enabled. The value associated with this key is a
      * Boolean where True indicates versioning should be enabled.
      */
     String VERSIONING = "versioning";
@@ -62,6 +63,7 @@ public interface FileOptionsProvider {
     String MAX_TOTAL_CONNECTIONS = "maxTotalConnections";
 
     /**
+     * Gets the options to be used for this file.
      *
      * @return Options to be used for this file.
      */

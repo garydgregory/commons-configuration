@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -58,9 +58,9 @@ public class ConfigurationBuilderResultCreatedEvent extends ConfigurationBuilder
     /**
      * Creates a new instance of {@code ConfigurationBuilderResultCreatedEvent} and initializes its properties.
      *
-     * @param source the {@code ConfigurationBuilder} object which triggered this event (must not be <b>null</b>)
-     * @param evType the type of this event (must not be <b>null</b>)
-     * @param createdConfiguration the newly created {@code ImmutableConfiguration} object (must not be <b>null</b>)
+     * @param source the {@code ConfigurationBuilder} object which triggered this event (must not be <strong>null</strong>)
+     * @param evType the type of this event (must not be <strong>null</strong>)
+     * @param createdConfiguration the newly created {@code ImmutableConfiguration} object (must not be <strong>null</strong>)
      * @throws IllegalArgumentException if a required parameter is null
      */
     public ConfigurationBuilderResultCreatedEvent(final ConfigurationBuilder<?> source,
@@ -73,7 +73,7 @@ public class ConfigurationBuilderResultCreatedEvent extends ConfigurationBuilder
     }
 
     /**
-     * Returns the newly created {@code ImmutableConfiguration} object.
+     * Gets the newly created {@code ImmutableConfiguration} object.
      *
      * @return the newly created {@code ImmutableConfiguration}
      */

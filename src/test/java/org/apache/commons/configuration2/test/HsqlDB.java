@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,30 +17,30 @@
 
 package org.apache.commons.configuration2.test;
 
-import java.io.FileReader;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.commons.io.file.PathUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Stolen from Turbine
- *
+ * Sourced from Apache Turbine.
  */
-
 public class HsqlDB {
-    private static final Log log = LogFactory.getLog(HsqlDB.class);
+
+    private static final Log LOG = LogFactory.getLog(HsqlDB.class);
+
     private final Connection connection;
 
     public HsqlDB(final String uri, final String databaseDriver, final String loadFile) throws Exception {
         Class.forName(databaseDriver);
-
         this.connection = DriverManager.getConnection(uri, "sa", "");
-
         if (StringUtils.isNotEmpty(loadFile)) {
             loadSqlFile(loadFile);
         }
@@ -59,31 +59,19 @@ public class HsqlDB {
     }
 
     private String getFileContents(final String fileName) throws Exception {
-        try (FileReader fr = new FileReader(fileName)) {
-
-            final char fileBuf[] = new char[1024];
-            final StringBuilder sb = new StringBuilder(1000);
-            int res = -1;
-
-            while ((res = fr.read(fileBuf, 0, 1024)) > -1) {
-                sb.append(fileBuf, 0, res);
-            }
-            return sb.toString();
-        }
+        return PathUtils.readString(Paths.get(fileName), Charset.defaultCharset());
     }
 
     private void loadSqlFile(final String fileName) throws Exception {
         try (Statement statement = connection.createStatement()) {
             String commands = getFileContents(fileName);
-
             for (int targetPos = commands.indexOf(';'); targetPos > -1; targetPos = commands.indexOf(';')) {
                 final String cmd = commands.substring(0, targetPos + 1);
                 try {
                     statement.execute(cmd);
                 } catch (final SQLException sqle) {
-                    log.warn("Statement: " + cmd + ": " + sqle.getMessage());
+                    LOG.warn("Statement: " + cmd + ": " + sqle.getMessage());
                 }
-
                 commands = commands.substring(targetPos + 2);
             }
         }

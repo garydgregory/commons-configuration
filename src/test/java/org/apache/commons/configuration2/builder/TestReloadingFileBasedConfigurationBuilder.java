@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,13 +39,14 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code ReloadingFileBasedConfigurationBuilder}.
- *
  */
 public class TestReloadingFileBasedConfigurationBuilder {
+
     /**
      * A test builder implementation which allows mocking the underlying reloading detector.
      */
-    private static class ReloadingFileBasedConfigurationBuilderTestImpl extends ReloadingFileBasedConfigurationBuilder<PropertiesConfiguration> {
+    private static final class ReloadingFileBasedConfigurationBuilderTestImpl extends ReloadingFileBasedConfigurationBuilder<PropertiesConfiguration> {
+
         /** The mock for the reloading detector. */
         private final ReloadingDetector mockDetector;
 
@@ -86,7 +87,7 @@ public class TestReloadingFileBasedConfigurationBuilder {
      * Tests whether a correct reloading detector is created if no custom factory was set.
      */
     @Test
-    public void testCreateReloadingDetectorDefaultFactory() throws ConfigurationException {
+    void testCreateReloadingDetectorDefaultFactory() throws ConfigurationException {
         final ReloadingFileBasedConfigurationBuilder<PropertiesConfiguration> builder = new ReloadingFileBasedConfigurationBuilder<>(
             PropertiesConfiguration.class);
         final FileHandler handler = new FileHandler();
@@ -102,7 +103,7 @@ public class TestReloadingFileBasedConfigurationBuilder {
      * Tests whether a custom reloading detector factory can be installed.
      */
     @Test
-    public void testCreateReloadingDetectoryCustomFactory() throws ConfigurationException {
+    void testCreateReloadingDetectoryCustomFactory() throws ConfigurationException {
         final ReloadingDetector detector = mock(ReloadingDetector.class);
         final ReloadingDetectorFactory factory = mock(ReloadingDetectorFactory.class);
         final FileHandler handler = new FileHandler();
@@ -124,7 +125,7 @@ public class TestReloadingFileBasedConfigurationBuilder {
      * constructor is called correctly.
      */
     @Test
-    public void testGetConfigurationNoLocation() throws ConfigurationException {
+    void testGetConfigurationNoLocation() throws ConfigurationException {
         final Map<String, Object> params = new HashMap<>();
         params.put("throwExceptionOnMissing", Boolean.TRUE);
         final ReloadingFileBasedConfigurationBuilder<PropertiesConfiguration> builder = new ReloadingFileBasedConfigurationBuilder<>(
@@ -138,7 +139,7 @@ public class TestReloadingFileBasedConfigurationBuilder {
      * Tests whether the allowFailOnInit flag is correctly initialized.
      */
     @Test
-    public void testInitAllowFailOnInitFlag() {
+    void testInitAllowFailOnInitFlag() {
         final ReloadingFileBasedConfigurationBuilder<PropertiesConfiguration> builder = new ReloadingFileBasedConfigurationBuilder<>(
             PropertiesConfiguration.class, null, true);
         assertTrue(builder.isAllowFailOnInit());
@@ -148,7 +149,7 @@ public class TestReloadingFileBasedConfigurationBuilder {
      * Tests whether this builder reacts on events fired by the reloading controller.
      */
     @Test
-    public void testReloadingControllerEvents() throws ConfigurationException {
+    void testReloadingControllerEvents() throws ConfigurationException {
         final ReloadingDetector detector = mock(ReloadingDetector.class);
 
         when(detector.isReloadingRequired()).thenReturn(Boolean.TRUE);
@@ -169,7 +170,7 @@ public class TestReloadingFileBasedConfigurationBuilder {
      * Tests the isReloadingRequired() implementation of the detector associated with the reloading controller.
      */
     @Test
-    public void testReloadingDetectorIsReloadingRequired() throws ConfigurationException {
+    void testReloadingDetectorIsReloadingRequired() throws ConfigurationException {
         final ReloadingDetector detector = mock(ReloadingDetector.class);
 
         when(detector.isReloadingRequired()).thenReturn(Boolean.TRUE, Boolean.FALSE);
@@ -189,7 +190,7 @@ public class TestReloadingFileBasedConfigurationBuilder {
      * Tests the behavior of the reloading detector if no underlying detector is available.
      */
     @Test
-    public void testReloadingDetectorNoFileHandler() {
+    void testReloadingDetectorNoFileHandler() {
         final ReloadingFileBasedConfigurationBuilder<PropertiesConfiguration> builder = new ReloadingFileBasedConfigurationBuilder<>(
             PropertiesConfiguration.class);
         final ReloadingDetector ctrlDetector = builder.getReloadingController().getDetector();
@@ -201,7 +202,7 @@ public class TestReloadingFileBasedConfigurationBuilder {
      * Tests the reloadingPerformed() implementation of the detector associated with the reloading controller.
      */
     @Test
-    public void testReloadingDetectorReloadingPerformed() throws ConfigurationException {
+    void testReloadingDetectorReloadingPerformed() throws ConfigurationException {
         final ReloadingDetector detector = mock(ReloadingDetector.class);
         final ReloadingFileBasedConfigurationBuilderTestImpl builder = new ReloadingFileBasedConfigurationBuilderTestImpl(detector);
         builder.getConfiguration();
@@ -216,7 +217,7 @@ public class TestReloadingFileBasedConfigurationBuilder {
      * Tests whether the controller's reloading state is reset when a new result configuration is created.
      */
     @Test
-    public void testResetReloadingStateInGetConfiguration() throws ConfigurationException {
+    void testResetReloadingStateInGetConfiguration() throws ConfigurationException {
         final ReloadingDetector detector = mock(ReloadingDetector.class);
 
         when(detector.isReloadingRequired()).thenReturn(Boolean.TRUE);

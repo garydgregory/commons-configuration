@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,9 @@
  */
 package org.apache.commons.configuration2;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -39,9 +38,10 @@ import org.junit.jupiter.api.Test;
  * Test class to test the handling of list structures in XMLConfiguration.
  */
 public class TestXMLListHandling {
+
     /** XML to be loaded by the configuration. */
-    private static final String SOURCE = "<config>" + "<values>a,b,c</values>" + "<split><value>1</value><value>2</value></split>"
-        + "<mixed><values>foo,blah</values><values>bar,baz</values></mixed>" + "</config>";
+    private static final String SOURCE = "<config><values>a,b,c</values><split><value>1</value><value>2</value></split>"
+            + "<mixed><values>foo,blah</values><values>bar,baz</values></mixed></config>";
 
     /** Key for the string property with multiple values. */
     private static final String KEY_VALUES = "values";
@@ -62,7 +62,7 @@ public class TestXMLListHandling {
     private static void checkCommaSeparated(final String xml, final String key, final String... values) {
         final String strValues = StringUtils.join(values, ',');
         final String element = element(key, strValues);
-        assertThat(xml, containsString(element));
+        assertTrue(xml.contains(element));
     }
 
     /**
@@ -74,7 +74,7 @@ public class TestXMLListHandling {
      */
     private static void checkSplit(final String xml, final String key, final String... values) {
         for (final String v : values) {
-            assertThat(xml, containsString(element(key, v)));
+            assertTrue(xml.contains(element(key, v)));
         }
     }
 
@@ -127,7 +127,7 @@ public class TestXMLListHandling {
      * Tests that a list item can be added without affecting the format.
      */
     @Test
-    public void testAddListItem() throws ConfigurationException {
+    void testAddListItem() throws ConfigurationException {
         config.addProperty(KEY_VALUES, "d");
         config.addProperty(KEY_SPLIT, "3");
         final String xml = saveToString();
@@ -141,16 +141,16 @@ public class TestXMLListHandling {
      * This should fail with a meaningful exception message.
      */
     @Test
-    public void testIncompatibleListDelimiterOnSaving() {
+    void testIncompatibleListDelimiterOnSaving() {
         config.setListDelimiterHandler(DisabledListDelimiterHandler.INSTANCE);
-        assertThrows(ConfigurationRuntimeException.class, () -> saveToString());
+        assertThrows(ConfigurationRuntimeException.class, this::saveToString);
     }
 
     /**
      * Tests whether a list consisting of multiple elements where some elements define multiple values is handled correctly.
      */
     @Test
-    public void testMixedList() throws ConfigurationException {
+    void testMixedList() throws ConfigurationException {
         final List<String> expected = Arrays.asList("foo", "blah", "bar", "baz");
         assertEquals(expected, config.getList("mixed.values"));
         final String xml = saveToString();
@@ -163,7 +163,7 @@ public class TestXMLListHandling {
      * Tests that a list item can be removed without affecting the format.
      */
     @Test
-    public void testRemoveListItem() throws ConfigurationException {
+    void testRemoveListItem() throws ConfigurationException {
         config.clearProperty(KEY_VALUES + "(2)");
         config.clearProperty(KEY_SPLIT + "(1)");
         final String xml = saveToString();
@@ -176,7 +176,7 @@ public class TestXMLListHandling {
      * Tests that the list format is kept if properties are not touched,
      */
     @Test
-    public void testSaveNoChanges() throws ConfigurationException {
+    void testSaveNoChanges() throws ConfigurationException {
         final String xml = saveToString();
 
         checkSplit(xml, ELEM_SPLIT, "1", "2");

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,9 +38,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code ConfigurationAttributePointer}.
- *
  */
 public class TestConfigurationAttributePointer {
+
     /** Constant for the name of the test attribute. */
     private static final String ATTR_NAME = "myAttr";
 
@@ -58,7 +58,7 @@ public class TestConfigurationAttributePointer {
         final ImmutableNode.Builder ndBuilder = new ImmutableNode.Builder();
         ndBuilder.name("parent").addAttribute(ATTR_NAME, ATTR_VALUE);
         final ImmutableNode nd = ndBuilder.create();
-        parent = new ConfigurationNodePointer<>(nd, Locale.ENGLISH, new InMemoryNodeModel(nd).getNodeHandler());
+        parent = new ConfigurationNodePointer<>(nd, Locale.ROOT, new InMemoryNodeModel(nd).getNodeHandler());
         pointer = new ConfigurationAttributePointer<>(parent, ATTR_NAME);
     }
 
@@ -66,7 +66,7 @@ public class TestConfigurationAttributePointer {
      * Tests querying an iterator for attributes. Result should be null.
      */
     @Test
-    public void testAttributeIterator() {
+    void testAttributeIterator() {
         assertNull(pointer.attributeIterator(new QName(null, "test")));
     }
 
@@ -74,7 +74,7 @@ public class TestConfigurationAttributePointer {
      * Tests querying an iterator for children. Result should be null.
      */
     @Test
-    public void testChildIterator() {
+    void testChildIterator() {
         assertNull(pointer.childIterator(null, false, null));
     }
 
@@ -82,7 +82,7 @@ public class TestConfigurationAttributePointer {
      * Tests querying the base value.
      */
     @Test
-    public void testGetBaseValue() {
+    void testGetBaseValue() {
         assertEquals(ATTR_VALUE, pointer.getBaseValue());
     }
 
@@ -90,7 +90,7 @@ public class TestConfigurationAttributePointer {
      * Tests querying the immediate node. Here a proxy for an attribute node should be returned.
      */
     @Test
-    public void testGetImmediateNode() {
+    void testGetImmediateNode() {
         final Object node = pointer.getImmediateNode();
         final QueryResult<?> proxy = assertInstanceOf(QueryResult.class, node);
         assertTrue(proxy.isAttributeResult());
@@ -102,7 +102,7 @@ public class TestConfigurationAttributePointer {
      * Tests the length.
      */
     @Test
-    public void testGetLength() {
+    void testGetLength() {
         assertEquals(1, pointer.getLength());
     }
 
@@ -110,17 +110,17 @@ public class TestConfigurationAttributePointer {
      * Tests querying the node name.
      */
     @Test
-    public void testGetName() {
-        final QName name = pointer.getName();
-        assertEquals(ATTR_NAME, name.getName());
-        assertNull(name.getPrefix());
+    void testGetName() {
+        final QName qName = pointer.getName();
+        assertEquals(ATTR_NAME, qName.getName());
+        assertNull(qName.getPrefix());
     }
 
     /**
      * Tests whether the correct pointer is returned.
      */
     @Test
-    public void testGetParentPointer() {
+    void testGetParentPointer() {
         assertSame(parent, pointer.getParentPointer());
     }
 
@@ -128,7 +128,7 @@ public class TestConfigurationAttributePointer {
      * Tests querying the attribute's value.
      */
     @Test
-    public void testGetValue() {
+    void testGetValue() {
         assertEquals(ATTR_VALUE, pointer.getValue());
     }
 
@@ -136,7 +136,7 @@ public class TestConfigurationAttributePointer {
      * Tests the attribute flag.
      */
     @Test
-    public void testIsAttribute() {
+    void testIsAttribute() {
         assertTrue(pointer.isAttribute());
     }
 
@@ -144,7 +144,7 @@ public class TestConfigurationAttributePointer {
      * Tests the collection flag.
      */
     @Test
-    public void testIsCollection() {
+    void testIsCollection() {
         assertFalse(pointer.isCollection());
     }
 
@@ -152,7 +152,7 @@ public class TestConfigurationAttributePointer {
      * Tests the leaf flag.
      */
     @Test
-    public void testIsLeaf() {
+    void testIsLeaf() {
         assertTrue(pointer.isLeaf());
     }
 
@@ -160,7 +160,7 @@ public class TestConfigurationAttributePointer {
      * Tries to set a new value.
      */
     @Test
-    public void testSetValue() {
+    void testSetValue() {
         assertThrows(UnsupportedOperationException.class, () -> pointer.setValue("newValue"));
     }
 
@@ -168,7 +168,7 @@ public class TestConfigurationAttributePointer {
      * Tests the testNode() method.
      */
     @Test
-    public void testTestNode() {
+    void testTestNode() {
         NodeTest test = new NodeTypeTest(Compiler.NODE_TYPE_TEXT);
         assertTrue(pointer.testNode(test));
         test = new NodeTypeTest(Compiler.NODE_TYPE_COMMENT);

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,10 +46,21 @@ import org.springframework.util.Assert;
  */
 public class ConfigurationPropertiesFactoryBean implements InitializingBean, FactoryBean<Properties> {
 
-    /** internal CompositeConfiguration containing the merged configuration objects **/
+    /**
+     * Creates a defensive copy of the specified array. Handles null values correctly.
+     *
+     * @param src the source array
+     * @param <T> the type of the array
+     * @return the defensive copy of the array
+     */
+    private static <T> T[] clone(final T[] src) {
+        return src != null ? src.clone() : null;
+    }
+
+    /** Internal CompositeConfiguration containing the merged configuration objects **/
     private CompositeConfiguration compositeConfiguration;
 
-    /** supplied configurations that will be merged in compositeConfiguration **/
+    /** Supplied configurations that will be merged in compositeConfiguration **/
     private Configuration[] configurations;
 
     /** Spring resources for loading configurations **/
@@ -58,36 +69,20 @@ public class ConfigurationPropertiesFactoryBean implements InitializingBean, Fac
     /** @see org.apache.commons.configuration2.AbstractConfiguration#throwExceptionOnMissing **/
     private boolean throwExceptionOnMissing = true;
 
+    /**
+     * Constructs a new instance.
+     */
     public ConfigurationPropertiesFactoryBean() {
     }
 
+    /**
+     * Constructs a new instance.
+     *
+     * @param configuration The configuration to compose.
+     */
     public ConfigurationPropertiesFactoryBean(final Configuration configuration) {
         Assert.notNull(configuration, "configuration");
         this.compositeConfiguration = new CompositeConfiguration(configuration);
-    }
-
-    /**
-     * @see org.springframework.beans.factory.FactoryBean#getObject()
-     */
-    @Override
-    public Properties getObject() throws Exception {
-        return compositeConfiguration != null ? ConfigurationConverter.getProperties(compositeConfiguration) : null;
-    }
-
-    /**
-     * @see org.springframework.beans.factory.FactoryBean#getObjectType()
-     */
-    @Override
-    public Class<?> getObjectType() {
-        return Properties.class;
-    }
-
-    /**
-     * @see org.springframework.beans.factory.FactoryBean#isSingleton()
-     */
-    @Override
-    public boolean isSingleton() {
-        return true;
     }
 
     /**
@@ -116,21 +111,73 @@ public class ConfigurationPropertiesFactoryBean implements InitializingBean, Fac
         }
     }
 
-    public Configuration[] getConfigurations() {
-        return defensiveCopy(configurations);
+    /**
+     * Gets the composite configuration.
+     *
+     * @return the composite configuration.
+     */
+    public CompositeConfiguration getConfiguration() {
+        return compositeConfiguration;
     }
 
     /**
-     * Set the commons configurations objects which will be used as properties.
+     * Gets a copy of the configurations.
      *
-     * @param configurations commons configurations objects which will be used as properties.
+     * @return a copy of the configurations.
      */
-    public void setConfigurations(final Configuration... configurations) {
-        this.configurations = defensiveCopy(configurations);
+    public Configuration[] getConfigurations() {
+        return clone(configurations);
     }
 
+    /**
+     * Gets a copy of the resource locations.
+     *
+     * @return a copy of the resource locations.
+     */
     public Resource[] getLocations() {
-        return defensiveCopy(locations);
+        return clone(locations);
+    }
+
+    /**
+     * @see org.springframework.beans.factory.FactoryBean#getObject()
+     */
+    @Override
+    public Properties getObject() throws Exception {
+        return compositeConfiguration != null ? ConfigurationConverter.getProperties(compositeConfiguration) : null;
+    }
+
+    /**
+     * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+     */
+    @Override
+    public Class<?> getObjectType() {
+        return Properties.class;
+    }
+
+    /**
+     * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+     */
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+    /**
+     * Tests the underlying CompositeConfiguration throwExceptionOnMissing flag.
+     *
+     * @return the underlying CompositeConfiguration throwExceptionOnMissing flag.
+     */
+    public boolean isThrowExceptionOnMissing() {
+        return throwExceptionOnMissing;
+    }
+
+    /**
+     * Sets the Commons Configuration objects which will be used as properties.
+     *
+     * @param configurations Commons Configuration objects which will be used as properties.
+     */
+    public void setConfigurations(final Configuration... configurations) {
+        this.configurations = clone(configurations);
     }
 
     /**
@@ -140,35 +187,16 @@ public class ConfigurationPropertiesFactoryBean implements InitializingBean, Fac
      * @param locations resources of configuration files
      */
     public void setLocations(final Resource... locations) {
-        this.locations = defensiveCopy(locations);
-    }
-
-    public boolean isThrowExceptionOnMissing() {
-        return throwExceptionOnMissing;
+        this.locations = clone(locations);
     }
 
     /**
-     * Set the underlying Commons CompositeConfiguration throwExceptionOnMissing flag.
+     * Sets the underlying CompositeConfiguration throwExceptionOnMissing flag.
      *
      * @see org.apache.commons.configuration2.AbstractConfiguration#setThrowExceptionOnMissing(boolean)
      * @param throwExceptionOnMissing The new value for the property
      */
     public void setThrowExceptionOnMissing(final boolean throwExceptionOnMissing) {
         this.throwExceptionOnMissing = throwExceptionOnMissing;
-    }
-
-    public CompositeConfiguration getConfiguration() {
-        return compositeConfiguration;
-    }
-
-    /**
-     * Creates a defensive copy of the specified array. Handles null values correctly.
-     *
-     * @param src the source array
-     * @param <T> the type of the array
-     * @return the defensive copy of the array
-     */
-    private static <T> T[] defensiveCopy(final T[] src) {
-        return src != null ? src.clone() : null;
     }
 }

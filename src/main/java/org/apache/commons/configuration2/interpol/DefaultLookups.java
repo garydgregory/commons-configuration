@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,10 +19,8 @@ package org.apache.commons.configuration2.interpol;
 import org.apache.commons.text.lookup.StringLookupFactory;
 
 /**
- * <p>
- * An enumeration class defining constants for built-in {@code Lookup} objects available for
+ * Enumerates built-in {@code Lookup} objects available for
  * {@code Configuration} instances.
- * </p>
  * <p>
  * When a new configuration object derived from {@code AbstractConfiguration} is created, it installs a
  * {@link ConfigurationInterpolator} containing a default set of {@link Lookup} objects. These lookups are
@@ -211,7 +209,7 @@ public enum DefaultLookups {
     }
 
     /**
-     * Returns the standard {@code Lookup} instance of this kind.
+     * Gets the standard {@code Lookup} instance of this kind.
      *
      * @return the associated {@code Lookup} object
      */
@@ -220,7 +218,7 @@ public enum DefaultLookups {
     }
 
     /**
-     * Returns the standard prefix for the lookup object of this kind.
+     * Gets the standard prefix for the lookup object of this kind.
      *
      * @return the prefix
      */

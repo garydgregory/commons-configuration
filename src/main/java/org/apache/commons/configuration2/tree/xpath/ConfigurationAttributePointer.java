@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,10 +29,11 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  * A specialized {@code NodePointer} implementation for the attributes of a configuration node.
  * </p>
  *
- * @since 2.0
  * @param <T> the type of the nodes this pointer deals with
+ * @since 2.0
  */
-class ConfigurationAttributePointer<T> extends NodePointer {
+final class ConfigurationAttributePointer<T> extends NodePointer {
+
     /**
      * The serial version UID.
      */
@@ -53,19 +54,6 @@ class ConfigurationAttributePointer<T> extends NodePointer {
     }
 
     /**
-     * Returns a reference to the parent node pointer.
-     *
-     * @return the parent pointer
-     */
-    public ConfigurationNodePointer<T> getParentPointer() {
-        // safe to cast because the constructor only expects pointers of this
-        // type
-        @SuppressWarnings("unchecked")
-        final ConfigurationNodePointer<T> configurationNodePointer = (ConfigurationNodePointer<T>) getParent();
-        return configurationNodePointer;
-    }
-
-    /**
      * Compares two child node pointers. Attributes do not have any children, so this is just a dummy implementation.
      *
      * @param p1 the first pointer
@@ -78,7 +66,7 @@ class ConfigurationAttributePointer<T> extends NodePointer {
     }
 
     /**
-     * Returns the base value. We return the value.
+     * Gets the base value. We return the value.
      *
      * @return the base value
      */
@@ -88,7 +76,7 @@ class ConfigurationAttributePointer<T> extends NodePointer {
     }
 
     /**
-     * Returns the immediate node. This is actually a {@link QueryResult} object describing the represented attribute.
+     * Gets the immediate node. This is actually a {@link QueryResult} object describing the represented attribute.
      *
      * @return the immediate node
      */
@@ -98,7 +86,7 @@ class ConfigurationAttributePointer<T> extends NodePointer {
     }
 
     /**
-     * Returns the length of the represented node. This is always 1.
+     * Gets the length of the represented node. This is always 1.
      *
      * @return the length
      */
@@ -108,13 +96,55 @@ class ConfigurationAttributePointer<T> extends NodePointer {
     }
 
     /**
-     * Returns the name of this node. This is the attribute name.
+     * Gets the name of this node. This is the attribute name.
      *
      * @return the name of this node
      */
     @Override
     public QName getName() {
         return new QName(null, attributeResult.getAttributeName());
+    }
+
+    /**
+     * Returns a reference to the current node handler. The handler is obtained from the parent pointer.
+     *
+     * @return the node handler
+     */
+    private NodeHandler<T> getNodeHandler() {
+        return getParentPointer().getNodeHandler();
+    }
+
+    /**
+     * Gets a reference to the parent node pointer.
+     *
+     * @return the parent pointer
+     */
+    public ConfigurationNodePointer<T> getParentPointer() {
+        // safe to cast because the constructor only expects pointers of this
+        // type
+        @SuppressWarnings("unchecked")
+        final ConfigurationNodePointer<T> configurationNodePointer = (ConfigurationNodePointer<T>) getParent();
+        return configurationNodePointer;
+    }
+
+    /**
+     * Returns the value of this node.
+     *
+     * @return this node's value
+     */
+    @Override
+    public Object getValue() {
+        return attributeResult.getAttributeValue(getNodeHandler());
+    }
+
+    /**
+     * Returns a flag whether this node is an attribute. Of course, this is the case.
+     *
+     * @return the attribute flag
+     */
+    @Override
+    public boolean isAttribute() {
+        return true;
     }
 
     /**
@@ -135,26 +165,6 @@ class ConfigurationAttributePointer<T> extends NodePointer {
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-    /**
-     * Returns a flag whether this node is an attribute. Of course, this is the case.
-     *
-     * @return the attribute flag
-     */
-    @Override
-    public boolean isAttribute() {
-        return true;
-    }
-
-    /**
-     * Returns the value of this node.
-     *
-     * @return this node's value
-     */
-    @Override
-    public Object getValue() {
-        return attributeResult.getAttributeValue(getNodeHandler());
     }
 
     /**
@@ -180,14 +190,5 @@ class ConfigurationAttributePointer<T> extends NodePointer {
             return true;
         }
         return super.testNode(test);
-    }
-
-    /**
-     * Returns a reference to the current node handler. The handler is obtained from the parent pointer.
-     *
-     * @return the node handler
-     */
-    private NodeHandler<T> getNodeHandler() {
-        return getParentPointer().getNodeHandler();
     }
 }

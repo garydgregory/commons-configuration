@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,6 +43,7 @@ import org.yaml.snakeyaml.Yaml;
  * Unit test for {@link YAMLConfiguration}
  */
 public class TestYAMLConfiguration {
+
     /** A folder for temporary files. */
     @TempDir
     public File tempFolder;
@@ -59,7 +60,7 @@ public class TestYAMLConfiguration {
     }
 
     @Test
-    public void testCopyConstructor() {
+    void testCopyConstructor() {
         final BaseHierarchicalConfiguration c = new BaseHierarchicalConfiguration();
         c.addProperty("foo", "bar");
 
@@ -68,48 +69,54 @@ public class TestYAMLConfiguration {
     }
 
     @Test
-    public void testGetProperty_dictionary() {
+    void testDoubleStringValues() {
+        final Object property = yamlConfiguration.getProperty("key5.example");
+        assertEquals(Arrays.asList("", "", "value"), property);
+    }
+
+    @Test
+    void testGetPropertyDictionary() {
         assertEquals("Martin D'vloper", yamlConfiguration.getProperty("martin.name"));
         assertEquals("Developer", yamlConfiguration.getProperty("martin.job"));
         assertEquals("Elite", yamlConfiguration.getProperty("martin.skill"));
     }
 
     @Test
-    public void testGetProperty_integer() {
+    void testGetPropertyInteger() {
         final Object property = yamlConfiguration.getProperty("int1");
         assertInstanceOf(Integer.class, property);
         assertEquals(37, property);
     }
 
     @Test
-    public void testGetProperty_nested() {
+    void testGetPropertyNested() {
         assertEquals("value23", yamlConfiguration.getProperty("key2.key3"));
     }
 
     @Test
-    public void testGetProperty_nested_with_list() {
+    void testGetPropertyNestedWithList() {
         assertEquals(Arrays.asList("col1", "col2"), yamlConfiguration.getProperty("key4.key5"));
     }
 
     @Test
-    public void testGetProperty_simple() {
+    void testGetPropertySimple() {
         assertEquals("value1", yamlConfiguration.getProperty("key1"));
     }
 
     @Test
-    public void testGetProperty_subset() {
+    void testGetPropertySubset() {
         final Configuration subset = yamlConfiguration.subset("key4");
         assertEquals(Arrays.asList("col1", "col2"), subset.getProperty("key5"));
     }
 
     @Test
-    public void testGetProperty_very_nested_properties() {
+    void testGetPropertyVeryNestedProperties() {
         final Object property = yamlConfiguration.getProperty("very.nested.properties");
         assertEquals(Arrays.asList("nested1", "nested2", "nested3"), property);
     }
 
     @Test
-    public void testObjectCreationFromReader() {
+    void testObjectCreationFromReader() {
         final File createdFile = new File(tempFolder, "data.txt");
         final String yaml = "!!java.io.FileOutputStream [" + createdFile.getAbsolutePath() + "]";
         final StringReader reader = new StringReader(yaml);
@@ -119,7 +126,7 @@ public class TestYAMLConfiguration {
     }
 
     @Test
-    public void testObjectCreationFromStream() {
+    void testObjectCreationFromStream() {
         final File createdFile = new File(tempFolder, "data.txt");
         final String yaml = "!!java.io.FileOutputStream [" + createdFile.getAbsolutePath() + "]";
         final ByteArrayInputStream inputStream = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
@@ -129,7 +136,7 @@ public class TestYAMLConfiguration {
     }
 
     @Test
-    public void testSave() throws IOException, ConfigurationException {
+    void testSave() throws IOException, ConfigurationException {
         // save the YAMLConfiguration as a String...
         final StringWriter sw = new StringWriter();
         yamlConfiguration.write(sw);
@@ -137,7 +144,7 @@ public class TestYAMLConfiguration {
 
         // ..and then try parsing it back as using SnakeYAML
         final Map<?, ?> parsed = new Yaml().loadAs(output, Map.class);
-        assertEquals(6, parsed.entrySet().size());
+        assertEquals(7, parsed.entrySet().size());
         assertEquals("value1", parsed.get("key1"));
 
         final Map<?, ?> key2 = (Map<?, ?>) parsed.get("key2");

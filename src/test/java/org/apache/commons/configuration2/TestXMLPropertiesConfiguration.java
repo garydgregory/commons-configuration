@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ package org.apache.commons.configuration2;
 import static org.apache.commons.configuration2.TempDirUtils.newFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.net.URL;
@@ -41,9 +42,9 @@ import org.xml.sax.InputSource;
 
 /**
  * Test class for {@code XMLPropertiesConfiguration}.
- *
  */
 public class TestXMLPropertiesConfiguration {
+
     /** Constant for the name of the test file. */
     private static final String TEST_PROPERTIES_FILE = "test.properties.xml";
 
@@ -66,7 +67,10 @@ public class TestXMLPropertiesConfiguration {
     public File tempFolder;
 
     @Test
-    public void testDOMLoad() throws Exception {
+    void testDOMLoad() throws Exception {
+        // Edge case
+        assertThrows(NullPointerException.class, () -> new XMLPropertiesConfiguration(null));
+        // Normal case
         final URL location = ConfigurationAssert.getTestURL(TEST_PROPERTIES_FILE);
         final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -84,7 +88,7 @@ public class TestXMLPropertiesConfiguration {
     }
 
     @Test
-    public void testDOMSave() throws Exception {
+    void testDOMSave() throws Exception {
         // load the configuration
         final XMLPropertiesConfiguration conf = load(TEST_PROPERTIES_FILE);
 
@@ -120,7 +124,7 @@ public class TestXMLPropertiesConfiguration {
     }
 
     @Test
-    public void testLoad() throws Exception {
+    void testLoad() throws Exception {
         final XMLPropertiesConfiguration conf = load(TEST_PROPERTIES_FILE);
         assertEquals("Description of the property list", conf.getHeader());
 
@@ -131,7 +135,7 @@ public class TestXMLPropertiesConfiguration {
     }
 
     @Test
-    public void testSave() throws Exception {
+    void testSave() throws Exception {
         // load the configuration
         final XMLPropertiesConfiguration conf = load(TEST_PROPERTIES_FILE);
 

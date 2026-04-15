@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,11 +42,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Test class for BaseConfigurationXMLReader.
- *
  */
 public class TestBaseConfigurationXMLReader {
     // A ContentHandler that raises an exception
-    private static class TestContentHandler extends DefaultHandler {
+    private static final class TestContentHandler extends DefaultHandler {
         @Override
         public void characters(final char[] ch, final int start, final int length) throws SAXException {
             throw new SAXException("Test exception during parsing");
@@ -118,24 +117,24 @@ public class TestBaseConfigurationXMLReader {
     }
 
     @Test
-    public void testParse() throws Exception {
+    void testParse() throws Exception {
         checkDocument(configReader, "config");
     }
 
     @Test
-    public void testParseIOException() {
+    void testParseIOException() {
         final BaseConfigurationXMLReader reader = new BaseConfigurationXMLReader();
         assertThrows(IOException.class, () -> reader.parse("document"));
     }
 
     @Test
-    public void testParseSAXException() {
+    void testParseSAXException() {
         configReader.setContentHandler(new TestContentHandler());
         assertThrows(SAXException.class, () -> configReader.parse("systemID"));
     }
 
     @Test
-    public void testSetRootName() throws Exception {
+    void testSetRootName() throws Exception {
         final BaseConfigurationXMLReader reader = new BaseConfigurationXMLReader(config);
         reader.setRootName("apache");
         checkDocument(reader, "apache");

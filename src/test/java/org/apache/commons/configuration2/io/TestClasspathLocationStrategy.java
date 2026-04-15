@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,9 +30,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code ClasspathLocationStrategy}.
- *
  */
 public class TestClasspathLocationStrategy {
+
     /** Constant for a test file name. */
     private static final String FILE_NAME = "test.xml";
 
@@ -52,7 +52,7 @@ public class TestClasspathLocationStrategy {
      * Tests a failed locate() operation.
      */
     @Test
-    public void testLocateFailed() {
+    void testLocateFailed() {
         final FileLocator locator = FileLocatorUtils.fileLocator().fileName("non existing resource name!").create();
         assertNull(strategy.locate(fileSystem, locator));
     }
@@ -61,7 +61,7 @@ public class TestClasspathLocationStrategy {
      * Tests a locate() operation if no file name is provided.
      */
     @Test
-    public void testLocateNoFileName() {
+    void testLocateNoFileName() {
         final FileLocator locator = FileLocatorUtils.fileLocator().fileName("").create();
         assertNull(strategy.locate(fileSystem, locator));
     }
@@ -70,7 +70,7 @@ public class TestClasspathLocationStrategy {
      * Tests a successful location of a provided resource name.
      */
     @Test
-    public void testLocateSuccess() throws ConfigurationException {
+    void testLocateSuccess() throws ConfigurationException {
         final FileLocator locator = FileLocatorUtils.fileLocator().fileName(FILE_NAME).basePath("somePath").create();
         final URL url = strategy.locate(fileSystem, locator);
         final Configurations configurations = new Configurations();

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,11 +32,24 @@ import org.apache.commons.lang3.StringUtils;
  * @since 2.0
  */
 public class ClasspathLocationStrategy implements FileLocationStrategy {
+
+    /**
+     * A singleton instance of this strategy.
+     */
+    static final ClasspathLocationStrategy INSTANCE = new ClasspathLocationStrategy();
+
+    /**
+     * Constructs a new instance.
+     */
+    public ClasspathLocationStrategy() {
+        // empty
+    }
+
     /**
      * {@inheritDoc} This implementation looks up the locator's file name as a resource on the class path.
      */
     @Override
     public URL locate(final FileSystem fileSystem, final FileLocator locator) {
-        return StringUtils.isEmpty(locator.getFileName()) ? null : FileLocatorUtils.locateFromClasspath(locator.getFileName());
+        return StringUtils.isEmpty(locator.getFileName()) ? null : FileLocatorUtils.getClasspathResource(locator.getFileName());
     }
 }

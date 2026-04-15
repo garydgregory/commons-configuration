@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@
 
 package org.apache.commons.configuration2.web;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,25 +37,8 @@ import org.mockito.ArgumentMatchers;
 
 /**
  * Test case for the {@link ServletContextConfiguration} class.
- *
  */
 public class TestServletContextConfiguration extends TestAbstractConfiguration {
-
-    /**
-     * Creates a mocked {@link ServletConfig}.
-     *
-     * @param parameters the init parameters to use
-     * @return The created mock
-     */
-    private ServletContext mockServletConfig(Properties parameters) {
-        final ServletContext context = mock(ServletContext.class);
-        when(context.getInitParameterNames()).thenAnswer(invocation -> parameters.keys());
-        when(context.getInitParameter(ArgumentMatchers.any())).thenAnswer(invocation -> {
-            final String name = invocation.getArgument(0, String.class);
-            return parameters.getProperty(name);
-        });
-        return context;
-    }
 
     @Override
     protected AbstractConfiguration getConfiguration() {
@@ -73,6 +57,7 @@ public class TestServletContextConfiguration extends TestAbstractConfiguration {
 
         // create a servlet
         final Servlet servlet = new HttpServlet() {
+
             /**
              * Serial version UID.
              */
@@ -84,7 +69,7 @@ public class TestServletContextConfiguration extends TestAbstractConfiguration {
             }
         };
 
-        final ServletContextConfiguration resultConfig = new ServletContextConfiguration(servlet);
+        final AbstractConfiguration resultConfig = new ServletContextConfiguration(servlet);
         resultConfig.setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         return resultConfig;
     }
@@ -97,6 +82,22 @@ public class TestServletContextConfiguration extends TestAbstractConfiguration {
         return new ServletContextConfiguration(context);
     }
 
+    /**
+     * Creates a mocked {@link ServletConfig}.
+     *
+     * @param parameters the init parameters to use
+     * @return The created mock
+     */
+    private ServletContext mockServletConfig(final Properties parameters) {
+        final ServletContext context = mock(ServletContext.class);
+        when(context.getInitParameterNames()).thenAnswer(invocation -> parameters.keys());
+        when(context.getInitParameter(ArgumentMatchers.any())).thenAnswer(invocation -> {
+            final String name = invocation.getArgument(0, String.class);
+            return parameters.getProperty(name);
+        });
+        return context;
+    }
+
     @Override
     @Test
     public void testAddPropertyDirect() {
@@ -107,5 +108,12 @@ public class TestServletContextConfiguration extends TestAbstractConfiguration {
     @Test
     public void testClearProperty() {
         assertThrows(UnsupportedOperationException.class, super::testClearProperty);
+    }
+
+    @Override
+    @Test
+    public void testContainsValue() {
+        assertFalse(getConfiguration().containsValue(null));
+        assertFalse(getConfiguration().containsValue(""));
     }
 }

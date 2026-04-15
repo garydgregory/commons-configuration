@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,11 +34,12 @@ import org.apache.commons.configuration2.event.EventListenerList;
  * @since 2.0
  */
 public interface EventListenerProvider {
+
     /**
-     * Returns an {@code EventListenerList} object with information about event listener registrations. All listeners
+     * Gets an {@code EventListenerList} object with information about event listener registrations. All listeners
      * contained in this object are added to the processing {@code ConfigurationBuilder}.
      *
-     * @return the {@code EventListenerList} with event listener registrations (must not be <b>null</b>)
+     * @return the {@code EventListenerList} with event listener registrations (must not be <strong>null</strong>)
      */
     EventListenerList getListeners();
 }

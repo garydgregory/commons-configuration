@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,9 +25,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test case for the ManagedReloadingDetector class.
- *
  */
 public class TestManagedReloadingDetector {
+
     /** The instance to be tested. */
     private ManagedReloadingDetector strategy;
 
@@ -40,7 +40,7 @@ public class TestManagedReloadingDetector {
      * Tests the refresh() method.
      */
     @Test
-    public void testRefresh() {
+    void testRefresh() {
         strategy.refresh();
         assertTrue(strategy.isReloadingRequired());
         assertTrue(strategy.isReloadingRequired());
@@ -50,7 +50,7 @@ public class TestManagedReloadingDetector {
      * Tests whether the reloading state can be reset again.
      */
     @Test
-    public void testReloadingPerformed() {
+    void testReloadingPerformed() {
         strategy.refresh();
         strategy.reloadingPerformed();
         assertFalse(strategy.isReloadingRequired());
@@ -60,7 +60,7 @@ public class TestManagedReloadingDetector {
      * Tests the result of isReloadingRequired() for a newly created instance.
      */
     @Test
-    public void testReloadingRequiredInitial() {
+    void testReloadingRequiredInitial() {
         assertFalse(strategy.isReloadingRequired());
     }
 }

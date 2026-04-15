@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,18 +36,10 @@ import org.apache.commons.configuration2.tree.NodeModelSupport;
  * structures.
  * </p>
  *
- * @since 2.0
  * @param <T> the type of the nodes used by this hierarchical configuration
+ * @since 2.0
  */
 public interface HierarchicalConfiguration<T> extends Configuration, ImmutableHierarchicalConfiguration, NodeModelSupport<T> {
-    /**
-     * Sets the expression engine to be used by this configuration. All property keys this configuration has to deal with
-     * will be interpreted by this engine.
-     *
-     * @param expressionEngine the new expression engine; can be <b>null</b>, then the default expression engine will be
-     *        used
-     */
-    void setExpressionEngine(ExpressionEngine expressionEngine);
 
     /**
      * Adds a collection of nodes at the specified position of the configuration tree. This method works similar to
@@ -57,10 +49,50 @@ public interface HierarchicalConfiguration<T> extends Configuration, ImmutableHi
      * node, the new nodes are added to this node. Otherwise a new node will be created at the specified position in the
      * hierarchy.
      *
-     * @param key the key where the nodes are to be added; can be <b>null </b>, then they are added to the root node
+     * @param key the key where the nodes are to be added; can be <strong>null </strong>, then they are added to the root node
      * @param nodes a collection with the {@code Node} objects to be added
      */
     void addNodes(String key, Collection<? extends T> nodes);
+
+    /**
+     * Returns a list with sub configurations for all child nodes of the node selected by the given key. This method works
+     * like {@link #immutableChildConfigurationsAt(String)}, but returns a list with mutable configuration objects. The
+     * configuration objects returned are <strong>not</strong> connected to the parent configuration.
+     *
+     * @param key the key for selecting the desired parent node
+     * @return a collection with {@code HierarchicalConfiguration} objects for all child nodes of the selected parent node
+     */
+    List<HierarchicalConfiguration<T>> childConfigurationsAt(String key);
+
+    /**
+     * Returns a list with sub configurations for all child nodes of the node selected by the given key allowing the caller
+     * to specify the {@code supportUpdates} flag.
+     *
+     * @param key the key for selecting the desired parent node
+     * @param supportUpdates a flag whether the returned sub configuration should be directly connected to its parent
+     * @return a collection with {@code HierarchicalConfiguration} objects for all child nodes of the selected parent node
+     */
+    List<HierarchicalConfiguration<T>> childConfigurationsAt(String key, boolean supportUpdates);
+
+    /**
+     * Removes all values of the property with the given name and of keys that start with this name. So if there is a
+     * property with the key &quot;foo&quot; and a property with the key &quot;foo.bar&quot;, a call of
+     * {@code clearTree("foo")} would remove both properties.
+     *
+     * @param key the key of the property to be removed
+     */
+    void clearTree(String key);
+
+    /**
+     * Returns a hierarchical subnode configuration for the node specified by the given key. This is a short form for
+     * {@code configurationAt(key,
+     * <strong>false</strong>)}.
+     *
+     * @param key the key that selects the sub tree
+     * @return a hierarchical configuration that contains this sub tree
+     * @see SubnodeConfiguration
+     */
+    HierarchicalConfiguration<T> configurationAt(String key);
 
     /**
      * <p>
@@ -77,8 +109,8 @@ public interface HierarchicalConfiguration<T> extends Configuration, ImmutableHi
      * </p>
      * <p>
      * With the {@code supportUpdate} flag the behavior of the returned sub configuration regarding updates of its parent
-     * configuration can be determined. If set to <b>false</b>, the configurations return on independent nodes structures.
-     * So changes made on one configuration cannot be seen by the other one. A value of <b>true</b> in contrast creates a
+     * configuration can be determined. If set to <strong>false</strong>, the configurations return on independent nodes structures.
+     * So changes made on one configuration cannot be seen by the other one. A value of <strong>true</strong> in contrast creates a
      * direct connection between both configurations - they are then using the same underlying data structures as much as
      * possible. There are however changes which break this connection; for instance, if the sub tree the sub configuration
      * belongs to is completely removed from the parent configuration. If such a change happens, the sub configuration
@@ -92,17 +124,6 @@ public interface HierarchicalConfiguration<T> extends Configuration, ImmutableHi
      * @see SubnodeConfiguration
      */
     HierarchicalConfiguration<T> configurationAt(String key, boolean supportUpdates);
-
-    /**
-     * Returns a hierarchical subnode configuration for the node specified by the given key. This is a short form for
-     * {@code configurationAt(key,
-     * <b>false</b>)}.
-     *
-     * @param key the key that selects the sub tree
-     * @return a hierarchical configuration that contains this sub tree
-     * @see SubnodeConfiguration
-     */
-    HierarchicalConfiguration<T> configurationAt(String key);
 
     /**
      * Returns a list of sub configurations for all configuration nodes selected by the given key. This method will evaluate
@@ -146,31 +167,11 @@ public interface HierarchicalConfiguration<T> extends Configuration, ImmutableHi
     List<HierarchicalConfiguration<T>> configurationsAt(String key, boolean supportUpdates);
 
     /**
-     * Returns a list with sub configurations for all child nodes of the node selected by the given key. This method works
-     * like {@link #immutableChildConfigurationsAt(String)}, but returns a list with mutable configuration objects. The
-     * configuration objects returned are <strong>not</strong> connected to the parent configuration.
+     * Sets the expression engine to be used by this configuration. All property keys this configuration has to deal with
+     * will be interpreted by this engine.
      *
-     * @param key the key for selecting the desired parent node
-     * @return a collection with {@code HierarchicalConfiguration} objects for all child nodes of the selected parent node
+     * @param expressionEngine the new expression engine; can be <strong>null</strong>, then the default expression engine will be
+     *        used
      */
-    List<HierarchicalConfiguration<T>> childConfigurationsAt(String key);
-
-    /**
-     * Returns a list with sub configurations for all child nodes of the node selected by the given key allowing the caller
-     * to specify the {@code supportUpdates} flag.
-     *
-     * @param key the key for selecting the desired parent node
-     * @param supportUpdates a flag whether the returned sub configuration should be directly connected to its parent
-     * @return a collection with {@code HierarchicalConfiguration} objects for all child nodes of the selected parent node
-     */
-    List<HierarchicalConfiguration<T>> childConfigurationsAt(String key, boolean supportUpdates);
-
-    /**
-     * Removes all values of the property with the given name and of keys that start with this name. So if there is a
-     * property with the key &quot;foo&quot; and a property with the key &quot;foo.bar&quot;, a call of
-     * {@code clearTree("foo")} would remove both properties.
-     *
-     * @param key the key of the property to be removed
-     */
-    void clearTree(String key);
+    void setExpressionEngine(ExpressionEngine expressionEngine);
 }

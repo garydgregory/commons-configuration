@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,15 +31,38 @@ import org.apache.commons.lang3.StringUtils;
  * implement specific behavior based on the concrete node type (child node or attribute node).
  * </p>
  *
- * @since 1.3
  * @param <T> the type of the nodes this iterator deals with
+ * @since 1.3
  */
-abstract class ConfigurationNodeIteratorBase<T> implements NodeIterator {
+abstract class AbstractConfigurationNodeIterator<T> implements NodeIterator {
+
     /** Constant for the prefix separator. */
     private static final String PREFIX_SEPARATOR = ":";
 
     /** A format for constructing a node name with a namespace prefix. */
     private static final String FMT_NAMESPACE = "%s" + PREFIX_SEPARATOR + "%s";
+
+    /**
+     * Generates a qualified name with a namespace prefix.
+     *
+     * @param prefix the prefix
+     * @param name the name (may be <strong>null</strong>)
+     * @return the qualified name
+     */
+    protected static String prefixName(final String prefix, final String name) {
+        return String.format(FMT_NAMESPACE, prefix, StringUtils.defaultString(name));
+    }
+
+    /**
+     * Returns the qualified name from the given {@code QName}. If the name has no namespace, result is the simple name.
+     * Otherwise, the namespace prefix is added.
+     *
+     * @param qName the {@code QName}
+     * @return the qualified name
+     */
+    protected static String qualifiedName(final QName qName) {
+        return qName.getPrefix() == null ? qName.getName() : prefixName(qName.getPrefix(), qName.getName());
+    }
 
     /** Stores the parent node pointer. */
     private final ConfigurationNodePointer<T> parent;
@@ -59,35 +82,40 @@ abstract class ConfigurationNodeIteratorBase<T> implements NodeIterator {
      * @param parent the parent pointer
      * @param reverse the reverse flag
      */
-    protected ConfigurationNodeIteratorBase(final ConfigurationNodePointer<T> parent, final boolean reverse) {
+    protected AbstractConfigurationNodeIterator(final ConfigurationNodePointer<T> parent, final boolean reverse) {
         this.parent = parent;
         this.reverse = reverse;
     }
 
     /**
-     * Returns the position of the iteration.
+     * Creates the configuration node pointer for the current position. This method is called by {@code getNodePointer()}.
+     * Derived classes must create the correct pointer object.
      *
-     * @return the position
+     * @param position the current position in the iteration
+     * @return the node pointer
      */
-    @Override
-    public int getPosition() {
-        return position;
+    protected abstract NodePointer createNodePointer(int position);
+
+    /**
+     * Gets the maximum position for this iterator.
+     *
+     * @return the maximum allowed position
+     */
+    protected int getMaxPosition() {
+        return reverse ? getStartOffset() + 1 : size() - getStartOffset();
     }
 
     /**
-     * Sets the position of the iteration.
+     * Gets the node handler for the managed nodes. This is a convenience method.
      *
-     * @param pos the new position
-     * @return a flag if this is a valid position
+     * @return the node handler
      */
-    @Override
-    public boolean setPosition(final int pos) {
-        position = pos;
-        return pos >= 1 && pos <= getMaxPosition();
+    protected NodeHandler<T> getNodeHandler() {
+        return getParent().getNodeHandler();
     }
 
     /**
-     * Returns the current node pointer.
+     * Gets the current node pointer.
      *
      * @return the current pointer in this iteration
      */
@@ -101,7 +129,7 @@ abstract class ConfigurationNodeIteratorBase<T> implements NodeIterator {
     }
 
     /**
-     * Returns the parent node pointer.
+     * Gets the parent node pointer.
      *
      * @return the parent node pointer
      */
@@ -110,21 +138,44 @@ abstract class ConfigurationNodeIteratorBase<T> implements NodeIterator {
     }
 
     /**
-     * Returns the node handler for the managed nodes. This is a convenience method.
+     * Gets the position of the iteration.
      *
-     * @return the node handler
+     * @return the position
      */
-    protected NodeHandler<T> getNodeHandler() {
-        return getParent().getNodeHandler();
+    @Override
+    public int getPosition() {
+        return position;
     }
 
     /**
-     * Returns the start offset of the iteration.
+     * Gets the start offset of the iteration.
      *
      * @return the start offset
      */
     protected int getStartOffset() {
         return startOffset;
+    }
+
+    /**
+     * Returns the index in the data list for the given position. This method also checks the reverse flag.
+     *
+     * @param pos the position (1-based)
+     * @return the corresponding list index
+     */
+    protected int positionToIndex(final int pos) {
+        return (reverse ? 1 - pos : pos - 1) + getStartOffset();
+    }
+
+    /**
+     * Sets the position of the iteration.
+     *
+     * @param pos the new position
+     * @return a flag if this is a valid position
+     */
+    @Override
+    public boolean setPosition(final int pos) {
+        position = pos;
+        return pos >= 1 && pos <= getMaxPosition();
     }
 
     /**
@@ -142,59 +193,9 @@ abstract class ConfigurationNodeIteratorBase<T> implements NodeIterator {
     }
 
     /**
-     * Returns the maximum position for this iterator.
-     *
-     * @return the maximum allowed position
-     */
-    protected int getMaxPosition() {
-        return reverse ? getStartOffset() + 1 : size() - getStartOffset();
-    }
-
-    /**
-     * Returns the index in the data list for the given position. This method also checks the reverse flag.
-     *
-     * @param pos the position (1-based)
-     * @return the corresponding list index
-     */
-    protected int positionToIndex(final int pos) {
-        return (reverse ? 1 - pos : pos - 1) + getStartOffset();
-    }
-
-    /**
-     * Creates the configuration node pointer for the current position. This method is called by {@code getNodePointer()}.
-     * Derived classes must create the correct pointer object.
-     *
-     * @param position the current position in the iteration
-     * @return the node pointer
-     */
-    protected abstract NodePointer createNodePointer(int position);
-
-    /**
      * Returns the number of elements in this iteration.
      *
      * @return the number of elements
      */
     protected abstract int size();
-
-    /**
-     * Generates a qualified name with a namespace prefix.
-     *
-     * @param prefix the prefix
-     * @param name the name (may be <b>null</b>)
-     * @return the qualified name
-     */
-    protected static String prefixName(final String prefix, final String name) {
-        return String.format(FMT_NAMESPACE, prefix, StringUtils.defaultString(name));
-    }
-
-    /**
-     * Returns the qualified name from the given {@code QName}. If the name has no namespace, result is the simple name.
-     * Otherwise, the namespace prefix is added.
-     *
-     * @param name the {@code QName}
-     * @return the qualified name
-     */
-    protected static String qualifiedName(final QName name) {
-        return name.getPrefix() == null ? name.getName() : prefixName(name.getPrefix(), name.getName());
-    }
 }

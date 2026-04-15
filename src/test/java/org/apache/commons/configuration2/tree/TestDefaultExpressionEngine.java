@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,14 +34,15 @@ import org.junit.jupiter.api.Test;
  * Test class for DefaultExpressionEngine.
  */
 public class TestDefaultExpressionEngine {
+
     /** Stores the names of the test nodes representing tables. */
-    private static final String[] tables = {"users", "documents"};
+    private static final String[] TABLES = {"users", "documents"};
 
     /** Stores the types of the test table nodes. */
-    private static final String[] tabTypes = {"system", "application"};
+    private static final String[] TAB_TYPES = {"system", "application"};
 
     /** Test data fields for the node hierarchy. */
-    private static final String[][] fields = {{"uid", "uname", "firstName", "lastName", "email"}, {"docid", "name", "creationDate", "authorID", "version"}};
+    private static final String[][] FIELDS = {{"uid", "uname", "firstName", "lastName", "email"}, {"docid", "name", "creationDate", "authorID", "version"}};
 
     /** The root of a hierarchy with test nodes. */
     private static ImmutableNode root;
@@ -95,17 +96,17 @@ public class TestDefaultExpressionEngine {
      * @return the root of the test node hierarchy
      */
     private static ImmutableNode setUpNodes() {
-        final ImmutableNode.Builder nodeTablesBuilder = new ImmutableNode.Builder(tables.length);
+        final ImmutableNode.Builder nodeTablesBuilder = new ImmutableNode.Builder(TABLES.length);
         nodeTablesBuilder.name("tables");
-        for (int i = 0; i < tables.length; i++) {
+        for (int i = 0; i < TABLES.length; i++) {
             final ImmutableNode.Builder nodeTableBuilder = new ImmutableNode.Builder(2);
             nodeTableBuilder.name("table");
-            nodeTableBuilder.addChild(new ImmutableNode.Builder().name("name").value(tables[i]).create());
-            nodeTableBuilder.addAttribute("type", tabTypes[i]);
+            nodeTableBuilder.addChild(new ImmutableNode.Builder().name("name").value(TABLES[i]).create());
+            nodeTableBuilder.addAttribute("type", TAB_TYPES[i]);
 
-            final ImmutableNode.Builder nodeFieldsBuilder = new ImmutableNode.Builder(fields[i].length);
-            for (int j = 0; j < fields[i].length; j++) {
-                nodeFieldsBuilder.addChild(createFieldNode(fields[i][j]));
+            final ImmutableNode.Builder nodeFieldsBuilder = new ImmutableNode.Builder(FIELDS[i].length);
+            for (int j = 0; j < FIELDS[i].length; j++) {
+                nodeFieldsBuilder.addChild(createFieldNode(FIELDS[i][j]));
             }
             nodeTableBuilder.addChild(nodeFieldsBuilder.name("fields").create());
             nodeTablesBuilder.addChild(nodeTableBuilder.create());
@@ -255,7 +256,7 @@ public class TestDefaultExpressionEngine {
      * Tests obtaining keys for attribute nodes.
      */
     @Test
-    public void testAttributeKey() {
+    void testAttributeKey() {
         assertEquals("tables.table[@type]", engine.attributeKey("tables.table", "type"));
     }
 
@@ -263,7 +264,7 @@ public class TestDefaultExpressionEngine {
      * Tests that a null parent key is ignored when constructing an attribute key.
      */
     @Test
-    public void testAttributeKeyNoParent() {
+    void testAttributeKeyNoParent() {
         assertEquals("[@test]", engine.attributeKey(null, "test"));
     }
 
@@ -271,7 +272,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether an attribute key can be queried if the root node is involved.
      */
     @Test
-    public void testAttributeKeyRoot() {
+    void testAttributeKeyRoot() {
         assertEquals("[@test]", engine.attributeKey("", "test"));
     }
 
@@ -279,7 +280,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether a correct attribute key with alternative syntax is generated.
      */
     @Test
-    public void testAttributeKeyWithAlternativeSyntax() {
+    void testAttributeKeyWithAlternativeSyntax() {
         setUpAlternativeSyntax();
         assertEquals("@test", engine.attributeKey("", "test"));
     }
@@ -288,7 +289,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether a canonical key can be queried if all child nodes have different names.
      */
     @Test
-    public void testCanonicalKeyNoDuplicates() {
+    void testCanonicalKeyNoDuplicates() {
         final ImmutableNode node = fetchNode("tables.table(0).name");
         assertEquals("table.name(0)", engine.canonicalKey(node, "table", handler));
     }
@@ -297,7 +298,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether the parent key can be undefined when querying a canonical key.
      */
     @Test
-    public void testCanonicalKeyNoParentKey() {
+    void testCanonicalKeyNoParentKey() {
         final ImmutableNode node = fetchNode("tables.table(0).fields.field(1).name");
         assertEquals("name(0)", engine.canonicalKey(node, null, handler));
     }
@@ -306,7 +307,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether a canonical key for the parent node can be queried if no parent key was passed in.
      */
     @Test
-    public void testCanonicalKeyRootNoParentKey() {
+    void testCanonicalKeyRootNoParentKey() {
         assertEquals("", engine.canonicalKey(root, null, handler));
     }
 
@@ -314,7 +315,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether a parent key is evaluated when determining the canonical key of the root node.
      */
     @Test
-    public void testCanonicalKeyRootWithParentKey() {
+    void testCanonicalKeyRootWithParentKey() {
         assertEquals("parent", engine.canonicalKey(root, "parent", handler));
     }
 
@@ -322,7 +323,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether duplicates are correctly resolved when querying for canonical keys.
      */
     @Test
-    public void testCanonicalKeyWithDuplicates() {
+    void testCanonicalKeyWithDuplicates() {
         final ImmutableNode tab1 = fetchNode("tables.table(0)");
         final ImmutableNode tab2 = fetchNode("tables.table(1)");
         assertEquals("tables.table(0)", engine.canonicalKey(tab1, "tables", handler));
@@ -333,7 +334,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether the default instance is initialized with default symbols.
      */
     @Test
-    public void testDefaultSymbols() {
+    void testDefaultSymbols() {
         assertSame(DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS, engine.getSymbols());
     }
 
@@ -341,7 +342,7 @@ public class TestDefaultExpressionEngine {
      * Tries to create an instance without symbols.
      */
     @Test
-    public void testInitNoSymbols() {
+    void testInitNoSymbols() {
         assertThrows(IllegalArgumentException.class, () -> new DefaultExpressionEngine(null));
     }
 
@@ -349,7 +350,7 @@ public class TestDefaultExpressionEngine {
      * Tests obtaining keys for nodes.
      */
     @Test
-    public void testNodeKey() {
+    void testNodeKey() {
         final ImmutableNode node = root.getChildren().get(0);
         assertEquals("tables", engine.nodeKey(node, "", handler));
         assertEquals("test.tables", engine.nodeKey(node, "test", handler));
@@ -360,7 +361,7 @@ public class TestDefaultExpressionEngine {
      * Tests obtaining node keys if a different syntax is set.
      */
     @Test
-    public void testNodeKeyWithAlternativeSyntax() {
+    void testNodeKeyWithAlternativeSyntax() {
         setUpAlternativeSyntax();
         assertEquals("tables/table", engine.nodeKey(root.getChildren().get(0).getChildren().get(0), "tables", handler));
     }
@@ -370,7 +371,7 @@ public class TestDefaultExpressionEngine {
      * attribute start marker.
      */
     @Test
-    public void testNodeKeyWithAlternativeSyntaxAttributePropertyDelimiter() {
+    void testNodeKeyWithAlternativeSyntaxAttributePropertyDelimiter() {
         setUpAlternativeSyntax();
         final DefaultExpressionEngineSymbols symbols = new DefaultExpressionEngineSymbols.Builder(engine.getSymbols())
             .setAttributeStart(engine.getSymbols().getPropertyDelimiter()).create();
@@ -382,7 +383,7 @@ public class TestDefaultExpressionEngine {
      * Tests obtaining keys for nodes that contain the delimiter character.
      */
     @Test
-    public void testNodeKeyWithEscapedDelimiters() {
+    void testNodeKeyWithEscapedDelimiters() {
         final ImmutableNode node = root.getChildren().get(1);
         assertEquals("connection..settings", engine.nodeKey(node, "", handler));
         assertEquals("connection..settings.usr..name", engine.nodeKey(node.getChildren().get(0), engine.nodeKey(node, "", handler), handler));
@@ -392,7 +393,7 @@ public class TestDefaultExpressionEngine {
      * Tests obtaining keys if the root node is involved.
      */
     @Test
-    public void testNodeKeyWithRoot() {
+    void testNodeKeyWithRoot() {
         assertEquals("", engine.nodeKey(root, null, handler));
         assertEquals("test", engine.nodeKey(root, "test", handler));
     }
@@ -401,9 +402,9 @@ public class TestDefaultExpressionEngine {
      * Tests adding new attributes.
      */
     @Test
-    public void testPrepareAddAttribute() {
+    void testPrepareAddAttribute() {
         final NodeAddData<ImmutableNode> data = engine.prepareAdd(root, "tables.table(0)[@tableSpace]", handler);
-        assertEquals(tables[0], data.getParent().getChildren().get(0).getValue());
+        assertEquals(TABLES[0], data.getParent().getChildren().get(0).getValue());
         assertEquals("tableSpace", data.getNewNodeName());
         assertTrue(data.isAttribute());
         assertTrue(data.getPathNodes().isEmpty());
@@ -413,7 +414,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether an attribute to the root node can be added.
      */
     @Test
-    public void testPrepareAddAttributeRoot() {
+    void testPrepareAddAttributeRoot() {
         final NodeAddData<ImmutableNode> data = engine.prepareAdd(root, "[@newAttr]", handler);
         assertSame(root, data.getParent());
         assertEquals("newAttr", data.getNewNodeName());
@@ -424,7 +425,7 @@ public class TestDefaultExpressionEngine {
      * Tests adding direct child nodes to the existing hierarchy.
      */
     @Test
-    public void testPrepareAddDirectly() {
+    void testPrepareAddDirectly() {
         NodeAddData<ImmutableNode> data = engine.prepareAdd(root, "newNode", handler);
         assertSame(root, data.getParent());
         assertTrue(data.getPathNodes().isEmpty());
@@ -441,26 +442,26 @@ public class TestDefaultExpressionEngine {
     }
 
     @Test
-    public void testPrepareAddEmptyKey() {
+    void testPrepareAddEmptyKey() {
         assertThrows(IllegalArgumentException.class, () -> engine.prepareAdd(root, "", handler));
     }
 
     /**
-     * Tests using invalid keys, e.g. if something should be added to attributes.
+     * Tests using invalid keys, for example if something should be added to attributes.
      */
     @Test
-    public void testPrepareAddInvalidKey() {
+    void testPrepareAddInvalidKey() {
         assertThrows(IllegalArgumentException.class, () -> engine.prepareAdd(root, "tables.table(0)[@type].new", handler));
     }
 
     @Test
-    public void testPrepareAddInvalidKeyAttribute() {
+    void testPrepareAddInvalidKeyAttribute() {
         assertThrows(IllegalArgumentException.class,
                 () -> engine.prepareAdd(root, "a.complete.new.path.with.an[@attribute].at.a.non.allowed[@position]", handler));
     }
 
     @Test
-    public void testPrepareAddNullKey() {
+    void testPrepareAddNullKey() {
         assertThrows(IllegalArgumentException.class, () -> engine.prepareAdd(root, null, handler));
     }
 
@@ -468,7 +469,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether the node matcher is used when adding keys.
      */
     @Test
-    public void testPrepareAddWithAlternativeMatcher() {
+    void testPrepareAddWithAlternativeMatcher() {
         setUpAlternativeMatcher();
         final NodeAddData<ImmutableNode> data = engine.prepareAdd(root, "tables_.table._fields__._field.name", handler);
         assertEquals("name", data.getNewNodeName());
@@ -479,12 +480,12 @@ public class TestDefaultExpressionEngine {
      * Tests add operations when an alternative syntax is set.
      */
     @Test
-    public void testPrepareAddWithAlternativeSyntax() {
+    void testPrepareAddWithAlternativeSyntax() {
         setUpAlternativeSyntax();
         NodeAddData<ImmutableNode> data = engine.prepareAdd(root, "tables/table[0]/test", handler);
         assertEquals("test", data.getNewNodeName());
         assertFalse(data.isAttribute());
-        assertEquals(tables[0], data.getParent().getChildren().get(0).getValue());
+        assertEquals(TABLES[0], data.getParent().getChildren().get(0).getValue());
 
         data = engine.prepareAdd(root, "a/complete/new/path@attr", handler);
         assertEquals("attr", data.getNewNodeName());
@@ -496,13 +497,13 @@ public class TestDefaultExpressionEngine {
      * Tests adding if indices are involved.
      */
     @Test
-    public void testPrepareAddWithIndex() {
+    void testPrepareAddWithIndex() {
         NodeAddData<ImmutableNode> data = engine.prepareAdd(root, "tables.table(0).tableSpace", handler);
         assertEquals("tableSpace", data.getNewNodeName());
         assertTrue(data.getPathNodes().isEmpty());
         assertEquals("table", data.getParent().getNodeName());
         final ImmutableNode node = data.getParent().getChildren().get(0);
-        assertEquals(tables[0], node.getValue());
+        assertEquals(TABLES[0], node.getValue());
 
         data = engine.prepareAdd(root, "tables.table(1).fields.field(2).alias", handler);
         assertEquals("alias", data.getNewNodeName());
@@ -514,7 +515,7 @@ public class TestDefaultExpressionEngine {
      * Tests add operations where complete paths are added.
      */
     @Test
-    public void testPrepareAddWithPath() {
+    void testPrepareAddWithPath() {
         NodeAddData<ImmutableNode> data = engine.prepareAdd(root, "tables.table(1).fields.field(-1).name", handler);
         assertEquals("name", data.getNewNodeName());
         checkNodePath(data, "field");
@@ -536,7 +537,7 @@ public class TestDefaultExpressionEngine {
      * nodes.
      */
     @Test
-    public void testPrepareAddWithSameAttributeDelimiter() {
+    void testPrepareAddWithSameAttributeDelimiter() {
         final DefaultExpressionEngineSymbols symbols = new DefaultExpressionEngineSymbols.Builder(DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS)
             .setAttributeEnd(null).setAttributeStart(DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS.getPropertyDelimiter()).create();
         engine = new DefaultExpressionEngine(symbols);
@@ -555,10 +556,10 @@ public class TestDefaultExpressionEngine {
      * Tests a different query syntax. Sets other strings for the typical tokens used by the expression engine.
      */
     @Test
-    public void testQueryAlternativeSyntax() {
+    void testQueryAlternativeSyntax() {
         setUpAlternativeSyntax();
-        checkKeyValue("tables/table[1]/name", "name", tables[1]);
-        checkAttributeValue("tables/table[0]@type", "type", tabTypes[0]);
+        checkKeyValue("tables/table[1]/name", "name", TABLES[1]);
+        checkAttributeValue("tables/table[0]@type", "type", TAB_TYPES[0]);
         checkAttributeValue("@test", "test", "true");
         checkKeyValue("connection.settings/usr.name", "usr.name", "scott");
     }
@@ -567,12 +568,12 @@ public class TestDefaultExpressionEngine {
      * Tests some queries when the same delimiter is used for properties and attributes.
      */
     @Test
-    public void testQueryAttributeEmulation() {
+    void testQueryAttributeEmulation() {
         final DefaultExpressionEngineSymbols symbols = new DefaultExpressionEngineSymbols.Builder(DefaultExpressionEngineSymbols.DEFAULT_SYMBOLS)
             .setAttributeEnd(null).setAttributeStart(DefaultExpressionEngineSymbols.DEFAULT_PROPERTY_DELIMITER).create();
         engine = new DefaultExpressionEngine(symbols);
-        checkKeyValue("tables.table(0).name", "name", tables[0]);
-        checkAttributeValue("tables.table(0).type", "type", tabTypes[0]);
+        checkKeyValue("tables.table(0).name", "name", TABLES[0]);
+        checkAttributeValue("tables.table(0).type", "type", TAB_TYPES[0]);
         checkKey("tables.table.type", "type", 2);
     }
 
@@ -580,7 +581,7 @@ public class TestDefaultExpressionEngine {
      * Tests querying nodes whose names contain a delimiter.
      */
     @Test
-    public void testQueryEscapedKeys() {
+    void testQueryEscapedKeys() {
         checkKeyValue("connection..settings.usr..name", "usr.name", "scott");
         checkKeyValue("connection..settings.usr..pwd", "usr.pwd", "tiger");
     }
@@ -589,7 +590,7 @@ public class TestDefaultExpressionEngine {
      * Tests some simple queries.
      */
     @Test
-    public void testQueryKeys() {
+    void testQueryKeys() {
         checkKey("tables.table.name", "name", 2);
         checkKey("tables.table.fields.field.name", "name", 10);
         checkKey("tables.table[@type]", "type", 2);
@@ -602,7 +603,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether the node matcher is used when querying keys.
      */
     @Test
-    public void testQueryKeyWithAlternativeMatcher() {
+    void testQueryKeyWithAlternativeMatcher() {
         setUpAlternativeMatcher();
         checkKey("tables_._table_.name_", "name", 2);
     }
@@ -611,13 +612,13 @@ public class TestDefaultExpressionEngine {
      * Performs some queries and evaluates the values of the result nodes.
      */
     @Test
-    public void testQueryNodes() {
-        for (int i = 0; i < tables.length; i++) {
-            checkKeyValue("tables.table(" + i + ").name", "name", tables[i]);
-            checkAttributeValue("tables.table(" + i + ")[@type]", "type", tabTypes[i]);
+    void testQueryNodes() {
+        for (int i = 0; i < TABLES.length; i++) {
+            checkKeyValue("tables.table(" + i + ").name", "name", TABLES[i]);
+            checkAttributeValue("tables.table(" + i + ")[@type]", "type", TAB_TYPES[i]);
 
-            for (int j = 0; j < fields[i].length; j++) {
-                checkKeyValue("tables.table(" + i + ").fields.field(" + j + ").name", "name", fields[i][j]);
+            for (int j = 0; j < FIELDS[i].length; j++) {
+                checkKeyValue("tables.table(" + i + ").fields.field(" + j + ").name", "name", FIELDS[i][j]);
             }
         }
     }
@@ -626,7 +627,7 @@ public class TestDefaultExpressionEngine {
      * Tests querying keys that do not exist.
      */
     @Test
-    public void testQueryNonExistingKeys() {
+    void testQueryNonExistingKeys() {
         checkKey("tables.tablespace.name", null, 0);
         checkKey("tables.table(2).name", null, 0);
         checkKey("a complete unknown key", null, 0);
@@ -641,7 +642,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether an attribute of the root node can be queried.
      */
     @Test
-    public void testQueryRootAttribute() {
+    void testQueryRootAttribute() {
         checkAttributeValue("[@test]", "test", "true");
     }
 
@@ -649,7 +650,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether the root node can be retrieved using the empty key.
      */
     @Test
-    public void testQueryRootNodeEmptyKey() {
+    void testQueryRootNodeEmptyKey() {
         checkQueryRootNode("");
     }
 
@@ -657,7 +658,7 @@ public class TestDefaultExpressionEngine {
      * Tests whether the root node can be retrieved using the null key.
      */
     @Test
-    public void testQueryRootNodeNullKey() {
+    void testQueryRootNodeNullKey() {
         checkQueryRootNode(null);
     }
 }

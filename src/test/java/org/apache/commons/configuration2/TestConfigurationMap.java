@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ package org.apache.commons.configuration2;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,15 +29,16 @@ import org.junit.jupiter.api.Test;
  */
 public class TestConfigurationMap {
 
-    ConfigurationMap map;
+    private ConfigurationMap map;
 
-    String[] properties = {"booleanProperty", "doubleProperty", "floatProperty", "intProperty", "longProperty", "shortProperty", "stringProperty"};
+    private final String[] properties = {"booleanProperty", "doubleProperty", "floatProperty", "intProperty", "longProperty", "shortProperty",
+            "stringProperty"};
 
-    Object[] values = {Boolean.TRUE, Double.valueOf(Double.MAX_VALUE), Float.valueOf(Float.MAX_VALUE), Integer.valueOf(Integer.MAX_VALUE),
-        Long.valueOf(Long.MAX_VALUE), Short.valueOf(Short.MAX_VALUE), "This is a string"};
+    private final Object[] values = {Boolean.TRUE, Double.valueOf(Double.MAX_VALUE), Float.valueOf(Float.MAX_VALUE), Integer.valueOf(Integer.MAX_VALUE),
+            Long.valueOf(Long.MAX_VALUE), Short.valueOf(Short.MAX_VALUE), "This is a string"};
 
     /**
-     * Set up instance variables required by this test case.
+     * Sets up instance variables required by this test case.
      */
     @BeforeEach
     public void setUp() throws Exception {
@@ -56,10 +58,18 @@ public class TestConfigurationMap {
     }
 
     /**
+     * Attempts to create a ConfigurationMap with null configuration. This should cause an exception.
+     */
+    @Test
+    void testNullConfig() {
+        assertThrows(NullPointerException.class, () -> new ConfigurationMap(null));
+    }
+
+    /**
      * Class under test for Object put(Object, Object)
      */
     @Test
-    public void testPut() {
+    void testPut() {
         for (int i = 0; i < properties.length; i++) {
             Object object = map.put(properties[i], values[i]);
             assertNotNull(object);

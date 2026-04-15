@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,6 +55,7 @@ import org.apache.commons.lang3.StringUtils;
  * @since 2.0
  */
 public class DefaultListDelimiterHandler extends AbstractListDelimiterHandler {
+
     /** Constant for the escape character. */
     private static final char ESCAPE = '\\';
 
@@ -75,15 +76,6 @@ public class DefaultListDelimiterHandler extends AbstractListDelimiterHandler {
      */
     public DefaultListDelimiterHandler(final char listDelimiter) {
         delimiter = listDelimiter;
-    }
-
-    /**
-     * Returns the list delimiter character used by this instance.
-     *
-     * @return the list delimiter character
-     */
-    public char getDelimiter() {
-        return delimiter;
     }
 
     @Override
@@ -107,6 +99,15 @@ public class DefaultListDelimiterHandler extends AbstractListDelimiterHandler {
             buf.append(c);
         }
         return buf.toString();
+    }
+
+    /**
+     * Gets the list delimiter character used by this instance.
+     *
+     * @return the list delimiter character
+     */
+    public char getDelimiter() {
+        return delimiter;
     }
 
     /**

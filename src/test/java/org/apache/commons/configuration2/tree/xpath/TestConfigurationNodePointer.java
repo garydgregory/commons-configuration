@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,9 +32,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code ConfigurationNodePointer}.
- *
  */
 public class TestConfigurationNodePointer extends AbstractXPathTest {
+
     /** Stores the node pointer to be tested. */
     private ConfigurationNodePointer<ImmutableNode> pointer;
 
@@ -75,7 +75,7 @@ public class TestConfigurationNodePointer extends AbstractXPathTest {
      * happen in practice.)
      */
     @Test
-    public void testCompareChildNodePointersAttributes() {
+    void testCompareChildNodePointersAttributes() {
         final ImmutableNode n1 = new ImmutableNode.Builder().name("n1").create();
         final ImmutableNode n2 = new ImmutableNode.Builder().name("n2").create();
         final NodePointer p1 = new ConfigurationNodePointer<>(pointer, n1, handler);
@@ -88,7 +88,7 @@ public class TestConfigurationNodePointer extends AbstractXPathTest {
      * Tests comparing child node pointers for child nodes.
      */
     @Test
-    public void testCompareChildNodePointersChildren() {
+    void testCompareChildNodePointersChildren() {
         final NodePointer p1 = new ConfigurationNodePointer<>(pointer, root.getChildren().get(1), handler);
         final NodePointer p2 = new ConfigurationNodePointer<>(pointer, root.getChildren().get(3), handler);
         assertEquals(-1, pointer.compareChildNodePointers(p1, p2));
@@ -99,7 +99,7 @@ public class TestConfigurationNodePointer extends AbstractXPathTest {
      * Tests the attribute flag.
      */
     @Test
-    public void testIsAttribute() {
+    void testIsAttribute() {
         assertFalse(pointer.isAttribute());
     }
 
@@ -107,7 +107,7 @@ public class TestConfigurationNodePointer extends AbstractXPathTest {
      * Tests the leaf flag for a real leaf node.
      */
     @Test
-    public void testIsLeafTrue() {
+    void testIsLeafTrue() {
         final ImmutableNode leafNode = new ImmutableNode.Builder().name("leafNode").create();
         pointer = new ConfigurationNodePointer<>(pointer, leafNode, handler);
         assertTrue(pointer.isLeaf());
@@ -117,7 +117,7 @@ public class TestConfigurationNodePointer extends AbstractXPathTest {
      * Tests if leaves in the tree are correctly detected.
      */
     @Test
-    public void testIsLeave() {
+    void testIsLeave() {
         assertFalse(pointer.isLeaf());
     }
 
@@ -125,7 +125,7 @@ public class TestConfigurationNodePointer extends AbstractXPathTest {
      * Tests the iterators returned by the node pointer.
      */
     @Test
-    public void testIterators() {
+    void testIterators() {
         checkIterators(pointer);
     }
 
@@ -133,7 +133,7 @@ public class TestConfigurationNodePointer extends AbstractXPathTest {
      * Tests that no new value can be set.
      */
     @Test
-    public void testSetValue() {
+    void testSetValue() {
         assertThrows(UnsupportedOperationException.class, () -> pointer.setValue("newValue"));
     }
 }

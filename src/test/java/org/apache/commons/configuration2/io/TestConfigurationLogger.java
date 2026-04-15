@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,9 +39,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code ConfigurationLogger}.
- *
  */
 public class TestConfigurationLogger {
+
     /** Constant for a message to be logged. */
     private static final String MSG = "Interesting log output";
 
@@ -49,7 +49,7 @@ public class TestConfigurationLogger {
      * Tests the logger set per default.
      */
     @Test
-    public void testAbstractConfigurationDefaultLogger() {
+    void testAbstractConfigurationDefaultLogger() {
         final AbstractConfiguration config = new BaseConfiguration();
         assertInstanceOf(NoOpLog.class, config.getLogger().getLog());
     }
@@ -58,7 +58,7 @@ public class TestConfigurationLogger {
      * Tests whether the logger can be set.
      */
     @Test
-    public void testAbstractConfigurationSetLogger() {
+    void testAbstractConfigurationSetLogger() {
         final ConfigurationLogger logger = new ConfigurationLogger(getClass());
         final AbstractConfiguration config = new BaseConfiguration();
 
@@ -70,7 +70,7 @@ public class TestConfigurationLogger {
      * Tests that the logger can be disabled by setting it to null.
      */
     @Test
-    public void testAbstractConfigurationSetLoggerNull() {
+    void testAbstractConfigurationSetLoggerNull() {
         final AbstractConfiguration config = new BaseConfiguration();
         config.setLogger(new ConfigurationLogger(getClass()));
 
@@ -82,7 +82,7 @@ public class TestConfigurationLogger {
      * Tests whether debug logging is possible.
      */
     @Test
-    public void testDebug() {
+    void testDebug() {
         final Log log = mock(Log.class);
         final ConfigurationLogger logger = new ConfigurationLogger(log);
 
@@ -96,7 +96,7 @@ public class TestConfigurationLogger {
      * Tests whether a dummy logger can be created.
      */
     @Test
-    public void testDummyLogger() {
+    void testDummyLogger() {
         final ConfigurationLogger logger = ConfigurationLogger.newDummyLogger();
 
         assertInstanceOf(NoOpLog.class, logger.getLog());
@@ -106,7 +106,7 @@ public class TestConfigurationLogger {
      * Tests whether error logging is possible.
      */
     @Test
-    public void testError() {
+    void testError() {
         final Log log = mock(Log.class);
         final ConfigurationLogger logger = new ConfigurationLogger(log);
 
@@ -120,7 +120,7 @@ public class TestConfigurationLogger {
      * Tests whether an exception can be logged on error level.
      */
     @Test
-    public void testErrorWithException() {
+    void testErrorWithException() {
         final Log log = mock(Log.class);
         final Throwable ex = new Exception("Test exception");
         final ConfigurationLogger logger = new ConfigurationLogger(log);
@@ -135,7 +135,7 @@ public class TestConfigurationLogger {
      * Tests whether info logging is possible.
      */
     @Test
-    public void testInfo() {
+    void testInfo() {
         final Log log = mock(Log.class);
         final ConfigurationLogger logger = new ConfigurationLogger(log);
 
@@ -149,7 +149,7 @@ public class TestConfigurationLogger {
      * Tries to create an instance without passing a logger class.
      */
     @Test
-    public void testInitNoLoggerClass() {
+    void testInitNoLoggerClass() {
         assertThrows(IllegalArgumentException.class, () -> new ConfigurationLogger((Class<?>) null));
     }
 
@@ -157,7 +157,7 @@ public class TestConfigurationLogger {
      * Tries to create an instance without passing in a logger name.
      */
     @Test
-    public void testInitNoLoggerName() {
+    void testInitNoLoggerName() {
         assertThrows(IllegalArgumentException.class, () -> new ConfigurationLogger((String) null));
     }
 
@@ -165,23 +165,22 @@ public class TestConfigurationLogger {
      * Tests whether a correct internal logger is created.
      */
     @Test
-    public void testInitWithLoggerSpec() {
+    void testInitWithLoggerSpec() {
         final ConfigurationLogger logger1 = new ConfigurationLogger(getClass().getName());
         final ConfigurationLogger logger2 = new ConfigurationLogger(getClass());
 
         assertNotNull(logger1.getLog());
         if (logger1.getLog() instanceof Log4JLogger) {
             assertEquals(logger1.getLog(), logger2.getLog());
-        } else {
-            // TODO assert what for the Slf4j adapter?
         }
+        // else: TODO assert what for the Slf4j adapter?
     }
 
     /**
      * Tests whether the debug status can be queried.
      */
     @Test
-    public void testIsDebugEnabled() {
+    void testIsDebugEnabled() {
         final Log log = mock(Log.class);
 
         when(log.isDebugEnabled()).thenReturn(Boolean.TRUE);
@@ -198,7 +197,7 @@ public class TestConfigurationLogger {
      * Tests whether the info status can be queried.
      */
     @Test
-    public void testIsInfoEnabled() {
+    void testIsInfoEnabled() {
         final Log log = mock(Log.class);
 
         when(log.isInfoEnabled()).thenReturn(Boolean.FALSE);
@@ -215,7 +214,7 @@ public class TestConfigurationLogger {
      * Tests that a derived class can be created for a logger.
      */
     @Test
-    public void testSubClass() {
+    void testSubClass() {
         final StringBuilder buf = new StringBuilder();
         final ConfigurationLogger logger = new ConfigurationLogger() {
             @Override
@@ -233,7 +232,7 @@ public class TestConfigurationLogger {
      * Tests whether warn logging is possible.
      */
     @Test
-    public void testWarn() {
+    void testWarn() {
         final Log log = mock(Log.class);
         final ConfigurationLogger logger = new ConfigurationLogger(log);
 
@@ -247,7 +246,7 @@ public class TestConfigurationLogger {
      * Tests whether an exception can be logged on warn level.
      */
     @Test
-    public void testWarnWithException() {
+    void testWarnWithException() {
         final Log log = mock(Log.class);
         final Throwable ex = new Exception("Test exception");
         final ConfigurationLogger logger = new ConfigurationLogger(log);

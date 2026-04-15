@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,9 +32,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code DefaultListDelimiterHandler}.
- *
  */
 public class TestDefaultListDelimiterHandler {
+
     /** The handler to be tested. */
     private DefaultListDelimiterHandler handler;
 
@@ -57,7 +57,7 @@ public class TestDefaultListDelimiterHandler {
     }
 
     @Test
-    public void testEscapeIntegerList() {
+    void testEscapeIntegerList() {
         final ValueTransformer trans = ListDelimiterHandler.NOOP_TRANSFORMER;
         final List<Integer> data = Arrays.asList(1, 2, 3, 4);
         assertEquals("1,2,3,4", handler.escapeList(data, trans));
@@ -67,17 +67,17 @@ public class TestDefaultListDelimiterHandler {
      * Tests whether a list is correctly escaped.
      */
     @Test
-    public void testEscapeList() {
+    void testEscapeList() {
         final ValueTransformer trans = value -> String.valueOf(value) + "_trans";
         final List<String> data = Arrays.asList("simple", "Hello,world!", "\\,\\", "end");
-        assertEquals("simple_trans,Hello\\,world!_trans," + "\\\\\\,\\\\_trans,end_trans", handler.escapeList(data, trans));
+        assertEquals("simple_trans,Hello\\,world!_trans,\\\\\\,\\\\_trans,end_trans", handler.escapeList(data, trans));
     }
 
     /**
      * Tests whether a backslash is correctly escaped.
      */
     @Test
-    public void testEscapeStringBackslash() {
+    void testEscapeStringBackslash() {
         assertEquals("C:\\\\Temp\\\\", handler.escapeString("C:\\Temp\\"));
     }
 
@@ -85,7 +85,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests whether the list delimiter character is correctly escaped in a string.
      */
     @Test
-    public void testEscapeStringListDelimiter() {
+    void testEscapeStringListDelimiter() {
         assertEquals("3\\,1415", handler.escapeString("3,1415"));
     }
 
@@ -93,7 +93,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests whether combinations of list delimiters and backslashes are correctly escaped.
      */
     @Test
-    public void testEscapeStringListDelimiterAndBackslash() {
+    void testEscapeStringListDelimiterAndBackslash() {
         assertEquals("C:\\\\Temp\\\\\\,\\\\\\\\Share\\,/root", handler.escapeString("C:\\Temp\\,\\\\Share,/root"));
     }
 
@@ -101,7 +101,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests whether a string is correctly escaped which does not contain any special character.
      */
     @Test
-    public void testEscapeStringNoSpecialCharacter() {
+    void testEscapeStringNoSpecialCharacter() {
         assertEquals("test", handler.escapeString("test"));
     }
 
@@ -109,7 +109,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests whether a value transformer is correctly called when escaping a single value.
      */
     @Test
-    public void testEscapeWithTransformer() {
+    void testEscapeWithTransformer() {
         final ValueTransformer trans = mock(ValueTransformer.class);
 
         when(trans.transformValue("a\\,b")).thenReturn("ok");
@@ -124,7 +124,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests whether split() deals correctly with escaped backslashes.
      */
     @Test
-    public void testSplitEscapeBackslash() {
+    void testSplitEscapeBackslash() {
         checkSplit("C:\\\\Temp\\\\", true, "C:\\Temp\\");
     }
 
@@ -132,7 +132,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests whether a line delimiter can be escaped when splitting a list.
      */
     @Test
-    public void testSplitEscapeLineDelimiter() {
+    void testSplitEscapeLineDelimiter() {
         checkSplit("3\\,1415", true, "3,1415");
     }
 
@@ -140,7 +140,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests a split operation with a complex combination of list delimiters and backslashes.
      */
     @Test
-    public void testSplitEscapeListDelimiterAndBackslashes() {
+    void testSplitEscapeListDelimiterAndBackslashes() {
         checkSplit("C:\\\\Temp\\\\\\,\\\\\\\\Share\\\\,/root", false, "C:\\Temp\\,\\\\Share\\", "/root");
     }
 
@@ -148,7 +148,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests whether a string list is split correctly.
      */
     @Test
-    public void testSplitList() {
+    void testSplitList() {
         checkSplit("a, b,c   ,   d", true, "a", "b", "c", "d");
     }
 
@@ -156,7 +156,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests whether trimming can be disabled when splitting a list.
      */
     @Test
-    public void testSplitNoTrim() {
+    void testSplitNoTrim() {
         checkSplit("a , b,  c  ,d", false, "a ", " b", "  c  ", "d");
     }
 
@@ -164,7 +164,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests split() if there is only a single element.
      */
     @Test
-    public void testSplitSingleElement() {
+    void testSplitSingleElement() {
         checkSplit("test", true, "test");
     }
 
@@ -172,7 +172,7 @@ public class TestDefaultListDelimiterHandler {
      * Tests whether an unexpected escape character is handled properly.
      */
     @Test
-    public void testSplitUnexpectedEscape() {
+    void testSplitUnexpectedEscape() {
         checkSplit("\\x, \\,y, \\", true, "\\x", ",y", "\\");
     }
 }

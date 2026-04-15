@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,6 +40,7 @@ import org.apache.commons.configuration2.ex.ConfigurationRuntimeException;
  * @since 2.0
  */
 public class CopyObjectDefaultHandler implements DefaultParametersHandler<Object> {
+
     /** The source object with the properties to be initialized. */
     private final BuilderParameters source;
 
@@ -47,8 +48,8 @@ public class CopyObjectDefaultHandler implements DefaultParametersHandler<Object
      * Creates a new instance of {@code CopyObjectDefaultHandler} and initializes it with the specified source object. The
      * properties defined by the source object are copied onto the objects to be initialized.
      *
-     * @param src the source object (must not be <b>null</b>)
-     * @throws IllegalArgumentException if the source object is <b>null</b>
+     * @param src the source object (must not be <strong>null</strong>)
+     * @throws IllegalArgumentException if the source object is <strong>null</strong>
      */
     public CopyObjectDefaultHandler(final BuilderParameters src) {
         if (src == null) {
@@ -58,7 +59,7 @@ public class CopyObjectDefaultHandler implements DefaultParametersHandler<Object
     }
 
     /**
-     * Returns the source object of this handler. This is the object whose properties are copied on the objects to be
+     * Gets the source object of this handler. This is the object whose properties are copied on the objects to be
      * initialized.
      *
      * @return the source object of this {@code CopyObjectDefaultHandler}

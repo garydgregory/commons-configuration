@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,6 +40,48 @@ package org.apache.commons.configuration2.tree;
  * @since 1.3
  */
 public class OverrideCombiner extends NodeCombiner {
+
+    /**
+     * Constructs a new instance.
+     */
+    public OverrideCombiner() {
+        // empty
+    }
+
+    /**
+     * Handles the attributes during a combination process. First all attributes of the first node are added to the result.
+     * Then all attributes of the second node, which are not contained in the first node, are also added.
+     *
+     * @param result the resulting node
+     * @param node1 the first node
+     * @param node2 the second node
+     */
+    protected void addAttributes(final ImmutableNode.Builder result, final ImmutableNode node1, final ImmutableNode node2) {
+        result.addAttributes(node1.getAttributes());
+        node2.getAttributes().keySet().forEach(attr -> {
+            if (!node1.getAttributes().containsKey(attr)) {
+                result.addAttribute(attr, HANDLER.getAttributeValue(node2, attr));
+            }
+        });
+    }
+
+    /**
+     * Tests if a child node of the second node can be combined with the given child node of the first node. If this is the
+     * case, the corresponding node will be returned, otherwise <strong>null</strong>. This implementation checks whether the child
+     * node occurs only once in both hierarchies and is no known list node.
+     *
+     * @param node1 the first node
+     * @param node2 the second node
+     * @param child the child node (of the first node)
+     * @return a child of the second node, with which a combination is possible
+     */
+    protected ImmutableNode canCombine(final ImmutableNode node1, final ImmutableNode node2, final ImmutableNode child) {
+        if (HANDLER.getChildrenCount(node2, child.getNodeName()) == 1 && HANDLER.getChildrenCount(node1, child.getNodeName()) == 1 && !isListNode(child)) {
+            return HANDLER.getChildren(node2, child.getNodeName()).get(0);
+        }
+        return null;
+    }
+
     /**
      * Constructs an override combination for the passed in node structures.
      *
@@ -67,39 +109,5 @@ public class OverrideCombiner extends NodeCombiner {
         result.value(node1.getValue() != null ? node1.getValue() : node2.getValue());
 
         return result.create();
-    }
-
-    /**
-     * Handles the attributes during a combination process. First all attributes of the first node are added to the result.
-     * Then all attributes of the second node, which are not contained in the first node, are also added.
-     *
-     * @param result the resulting node
-     * @param node1 the first node
-     * @param node2 the second node
-     */
-    protected void addAttributes(final ImmutableNode.Builder result, final ImmutableNode node1, final ImmutableNode node2) {
-        result.addAttributes(node1.getAttributes());
-        node2.getAttributes().keySet().forEach(attr -> {
-            if (!node1.getAttributes().containsKey(attr)) {
-                result.addAttribute(attr, HANDLER.getAttributeValue(node2, attr));
-            }
-        });
-    }
-
-    /**
-     * Tests if a child node of the second node can be combined with the given child node of the first node. If this is the
-     * case, the corresponding node will be returned, otherwise <b>null</b>. This implementation checks whether the child
-     * node occurs only once in both hierarchies and is no known list node.
-     *
-     * @param node1 the first node
-     * @param node2 the second node
-     * @param child the child node (of the first node)
-     * @return a child of the second node, with which a combination is possible
-     */
-    protected ImmutableNode canCombine(final ImmutableNode node1, final ImmutableNode node2, final ImmutableNode child) {
-        if (HANDLER.getChildrenCount(node2, child.getNodeName()) == 1 && HANDLER.getChildrenCount(node1, child.getNodeName()) == 1 && !isListNode(child)) {
-            return HANDLER.getChildren(node2, child.getNodeName()).get(0);
-        }
-        return null;
     }
 }

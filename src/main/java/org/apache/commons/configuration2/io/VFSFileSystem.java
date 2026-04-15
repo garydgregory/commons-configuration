@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,16 +47,11 @@ import org.apache.commons.vfs2.provider.UriParser;
  * @since 1.7
  */
 public class VFSFileSystem extends DefaultFileSystem {
+
     /**
      * Stream handler required to create URL.
      */
-    private static class VFSURLStreamHandler extends URLStreamHandler {
-        /** The Protocol used */
-        private final String protocol;
-
-        public VFSURLStreamHandler(final FileName file) {
-            this.protocol = file.getScheme();
-        }
+    private static final class VFSURLStreamHandler extends URLStreamHandler {
 
         @Override
         protected URLConnection openConnection(final URL url) throws IOException {
@@ -112,13 +107,11 @@ public class VFSFileSystem extends DefaultFileSystem {
             }
             final FileContent content = file.getContent();
             if (content == null) {
-                final String msg = "Cannot access content of " + file.getName().getFriendlyURI();
-                throw new ConfigurationException(msg);
+                throw new ConfigurationException("Cannot access content of %s", file.getName().getFriendlyURI());
             }
             return content.getInputStream();
-        } catch (final FileSystemException fse) {
-            final String msg = "Unable to access " + url.toString();
-            throw new ConfigurationException(msg, fse);
+        } catch (final FileSystemException e) {
+            throw new ConfigurationException(e, "Unable to access %s", url);
         }
     }
 
@@ -177,11 +170,11 @@ public class VFSFileSystem extends DefaultFileSystem {
             final FileContent content = file.getContent();
 
             if (content == null) {
-                throw new ConfigurationException("Cannot access content of " + url);
+                throw new ConfigurationException("Cannot access content of %s", url);
             }
             return content.getOutputStream();
-        } catch (final FileSystemException fse) {
-            throw new ConfigurationException("Unable to access " + url, fse);
+        } catch (final FileSystemException e) {
+            throw new ConfigurationException(e, "Unable to access ", url);
         }
     }
 
@@ -197,7 +190,6 @@ public class VFSFileSystem extends DefaultFileSystem {
                     return name.toString();
                 }
             }
-
             if (UriParser.extractScheme(fileName) != null) {
                 return fileName;
             }
@@ -228,17 +220,16 @@ public class VFSFileSystem extends DefaultFileSystem {
                 path = resolveURI(file);
             }
 
-            final URLStreamHandler handler = new VFSURLStreamHandler(path);
+            final URLStreamHandler handler = new VFSURLStreamHandler();
             return new URL(null, path.getURI(), handler);
-        } catch (final FileSystemException fse) {
-            throw new ConfigurationRuntimeException("Could not parse basePath: " + basePath + " and fileName: " + file, fse);
+        } catch (final FileSystemException e) {
+            throw new ConfigurationRuntimeException(e, "Could not parse basePath: %s and fileName: %s", basePath, file);
         }
     }
 
     @Override
     public URL locateFromURL(final String basePath, final String fileName) {
         final String fileScheme = UriParser.extractScheme(fileName);
-
         // Use DefaultFileSystem if basePath and fileName don't have a scheme.
         if ((basePath == null || UriParser.extractScheme(basePath) == null) && fileScheme == null) {
             return super.locateFromURL(basePath, fileName);
@@ -264,7 +255,7 @@ public class VFSFileSystem extends DefaultFileSystem {
                 return null;
             }
             final FileName path = file.getName();
-            final URLStreamHandler handler = new VFSURLStreamHandler(path);
+            final URLStreamHandler handler = new VFSURLStreamHandler();
             return new URL(null, path.getURI(), handler);
         } catch (final FileSystemException | MalformedURLException fse) {
             return null;
@@ -280,7 +271,6 @@ public class VFSFileSystem extends DefaultFileSystem {
         final Class<?>[] paramTypes = new Class<?>[2];
         paramTypes[0] = FileSystemOptions.class;
         paramTypes[1] = value.getClass();
-
         try {
             final Method method = builder.getClass().getMethod(methodName, paramTypes);
             final Object[] params = new Object[2];
@@ -290,6 +280,5 @@ public class VFSFileSystem extends DefaultFileSystem {
         } catch (final Exception ex) {
             log.warn("Cannot access property '" + key + "'! Ignoring.", ex);
         }
-
     }
 }

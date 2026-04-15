@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,6 @@
  */
 package org.apache.commons.configuration2;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,9 +33,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * A test class which tests functionality related to immutable configurations.
- *
  */
 public class TestImmutableConfiguration {
+
     /** Constant for the name of a test properties file. */
     private static final String TEST_FILE = "test.properties";
 
@@ -70,20 +68,20 @@ public class TestImmutableConfiguration {
      * Tests that exceptions thrown by the wrapped configuration are handled correctly.
      */
     @Test
-    public void testExceptionHandling() {
+    void testExceptionHandling() {
         final PropertiesConfiguration config = new PropertiesConfiguration();
         final String property = "nonExistingProperty";
         config.setThrowExceptionOnMissing(true);
         final ImmutableConfiguration ic = ConfigurationUtils.unmodifiableConfiguration(config);
         final NoSuchElementException e = assertThrows(NoSuchElementException.class, () -> ic.getString(property));
-        assertThat(e.getMessage(), containsString(property));
+        assertTrue(e.getMessage().contains(property));
     }
 
     /**
      * Tests whether an immutable subset can be queried.
      */
     @Test
-    public void testImmutableSubset() throws ConfigurationException {
+    void testImmutableSubset() throws ConfigurationException {
         final ImmutableConfiguration conf = ConfigurationUtils.unmodifiableConfiguration(createTestConfig());
         final ImmutableConfiguration subset = conf.immutableSubset("test");
         assertFalse(subset.isEmpty());
@@ -94,7 +92,7 @@ public class TestImmutableConfiguration {
      * Tests whether data can be accessed from an unmodifiable configuration.
      */
     @Test
-    public void testUnmodifiableConfigurationAccess() throws ConfigurationException {
+    void testUnmodifiableConfigurationAccess() throws ConfigurationException {
         final Configuration confOrg = createTestConfig();
         final ImmutableConfiguration conf = ConfigurationUtils.unmodifiableConfiguration(confOrg);
         assertFalse(conf.isEmpty());
@@ -109,19 +107,16 @@ public class TestImmutableConfiguration {
      * Tests that a cast to a mutable configuration is not possible.
      */
     @Test
-    public void testUnmodifiableConfigurationCast() throws ConfigurationException {
+    void testUnmodifiableConfigurationCast() throws ConfigurationException {
         final ImmutableConfiguration conf = ConfigurationUtils.unmodifiableConfiguration(createTestConfig());
-        assertThrows(ClassCastException.class, () -> {
-            final Configuration mutableConf = (Configuration) conf;
-            mutableConf.clear();
-        });
+        assertThrows(ClassCastException.class, () -> ((Configuration) conf).clear());
     }
 
     /**
      * Tests an iteration over the keys of the immutable configuration.
      */
     @Test
-    public void testUnmodifiableConfigurationIterate() throws ConfigurationException {
+    void testUnmodifiableConfigurationIterate() throws ConfigurationException {
         final Configuration confOrg = createTestConfig();
         final ImmutableConfiguration conf = ConfigurationUtils.unmodifiableConfiguration(confOrg);
         assertEquals(fetchKeys(confOrg.getKeys()), fetchKeys(conf.getKeys()));
@@ -131,7 +126,7 @@ public class TestImmutableConfiguration {
      * Tests that it is not possible to remove keys using the iterator.
      */
     @Test
-    public void testUnmodifiableConfigurationIteratorRemove() throws ConfigurationException {
+    void testUnmodifiableConfigurationIteratorRemove() throws ConfigurationException {
         final ImmutableConfiguration conf = ConfigurationUtils.unmodifiableConfiguration(createTestConfig());
         final Iterator<String> it = conf.getKeys();
         it.next();
@@ -142,7 +137,7 @@ public class TestImmutableConfiguration {
      * Tests whether an update of the original configuration is visible for the immutable view.
      */
     @Test
-    public void testUnmodifiableConfigurationLiveUpdate() throws ConfigurationException {
+    void testUnmodifiableConfigurationLiveUpdate() throws ConfigurationException {
         final Configuration confOrg = createTestConfig();
         final ImmutableConfiguration conf = ConfigurationUtils.unmodifiableConfiguration(confOrg);
         final String key = "new.property";
@@ -155,7 +150,7 @@ public class TestImmutableConfiguration {
      * Tries to create an immutable configuration from a null object.
      */
     @Test
-    public void testUnmodifiableConfigurationNull() {
+    void testUnmodifiableConfigurationNull() {
         assertThrows(NullPointerException.class, () -> ConfigurationUtils.unmodifiableConfiguration(null));
     }
 
@@ -163,7 +158,7 @@ public class TestImmutableConfiguration {
      * Tests different access methods for properties.
      */
     @Test
-    public void testUnmodifiableConfigurationOtherTypes() throws ConfigurationException {
+    void testUnmodifiableConfigurationOtherTypes() throws ConfigurationException {
         final ImmutableConfiguration conf = ConfigurationUtils.unmodifiableConfiguration(createTestConfig());
         assertEquals((byte) 10, conf.getByte("test.byte"));
         assertTrue(conf.getBoolean("test.boolean"));
@@ -178,7 +173,7 @@ public class TestImmutableConfiguration {
      * Tests whether an unmodifiable hierarchical configuration can be created.
      */
     @Test
-    public void testUnmodifiableHierarchicalConfiguration() {
+    void testUnmodifiableHierarchicalConfiguration() {
         final HierarchicalConfiguration<?> conf = new BaseHierarchicalConfiguration();
         final String key = "test";
         conf.addProperty(key, Boolean.TRUE);

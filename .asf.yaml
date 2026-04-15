@@ -5,7 +5,7 @@
 # (the "License"); you may not use this file except in compliance with
 # the License.  You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#      https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,33 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Coverage
+github:
+  description: "Apache Commons Configuration"
+  homepage: https://commons.apache.org/configuration/
 
-on: [push, pull_request]
-
-permissions:
-  contents: read
-
-jobs:
-  build:
-
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [ 8 ]
-
-    steps:
-    - uses: actions/checkout@v3.0.2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: ${{ matrix.java }}
-        cache: 'maven'
-    - name: Build with Maven
-      run: mvn -V test jacoco:report --file pom.xml --no-transfer-progress
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./target/site/jacoco/jacoco.xml
+notifications:
+    commits:      commits@commons.apache.org
+    issues:       issues@commons.apache.org
+    pullrequests: issues@commons.apache.org
+    jira_options: link label
+    jobs:         notifications@commons.apache.org
+    # commits_bot_dependabot: dependabot@commons.apache.org
+    issues_bot_dependabot: dependabot@commons.apache.org
+    pullrequests_bot_dependabot: dependabot@commons.apache.org
+    issues_bot_codecov-commenter: notifications@commons.apache.org
+    pullrequests_bot_codecov-commenter: notifications@commons.apache.org

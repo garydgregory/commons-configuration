@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,7 @@ import java.util.Set;
  * </p>
  * <p>
  * A <em>node combiner</em> is an object that knows how two hierarchical node structures can be combined into a single
- * one. Of course, there are many possible ways of implementing such a combination, e.g. constructing a union, an
+ * one. Of course, there are many possible ways of implementing such a combination, for example constructing a union, an
  * intersection, or an "override" structure (were nodes in the first hierarchy take precedence over nodes in the second
  * hierarchy). This abstract base class only provides some helper methods and defines the common interface for node
  * combiners. Concrete sub classes will implement the diverse combination algorithms.
@@ -42,12 +42,33 @@ import java.util.Set;
  * @since 1.3
  */
 public abstract class NodeCombiner {
+
     /**
      * A default handler object for immutable nodes. This object can be used by derived classes for dealing with nodes.
      * However, it provides only limited functionality; it supports only operations on child nodes, but no references to
      * parent nodes.
      */
     protected static final NodeHandler<ImmutableNode> HANDLER = createNodeHandler();
+
+    /**
+     * Creates a node handler object for immutable nodes which can be used by sub classes to perform advanced operations on
+     * nodes.
+     *
+     * @return the node handler implementation
+     */
+    private static NodeHandler<ImmutableNode> createNodeHandler() {
+        return new AbstractImmutableNodeHandler() {
+            @Override
+            public ImmutableNode getParent(final ImmutableNode node) {
+                return null;
+            }
+
+            @Override
+            public ImmutableNode getRootNode() {
+                return null;
+            }
+        };
+    }
 
     /** Stores a list with node names that are known to be list nodes. */
     private final Set<String> listNodes;
@@ -69,7 +90,17 @@ public abstract class NodeCombiner {
     }
 
     /**
-     * Returns a set with the names of nodes that are known to be list nodes.
+     * Combines the hierarchies represented by the given root nodes. This method must be defined in concrete sub classes
+     * with the implementation of a specific combination algorithm.
+     *
+     * @param node1 the first root node
+     * @param node2 the second root node
+     * @return the root node of the resulting combined node structure
+     */
+    public abstract ImmutableNode combine(ImmutableNode node1, ImmutableNode node2);
+
+    /**
+     * Gets a set with the names of nodes that are known to be list nodes.
      *
      * @return a set with the names of list nodes
      */
@@ -86,35 +117,5 @@ public abstract class NodeCombiner {
      */
     public boolean isListNode(final ImmutableNode node) {
         return listNodes.contains(node.getNodeName());
-    }
-
-    /**
-     * Combines the hierarchies represented by the given root nodes. This method must be defined in concrete sub classes
-     * with the implementation of a specific combination algorithm.
-     *
-     * @param node1 the first root node
-     * @param node2 the second root node
-     * @return the root node of the resulting combined node structure
-     */
-    public abstract ImmutableNode combine(ImmutableNode node1, ImmutableNode node2);
-
-    /**
-     * Creates a node handler object for immutable nodes which can be used by sub classes to perform advanced operations on
-     * nodes.
-     *
-     * @return the node handler implementation
-     */
-    private static NodeHandler<ImmutableNode> createNodeHandler() {
-        return new AbstractImmutableNodeHandler() {
-            @Override
-            public ImmutableNode getParent(final ImmutableNode node) {
-                return null;
-            }
-
-            @Override
-            public ImmutableNode getRootNode() {
-                return null;
-            }
-        };
     }
 }

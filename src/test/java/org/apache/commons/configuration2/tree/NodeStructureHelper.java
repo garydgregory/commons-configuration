@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,9 +29,9 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * A helper class for tests related to hierarchies of {@code ImmutableNode} objects. This class provides functionality
  * for creating test trees and accessing single nodes. It can be used by various test classes.
- *
  */
-public class NodeStructureHelper {
+public final class NodeStructureHelper {
+
     /** A pattern for parsing node keys with optional indices. */
     private static final Pattern PAT_KEY_WITH_INDEX = Pattern.compile("(\\w+)\\((\\d+)\\)");
 
@@ -234,36 +234,6 @@ public class NodeStructureHelper {
     }
 
     /**
-     * Prepares the passed in resolver mock to resolve add keys. They are interpreted on a default expression engine.
-     *
-     * @param resolver the {@code NodeKeyResolver} mock
-     */
-    public static void prepareResolveAddKeys(final NodeKeyResolver<ImmutableNode> resolver) {
-        when(resolver.resolveAddKey(any(), any(), any())).then(invocation -> {
-            final ImmutableNode root = invocation.getArgument(0, ImmutableNode.class);
-            final String key = invocation.getArgument(1, String.class);
-            final TreeData handler = invocation.getArgument(2, TreeData.class);
-            return DefaultExpressionEngine.INSTANCE.prepareAdd(root, key, handler);
-        });
-    }
-
-    /**
-     * Prepares a mock for a resolver to expect arbitrary resolve operations. These operations are implemented on top of a
-     * default expression engine.
-     *
-     * @param resolver the mock resolver
-     */
-    @SuppressWarnings("unchecked")
-    public static void prepareResolveKeyForQueries(final NodeKeyResolver<ImmutableNode> resolver) {
-        when(resolver.resolveKey(any(), any(), any())).thenAnswer(invocation -> {
-            final ImmutableNode root = invocation.getArgument(0, ImmutableNode.class);
-            final String key = invocation.getArgument(1, String.class);
-            final NodeHandler<ImmutableNode> handler = invocation.getArgument(2, NodeHandler.class);
-            return DefaultExpressionEngine.INSTANCE.query(root, key, handler);
-        });
-    }
-
-    /**
      * Returns the name of the specified field in the tables tree.
      *
      * @param tabIdx the index of the table
@@ -429,6 +399,36 @@ public class NodeStructureHelper {
     }
 
     /**
+     * Prepares the passed in resolver mock to resolve add keys. They are interpreted on a default expression engine.
+     *
+     * @param resolver the {@code NodeKeyResolver} mock
+     */
+    public static void prepareResolveAddKeys(final NodeKeyResolver<ImmutableNode> resolver) {
+        when(resolver.resolveAddKey(any(), any(), any())).then(invocation -> {
+            final ImmutableNode root = invocation.getArgument(0, ImmutableNode.class);
+            final String key = invocation.getArgument(1, String.class);
+            final TreeData handler = invocation.getArgument(2, TreeData.class);
+            return DefaultExpressionEngine.INSTANCE.prepareAdd(root, key, handler);
+        });
+    }
+
+    /**
+     * Prepares a mock for a resolver to expect arbitrary resolve operations. These operations are implemented on top of a
+     * default expression engine.
+     *
+     * @param resolver the mock resolver
+     */
+    @SuppressWarnings("unchecked")
+    public static void prepareResolveKeyForQueries(final NodeKeyResolver<ImmutableNode> resolver) {
+        when(resolver.resolveKey(any(), any(), any())).thenAnswer(invocation -> {
+            final ImmutableNode root = invocation.getArgument(0, ImmutableNode.class);
+            final String key = invocation.getArgument(1, String.class);
+            final NodeHandler<ImmutableNode> handler = invocation.getArgument(2, NodeHandler.class);
+            return DefaultExpressionEngine.INSTANCE.query(root, key, handler);
+        });
+    }
+
+    /**
      * Returns the name of the test table with the given index.
      *
      * @param idx the index of the table
@@ -466,5 +466,9 @@ public class NodeStructureHelper {
      */
     public static int worksLength(final int authorIdx) {
         return WORKS[authorIdx].length;
+    }
+
+    private NodeStructureHelper() {
+        // empty
     }
 }

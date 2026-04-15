@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,29 +29,55 @@ import java.util.Set;
  * classes have to implement the {@code getDecoratedNodeHandler()} method to provide the underlying handler.
  * </p>
  *
- * @since 2.0
  * @param <T> the type of the nodes supported by this handler
+ * @since 2.0
  */
 public abstract class NodeHandlerDecorator<T> implements NodeHandler<T> {
-    @Override
-    public String nodeName(final T node) {
-        return getDecoratedNodeHandler().nodeName(node);
+
+    /**
+     * Constructs a new instance.
+     */
+    public NodeHandlerDecorator() {
+        // empty
     }
 
     @Override
-    public Object getValue(final T node) {
-        return getDecoratedNodeHandler().getValue(node);
+    public Set<String> getAttributes(final T node) {
+        return getDecoratedNodeHandler().getAttributes(node);
     }
 
     @Override
-    public T getParent(final T node) {
-        return getDecoratedNodeHandler().getParent(node);
+    public Object getAttributeValue(final T node, final String name) {
+        return getDecoratedNodeHandler().getAttributeValue(node, name);
+    }
+
+    @Override
+    public T getChild(final T node, final int index) {
+        return getDecoratedNodeHandler().getChild(node, index);
     }
 
     @Override
     public List<T> getChildren(final T node) {
         return getDecoratedNodeHandler().getChildren(node);
     }
+
+    @Override
+    public List<T> getChildren(final T node, final String name) {
+        return getDecoratedNodeHandler().getChildren(node, name);
+    }
+
+    @Override
+    public int getChildrenCount(final T node, final String name) {
+        return getDecoratedNodeHandler().getChildrenCount(node, name);
+    }
+
+    /**
+     * Gets the {@code NodeHandler} object that is decorated by this instance. All method calls are delegated to this
+     * object.
+     *
+     * @return the decorated {@code NodeHandler}
+     */
+    protected abstract NodeHandler<T> getDecoratedNodeHandler();
 
     @Override
     public <C> List<T> getMatchingChildren(final T node, final NodeMatcher<C> matcher, final C criterion) {
@@ -64,28 +90,18 @@ public abstract class NodeHandlerDecorator<T> implements NodeHandler<T> {
     }
 
     @Override
-    public List<T> getChildren(final T node, final String name) {
-        return getDecoratedNodeHandler().getChildren(node, name);
+    public T getParent(final T node) {
+        return getDecoratedNodeHandler().getParent(node);
     }
 
     @Override
-    public T getChild(final T node, final int index) {
-        return getDecoratedNodeHandler().getChild(node, index);
+    public T getRootNode() {
+        return getDecoratedNodeHandler().getRootNode();
     }
 
     @Override
-    public int indexOfChild(final T parent, final T child) {
-        return getDecoratedNodeHandler().indexOfChild(parent, child);
-    }
-
-    @Override
-    public int getChildrenCount(final T node, final String name) {
-        return getDecoratedNodeHandler().getChildrenCount(node, name);
-    }
-
-    @Override
-    public Set<String> getAttributes(final T node) {
-        return getDecoratedNodeHandler().getAttributes(node);
+    public Object getValue(final T node) {
+        return getDecoratedNodeHandler().getValue(node);
     }
 
     @Override
@@ -94,8 +110,8 @@ public abstract class NodeHandlerDecorator<T> implements NodeHandler<T> {
     }
 
     @Override
-    public Object getAttributeValue(final T node, final String name) {
-        return getDecoratedNodeHandler().getAttributeValue(node, name);
+    public int indexOfChild(final T parent, final T child) {
+        return getDecoratedNodeHandler().indexOfChild(parent, child);
     }
 
     @Override
@@ -104,15 +120,7 @@ public abstract class NodeHandlerDecorator<T> implements NodeHandler<T> {
     }
 
     @Override
-    public T getRootNode() {
-        return getDecoratedNodeHandler().getRootNode();
+    public String nodeName(final T node) {
+        return getDecoratedNodeHandler().nodeName(node);
     }
-
-    /**
-     * Returns the {@code NodeHandler} object that is decorated by this instance. All method calls are delegated to this
-     * object.
-     *
-     * @return the decorated {@code NodeHandler}
-     */
-    protected abstract NodeHandler<T> getDecoratedNodeHandler();
 }

@@ -7,7 +7,7 @@
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+       https://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,9 @@
    limitations under the License.
 -->
 
-<document>
-
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 https://maven.apache.org/xsd/xdoc-2.0.xsd">
  <properties>
   <title>XML Configurations</title>
  </properties>
@@ -163,7 +164,7 @@ XMLConfiguration config = builder.getConfiguration();
             cannot support XML documents using an XML Schema.
         </p>
         <p>
-            <a href="http://xml.apache.org/commons/components/resolver/resolver-article.html#s.whats.wrong">XML
+            <a href="https://xml.apache.org/commons/components/resolver/resolver-article.html#s.whats.wrong">XML
             Entity and URI Resolvers</a> describes using a set of catalog files to
             resolve entities. <em>Commons Configuration</em> provides support for
             this Catalog Resolver through its own
@@ -190,7 +191,7 @@ XMLConfiguration config = builder.getConfiguration();
             schemas. When processing the document the parser will pass the hint,
             in this case https://commons.apache.org/sample.xsd, to the entity resolver
             as the system id. More information on using schema locations can be found
-            at <a href="http://www.w3.org/TR/xmlschema-0/#schemaLocation">schemaLocation</a>.
+            at <a href="https://www.w3.org/TR/xmlschema-0/#schemaLocation">schemaLocation</a>.
         </p>
         <p>
             The example that follows shows how to use the <code>CatalogResolver</code> class when
@@ -260,6 +261,7 @@ XMLConfiguration config = builder.getConfiguration();
         <code><a href="../apidocs/org/apache/commons/configuration2/builder/XMLBuilderProperties.html">
         XMLBuilderProperties</a></code> interface defines settings specific to
         XML configurations. This includes
+      </p>
         <ul>
           <li>a custom <code>DocumentBuilder</code></li>
           <li>a custom <code>EntityResolver</code></li>
@@ -267,7 +269,6 @@ XMLConfiguration config = builder.getConfiguration();
           validation is to be performed</li>
           <li>the public and the system ID of the document when it is written</li>
         </ul>
-      </p>
       <p>
         A parameters object for an XML configuration can be obtained using
         the <code>xml()</code> method of a

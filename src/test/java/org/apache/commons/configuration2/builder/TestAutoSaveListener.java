@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,9 +30,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@code AutoSaveListener}.
- *
  */
 public class TestAutoSaveListener {
+
     /** A mock for the associated builder. */
     private FileBasedConfigurationBuilder<?> builder;
 
@@ -58,7 +58,7 @@ public class TestAutoSaveListener {
      * Tests that after a load operation changes on the monitored configuration are detected again.
      */
     @Test
-    public void testConfigurationChangedAfterLoading() throws ConfigurationException {
+    void testConfigurationChangedAfterLoading() throws ConfigurationException {
         final FileHandler handler = new FileHandler();
         listener.loading(handler);
         fireChangeEvent(false);
@@ -73,7 +73,7 @@ public class TestAutoSaveListener {
      * Tests whether a change of the monitored configuration causes a save operation.
      */
     @Test
-    public void testConfigurationChangedAutoSave() throws ConfigurationException {
+    void testConfigurationChangedAutoSave() throws ConfigurationException {
         fireChangeEvent(false);
 
         verify(builder).save();
@@ -84,7 +84,7 @@ public class TestAutoSaveListener {
      * Tests whether an exception thrown by the builder's save() method is handled.
      */
     @Test
-    public void testConfigurationChangedAutoSaveException() throws ConfigurationException {
+    void testConfigurationChangedAutoSaveException() throws ConfigurationException {
         doThrow(new ConfigurationException()).when(builder).save();
 
         fireChangeEvent(false);
@@ -97,7 +97,7 @@ public class TestAutoSaveListener {
      * Tests whether no auto save is triggered before the change to the monitored configuration actually happens.
      */
     @Test
-    public void testConfigurationChangedBeforeUpdateNoSave() {
+    void testConfigurationChangedBeforeUpdateNoSave() {
         fireChangeEvent(true);
 
         verifyNoInteractions(builder);
@@ -107,7 +107,7 @@ public class TestAutoSaveListener {
      * Tests that updated during load operations do not create an auto save.
      */
     @Test
-    public void testConfigurationChangedWhileLoading() {
+    void testConfigurationChangedWhileLoading() {
         listener.loading(new FileHandler());
         fireChangeEvent(false);
 
@@ -118,7 +118,7 @@ public class TestAutoSaveListener {
      * Tests whether the file handler can be updated and is correctly initialized.
      */
     @Test
-    public void testUpdateFileHandler() {
+    void testUpdateFileHandler() {
         final FileHandler handler = mock(FileHandler.class);
         final FileHandler handler2 = mock(FileHandler.class);
 
@@ -136,7 +136,7 @@ public class TestAutoSaveListener {
      * longer needed.
      */
     @Test
-    public void testUpdateFileHandlerNull() {
+    void testUpdateFileHandlerNull() {
         final FileHandler handler = mock(FileHandler.class);
 
         listener.updateFileHandler(handler);

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -53,13 +53,13 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test class for {@code ReloadingCombinedConfigurationBuilder} which actually accesses files to be reloaded.
- *
  */
 public class TestReloadingCombinedConfigurationBuilderFileBased {
+
     /**
      * A test builder class which always returns the same configuration.
      */
-    private static class ConstantConfigurationBuilder extends BasicConfigurationBuilder<BaseHierarchicalConfiguration> {
+    private static final class ConstantConfigurationBuilder extends BasicConfigurationBuilder<BaseHierarchicalConfiguration> {
         private final BaseHierarchicalConfiguration configuration;
 
         public ConstantConfigurationBuilder(final BaseHierarchicalConfiguration conf) {
@@ -76,7 +76,8 @@ public class TestReloadingCombinedConfigurationBuilderFileBased {
     /**
      * A thread class for testing concurrent reload operations.
      */
-    private static class ReloadThread extends Thread {
+    private static final class ReloadThread extends Thread {
+
         /** The builder to be queried. */
         private final ReloadingCombinedConfigurationBuilder builder;
 
@@ -206,7 +207,7 @@ public class TestReloadingCombinedConfigurationBuilderFileBased {
      * Tests concurrent access to a reloading builder for combined configurations.
      */
     @Test
-    public void testConcurrentGetAndReload() throws Exception {
+    void testConcurrentGetAndReload() throws Exception {
         final int threadCount = 4;
         final int loopCount = 100;
         final ReloadingDetectorFactory detectorFactory = (handler, params) -> new RandomReloadingDetector();
@@ -223,8 +224,8 @@ public class TestReloadingCombinedConfigurationBuilderFileBased {
 
         assertEquals("100", builder.getConfiguration().getString("/property[@name='config']/@value"));
 
-        final Thread testThreads[] = new Thread[threadCount];
-        final int failures[] = new int[threadCount];
+        final Thread[] testThreads = new Thread[threadCount];
+        final int[] failures = new int[threadCount];
 
         for (int i = 0; i < testThreads.length; ++i) {
             testThreads[i] = new ReloadThread(builder, failures, i, loopCount);
@@ -243,7 +244,7 @@ public class TestReloadingCombinedConfigurationBuilderFileBased {
      * Tests whether the default definition builder is capable of detecting a change in the definition configuration.
      */
     @Test
-    public void testReloadDefinitionFileDefaultBuilder() throws ConfigurationException, IOException, InterruptedException {
+    void testReloadDefinitionFileDefaultBuilder() throws ConfigurationException, IOException, InterruptedException {
         final File defFile = newFile(tempFolder);
         builder.configure(parameters.combined().setDefinitionBuilderParameters(parameters.xml().setReloadingRefreshDelay(0L).setFile(defFile)));
         checkReloadDefinitionFile(defFile);
@@ -254,7 +255,7 @@ public class TestReloadingCombinedConfigurationBuilderFileBased {
      * definition configuration is provided.
      */
     @Test
-    public void testReloadDefinitionFileExplicitBuilder() throws ConfigurationException, IOException, InterruptedException {
+    void testReloadDefinitionFileExplicitBuilder() throws ConfigurationException, IOException, InterruptedException {
         final File defFile = newFile(tempFolder);
         builder.configure(parameters.combined().setDefinitionBuilder(
             new ReloadingFileBasedConfigurationBuilder<>(XMLConfiguration.class).configure(parameters.xml().setReloadingRefreshDelay(0L).setFile(defFile))));
@@ -265,7 +266,7 @@ public class TestReloadingCombinedConfigurationBuilderFileBased {
      * Tests whether a changed file is detected on disk.
      */
     @Test
-    public void testReloadFromFile() throws ConfigurationException, IOException {
+    void testReloadFromFile() throws ConfigurationException, IOException {
         final File xmlConf1 = writeReloadFile(null, 1, 0);
         final File xmlConf2 = writeReloadFile(null, 2, 0);
         final ReloadingDetectorFactory detectorFactory = (handler, params) -> new AlwaysReloadingDetector();
@@ -307,7 +308,7 @@ public class TestReloadingCombinedConfigurationBuilderFileBased {
     /**
      * Writes a file for testing reload operations.
      *
-     * @param f the file to be written or <b>null</b> for creating a new one
+     * @param f the file to be written or <strong>null</strong> for creating a new one
      * @param tagIdx the index of the tag
      * @param value the value of the reload test property
      * @return the file that was written
@@ -321,7 +322,7 @@ public class TestReloadingCombinedConfigurationBuilderFileBased {
      * Helper method for writing a test file for reloading. The file will be created in the test directory. It is also
      * scheduled for automatic deletion after the test.
      *
-     * @param f the file to be written or <b>null</b> for creating a new one
+     * @param f the file to be written or <strong>null</strong> for creating a new one
      * @param content the content of the file
      * @return the {@code File} object for the test file
      * @throws IOException if an error occurs

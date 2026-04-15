@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,9 +32,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests the ConfigurationConverter class.
- *
  */
 public class TestConfigurationConverter {
+
     /**
      * Creates a configuration object with some test values.
      *
@@ -52,7 +52,7 @@ public class TestConfigurationConverter {
     }
 
     @Test
-    public void testConfigurationToMap() {
+    void testConfigurationToMap() {
         final Configuration config = new BaseConfiguration();
         config.addProperty("string", "teststring");
 
@@ -66,7 +66,7 @@ public class TestConfigurationConverter {
      * Tests a conversion to Properties if the default list delimiter handler is used (which does not support list joining).
      */
     @Test
-    public void testConfigurationToPropertiesDefaultListHandling() {
+    void testConfigurationToPropertiesDefaultListHandling() {
         final BaseConfiguration config = createTestConfiguration();
         final Properties props = ConfigurationConverter.getProperties(config);
 
@@ -81,7 +81,7 @@ public class TestConfigurationConverter {
      * Tests a conversion to Properties if the list delimiter handler supports list joining.
      */
     @Test
-    public void testConfigurationToPropertiesListDelimiterHandler() {
+    void testConfigurationToPropertiesListDelimiterHandler() {
         final BaseConfiguration config = createTestConfiguration();
         config.setListDelimiterHandler(new DefaultListDelimiterHandler(';'));
         final Properties props = ConfigurationConverter.getProperties(config);
@@ -93,7 +93,7 @@ public class TestConfigurationConverter {
      * properties with multiple values have to be handled in a special way.
      */
     @Test
-    public void testConfigurationToPropertiesNoAbstractConfiguration() {
+    void testConfigurationToPropertiesNoAbstractConfiguration() {
         final Configuration src = mock(Configuration.class);
         final BaseConfiguration config = createTestConfiguration();
 
@@ -112,7 +112,7 @@ public class TestConfigurationConverter {
      * CONFIGURATION-432.
      */
     @Test
-    public void testConfigurationToPropertiesScalarValue() {
+    void testConfigurationToPropertiesScalarValue() {
         final BaseConfiguration config = new BaseConfiguration();
         config.addProperty("scalar", Integer.valueOf(42));
         final Properties props = ConfigurationConverter.getProperties(config);
@@ -120,7 +120,7 @@ public class TestConfigurationConverter {
     }
 
     @Test
-    public void testPropertiesToConfiguration() {
+    void testPropertiesToConfiguration() {
         final Properties props = new Properties();
         props.setProperty("string", "teststring");
         props.setProperty("int", "123");

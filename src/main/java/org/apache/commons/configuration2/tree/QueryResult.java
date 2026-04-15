@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,37 +34,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * Implementation note: Instances are immutable. They are created using the static factory methods.
  * </p>
  *
- * @since 2.0
  * @param <T> the type of the result nodes
+ * @since 2.0
  */
 public final class QueryResult<T> {
-    /** The node result. */
-    private final T node;
-
-    /** The name of the result attribute. */
-    private final String attributeName;
-
-    /**
-     * Creates a new instance of {@code QueryResult}.
-     *
-     * @param nd the node
-     * @param attr the attribute name
-     */
-    private QueryResult(final T nd, final String attr) {
-        node = nd;
-        attributeName = attr;
-    }
-
-    /**
-     * Creates a {@code QueryResult} instance representing the specified result node.
-     *
-     * @param <T> the type of the result node
-     * @param resultNode the result node
-     * @return the newly created instance
-     */
-    public static <T> QueryResult<T> createNodeResult(final T resultNode) {
-        return new QueryResult<>(resultNode, null);
-    }
 
     /**
      * Creates a {@code QueryResult} instance representing an attribute result. An attribute result consists of the node the
@@ -80,52 +53,31 @@ public final class QueryResult<T> {
     }
 
     /**
-     * Returns the node referenced by this object. Depending on the result type, this is either the result node or the
-     * parent node of the represented attribute.
+     * Creates a {@code QueryResult} instance representing the specified result node.
      *
-     * @return the referenced node
+     * @param <T> the type of the result node
+     * @param resultNode the result node
+     * @return the newly created instance
      */
-    public T getNode() {
-        return node;
+    public static <T> QueryResult<T> createNodeResult(final T resultNode) {
+        return new QueryResult<>(resultNode, null);
     }
+
+    /** The node result. */
+    private final T node;
+
+    /** The name of the result attribute. */
+    private final String attributeName;
 
     /**
-     * Returns the name of the attribute. This method is defined only for results of type attribute.
+     * Creates a new instance of {@code QueryResult}.
      *
-     * @return the attribute name
+     * @param nd the node
+     * @param attr the attribute name
      */
-    public String getAttributeName() {
-        return attributeName;
-    }
-
-    /**
-     * Returns a flag whether this is a result of type attribute. If result is <b>true</b>, the attribute name and value can
-     * be queried. Otherwise, only the result node is available.
-     *
-     * @return <b>true</b> for an attribute result, <b>false</b> otherwise
-     */
-    public boolean isAttributeResult() {
-        return StringUtils.isNotEmpty(getAttributeName());
-    }
-
-    /**
-     * Returns the attribute value if this is an attribute result. If this is not an attribute result, an exception is
-     * thrown.
-     *
-     * @param handler the {@code NodeHandler}
-     * @return the attribute value
-     * @throws IllegalStateException if this is not an attribute result
-     */
-    public Object getAttributeValue(final NodeHandler<T> handler) {
-        if (!isAttributeResult()) {
-            throw new IllegalStateException("This is not an attribute result! " + "Attribute value cannot be fetched.");
-        }
-        return handler.getAttributeValue(getNode(), getAttributeName());
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getNode()).append(getAttributeName()).toHashCode();
+    private QueryResult(final T nd, final String attr) {
+        node = nd;
+        attributeName = attr;
     }
 
     /**
@@ -146,6 +98,55 @@ public final class QueryResult<T> {
 
         final QueryResult<?> c = (QueryResult<?>) obj;
         return new EqualsBuilder().append(getNode(), c.getNode()).append(getAttributeName(), c.getAttributeName()).isEquals();
+    }
+
+    /**
+     * Gets the name of the attribute. This method is defined only for results of type attribute.
+     *
+     * @return the attribute name
+     */
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    /**
+     * Gets the attribute value if this is an attribute result. If this is not an attribute result, an exception is
+     * thrown.
+     *
+     * @param handler the {@code NodeHandler}
+     * @return the attribute value
+     * @throws IllegalStateException if this is not an attribute result
+     */
+    public Object getAttributeValue(final NodeHandler<T> handler) {
+        if (!isAttributeResult()) {
+            throw new IllegalStateException("This is not an attribute result! Attribute value cannot be fetched.");
+        }
+        return handler.getAttributeValue(getNode(), getAttributeName());
+    }
+
+    /**
+     * Gets the node referenced by this object. Depending on the result type, this is either the result node or the
+     * parent node of the represented attribute.
+     *
+     * @return the referenced node
+     */
+    public T getNode() {
+        return node;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getNode()).append(getAttributeName()).toHashCode();
+    }
+
+    /**
+     * Returns a flag whether this is a result of type attribute. If result is <strong>true</strong>, the attribute name and value can
+     * be queried. Otherwise, only the result node is available.
+     *
+     * @return <strong>true</strong> for an attribute result, <strong>false</strong> otherwise
+     */
+    public boolean isAttributeResult() {
+        return StringUtils.isNotEmpty(getAttributeName());
     }
 
     /**

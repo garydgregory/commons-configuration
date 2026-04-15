@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for simple MultiConfigurationTest.
- *
  */
 public class TestPatternSubtreeConfiguration {
     private static final File CONFIG_FILE = ConfigurationAssert.getTestFile("testPatternSubtreeConfig.xml");
@@ -49,7 +48,7 @@ public class TestPatternSubtreeConfiguration {
      * Rigorous Test :-)
      */
     @Test
-    public void testMultiConfiguration() {
+    void testMultiConfiguration() {
         final PatternSubtreeConfigurationWrapper config = new PatternSubtreeConfigurationWrapper(this.conf, PATTERN);
         config.setExpressionEngine(new XPathExpressionEngine());
 
@@ -67,7 +66,7 @@ public class TestPatternSubtreeConfiguration {
      * Tests a read operation if the wrapped configuration does not implement FileBased.
      */
     @Test
-    public void testReadNotFileBased() {
+    void testReadNotFileBased() {
         final HierarchicalConfiguration<ImmutableNode> hc = new BaseHierarchicalConfiguration();
         final PatternSubtreeConfigurationWrapper config = new PatternSubtreeConfigurationWrapper(hc, PATTERN);
         final FileHandler fileHandler = new FileHandler(config);
@@ -78,7 +77,7 @@ public class TestPatternSubtreeConfiguration {
      * Tests a write operation if the wrapped configuration does not implement FileBased.
      */
     @Test
-    public void testSaveNotFileBased() {
+    void testSaveNotFileBased() {
         final HierarchicalConfiguration<ImmutableNode> hc = new BaseHierarchicalConfiguration();
         final PatternSubtreeConfigurationWrapper config = new PatternSubtreeConfigurationWrapper(hc, PATTERN);
         final FileHandler fileHandler = new FileHandler(config);

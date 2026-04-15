@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,11 +37,12 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  * @since 2.0
  */
 public interface InputStreamSupport {
+
     /**
      * Reads the content of this object from the specified {@code InputStream}.
      *
      * @param in the input stream
-     * @throws ConfigurationException if a non-I/O related problem occurs, e.g. the data read does not have the expected
+     * @throws ConfigurationException if a non-I/O related problem occurs, for example the data read does not have the expected
      *         format
      * @throws IOException if an I/O error occurs.
      */
